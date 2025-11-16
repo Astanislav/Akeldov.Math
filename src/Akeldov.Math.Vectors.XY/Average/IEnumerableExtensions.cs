@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Akeldov.Math.Vectors.XY
 {
@@ -6,6 +7,9 @@ namespace Akeldov.Math.Vectors.XY
     {
         public static VectorXY Average(this IEnumerable<VectorXY> vectors)
         {
+            if (vectors is null)
+                throw new ArgumentNullException(nameof(vectors));
+
             var res = VectorXY.Zero;
             var count = 0;
 
@@ -15,11 +19,20 @@ namespace Akeldov.Math.Vectors.XY
                 count++;
             }
 
+            if (count == 0)
+                throw new InvalidOperationException("Sequence contains no elements.");
+
             return res / count;
         }
 
         public static VectorXY Average(this VectorXY[] vectors)
         {
+            if (vectors is null)
+                throw new ArgumentNullException(nameof(vectors));
+
+            if (vectors.Length == 0)
+                throw new InvalidOperationException("Sequence contains no elements.");
+
             var res = VectorXY.Zero;
 
             for (int i = 0; i < vectors.Length; i++)
