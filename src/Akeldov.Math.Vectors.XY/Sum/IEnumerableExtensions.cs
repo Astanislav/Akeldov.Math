@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Akeldov.Math.Vectors.XY
 {
@@ -6,6 +7,9 @@ namespace Akeldov.Math.Vectors.XY
     {
         public static VectorXY Sum(this IEnumerable<VectorXY> vectors)
         {
+            if (vectors is null)
+                throw new ArgumentNullException(nameof(vectors));
+
             var res = VectorXY.Zero;
 
             foreach (var vector in vectors)
@@ -18,6 +22,9 @@ namespace Akeldov.Math.Vectors.XY
 
         public static VectorXY Sum(this VectorXY[] vectors)
         {
+            if (vectors is null)
+                throw new ArgumentNullException(nameof(vectors));
+
             var res = VectorXY.Zero;
 
             for (int i = 0; i < vectors.Length; i++)
