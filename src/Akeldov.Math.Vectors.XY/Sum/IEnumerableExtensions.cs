@@ -15,5 +15,17 @@ namespace Akeldov.Math.Vectors.XY
 
             return res;
         }
+
+        public static VectorXY Sum(this VectorXY[] vectors)
+        {
+            var res = VectorXY.Zero;
+
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                res = res + vectors[i];
+            }
+
+            return res;
+        }
     }
 }
