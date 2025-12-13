@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Intervals", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Geometry.Curves", "src\Akeldov.Math.Geometry.Curves\Akeldov.Math.Geometry.Curves.csproj", "{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Sampling", "src\Akeldov.Math.Sampling\Akeldov.Math.Sampling.csproj", "{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +29,15 @@ Global
 		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F13E249-3E55-4FA9-80CE-D21EC009E9DD}
 	EndGlobalSection
 EndGlobal
