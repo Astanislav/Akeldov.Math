@@ -1,4 +1,6 @@
-﻿namespace Akeldov.Math.Sampling
+﻿using System.Collections.Generic;
+
+namespace Akeldov.Math.Sampling
 {
     public interface ISamplingResult<out TSample>
     {

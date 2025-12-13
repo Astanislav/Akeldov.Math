@@ -1,4 +1,5 @@
 ﻿using Akeldov.Math.Vectors.XY;
+using System.Collections.Generic;
 
 namespace Akeldov.Math.Geometry.Curves
 {
