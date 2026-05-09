@@ -3,5 +3,19 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
+
+		<PackageId>Akeldov.Math.Spatial2D</PackageId>
+		<Version>0.1.0</Version>
+		<Authors>Stanislav Akeldov</Authors>
+		<Description>Two-dimensional geometry, vector math, spatial sampling, partitioning, and influence field utilities.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>math;geometry;2d;vectors;spatial;sampling;voronoi;poisson-disk</PackageTags>
+		<RepositoryUrl>https://github.com/AStanislav/Akeldov.Math</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/AStanislav/Akeldov.Math</PackageProjectUrl>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 </Project>
