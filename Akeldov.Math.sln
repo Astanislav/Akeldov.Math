@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Geometry.Curve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Sampling", "src\Akeldov.Math.Sampling\Akeldov.Math.Sampling.csproj", "{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Spatial2D", "src\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj", "{151E3C50-E6D4-472B-9138-C08B8BA5EB43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
