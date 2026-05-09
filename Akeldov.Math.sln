@@ -3,13 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Vectors.XY", "src\Akeldov.Math.Vectors.XY\Akeldov.Math.Vectors.XY.csproj", "{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Intervals", "src\Akeldov.Math.Intervals\Akeldov.Math.Intervals.csproj", "{4BEA0229-A4F3-468C-B10C-71125BC38F16}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Geometry.Curves", "src\Akeldov.Math.Geometry.Curves\Akeldov.Math.Geometry.Curves.csproj", "{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Sampling", "src\Akeldov.Math.Sampling\Akeldov.Math.Sampling.csproj", "{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Spatial2D", "src\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj", "{151E3C50-E6D4-472B-9138-C08B8BA5EB43}"
 EndProject
@@ -25,22 +19,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4BEA0229-A4F3-468C-B10C-71125BC38F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BEA0229-A4F3-468C-B10C-71125BC38F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BEA0229-A4F3-468C-B10C-71125BC38F16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BEA0229-A4F3-468C-B10C-71125BC38F16}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,10 +36,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3F9EFFD4-30CA-48CA-8E18-5DF3F6476340} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
 		{4BEA0229-A4F3-468C-B10C-71125BC38F16} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
-		{3308F800-3D98-48AD-AA76-7BC6B1ADBAAD} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
-		{0DCBA096-5F3F-4044-92C0-F1A7D46506A2} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43} = {55C7611B-0B20-456C-A88F-5F28DFD7ECAF}
 		{21D032CC-729C-48F9-9717-668C51441188} = {2AA7C352-506F-4F52-8525-42B261FC906D}
 	EndGlobalSection
