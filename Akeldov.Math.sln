@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Sampling", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Spatial2D", "src\Akeldov.Math.Spatial2D\Akeldov.Math.Spatial2D.csproj", "{151E3C50-E6D4-472B-9138-C08B8BA5EB43}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2AA7C352-506F-4F52-8525-42B261FC906D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akeldov.Math.Spatial2D.Tests", "tests\Akeldov.Math.Spatial2D.Tests\Akeldov.Math.Spatial2D.Tests.csproj", "{21D032CC-729C-48F9-9717-668C51441188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,9 +43,16 @@ Global
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{151E3C50-E6D4-472B-9138-C08B8BA5EB43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21D032CC-729C-48F9-9717-668C51441188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D032CC-729C-48F9-9717-668C51441188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D032CC-729C-48F9-9717-668C51441188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D032CC-729C-48F9-9717-668C51441188}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{21D032CC-729C-48F9-9717-668C51441188} = {2AA7C352-506F-4F52-8525-42B261FC906D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5F13E249-3E55-4FA9-80CE-D21EC009E9DD}

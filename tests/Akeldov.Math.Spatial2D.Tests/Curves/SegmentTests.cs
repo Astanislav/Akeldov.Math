@@ -1,0 +1,162 @@
+using Akeldov.Math.Spatial2D.Curves;
+
+namespace Akeldov.Math.Spatial2D.Tests.Curves;
+
+public class SegmentTests
+{
+    [Test]
+    public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
+    {
+        var segment = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 1f, 0f);
+    }
+
+    [Test]
+    public void RayIntersections_WhenEndpointIsExcluded_DoesNotReturnThatEndpoint()
+    {
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: false, includesB: true);
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void RayIntersections_WhenEndpointIsIncluded_ReturnsThatEndpoint()
+    {
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: true, includesB: true);
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 1f, 0f);
+    }
+
+    [Test]
+    public void RayIntersections_WhenRayStartsInsideCollinearSegment_ReturnsRayOrigin()
+    {
+        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f));
+        var ray = new Ray(new VectorXY(4f, 0f));
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 4f, 0f);
+    }
+
+    [Test]
+    public void RayIntersections_WhenCollinearSegmentIsAhead_ReturnsFirstIncludedEndpoint()
+    {
+        var segment = new Segment(new VectorXY(4f, 0f), new VectorXY(10f, 0f));
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 4f, 0f);
+    }
+
+    [Test]
+    public void RayIntersections_WhenCollinearSegmentStartsAtExcludedRayOrigin_ReturnsEmpty()
+    {
+        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesA: false, includesB: true);
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void Project_WhenPointProjectsOutsideSegment_ClampsToNearestEndpoint()
+    {
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+
+        var projection = segment.Project(VectorXY.Zero);
+
+        AssertVector(projection.Point, 2f, 0f);
+        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void RayIntersections_WhenSegmentIsBehindRay_ReturnsEmpty()
+    {
+        var segment = new Segment(new VectorXY(-4f, 0f), new VectorXY(-2f, 0f));
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void RayIntersections_WhenDegenerateSegmentPointIsOnRay_ReturnsPoint()
+    {
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f));
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 2f, 0f);
+    }
+
+    [Test]
+    public void RayIntersections_WhenDegenerateSegmentPointIsExcluded_ReturnsEmpty()
+    {
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesA: false, includesB: false);
+        var ray = new Ray(VectorXY.Zero);
+
+        var intersections = segment.RayIntersections(ray);
+
+        Assert.That(intersections, Is.Empty);
+    }
+
+    [Test]
+    public void Project_WhenPointProjectsInsideSegment_ReturnsInteriorProjection()
+    {
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+
+        var projection = segment.Project(new VectorXY(3f, 2f));
+
+        AssertVector(projection.Point, 3f, 0f);
+        Assert.That(projection.Parameter, Is.EqualTo(0.5f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Project_WhenSegmentIsDegenerate_ReturnsEndpoint()
+    {
+        var segment = new Segment(new VectorXY(2f, 3f), new VectorXY(2f, 3f));
+
+        var projection = segment.Project(new VectorXY(5f, 7f));
+
+        AssertVector(projection.Point, 2f, 3f);
+        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Equals_WhenEndpointInclusionDiffers_ReturnsFalse()
+    {
+        var closed = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: true, includesB: true);
+        var openAtA = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: false, includesB: true);
+
+        Assert.That(closed, Is.Not.EqualTo(openAtA));
+        Assert.That(closed.GetHashCode(), Is.Not.EqualTo(openAtA.GetHashCode()));
+    }
+
+    private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+}

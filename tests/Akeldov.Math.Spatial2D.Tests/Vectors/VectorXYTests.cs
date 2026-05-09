@@ -1,0 +1,70 @@
+namespace Akeldov.Math.Spatial2D.Tests.Vectors;
+
+public class VectorXYTests
+{
+    [Test]
+    public void Normalize_WhenVectorHasLength_ReturnsUnitVector()
+    {
+        var vector = new VectorXY(3f, 4f);
+
+        var normalized = vector.Normalize();
+
+        Assert.That(normalized.Length, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(normalized.X, Is.EqualTo(0.6f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(normalized.Y, Is.EqualTo(0.8f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Normalize_WhenVectorIsZero_ReturnsZero()
+    {
+        var normalized = VectorXY.Zero.Normalize();
+
+        Assert.That(normalized, Is.EqualTo(VectorXY.Zero));
+    }
+
+    [Test]
+    public void Angle_ReturnsSignedAngleFromFirstVectorToSecondVector()
+    {
+        var angle = VectorXY.Angle(new VectorXY(1f, 0f), new VectorXY(0f, 1f));
+
+        Assert.That(angle, Is.EqualTo(MathF.PI / 2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Angle_WhenRotationIsClockwise_ReturnsNegativeAngle()
+    {
+        var angle = VectorXY.Angle(new VectorXY(0f, 1f), new VectorXY(1f, 0f));
+
+        Assert.That(angle, Is.EqualTo(-MathF.PI / 2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Equals_WhenComponentsDifferWithinGeometryEpsilon_ReturnsFalse()
+    {
+        var left = new VectorXY(1f, 2f);
+        var right = new VectorXY(1f + GeometryConstants.GeometryEpsilon / 2f, 2f);
+
+        Assert.That(left.Equals(right), Is.False);
+        Assert.That(left == right, Is.False);
+        Assert.That(left.AlmostEquals(right), Is.True);
+    }
+
+    [Test]
+    public void AlmostEquals_WhenEuclideanDistanceExceedsEpsilon_ReturnsFalse()
+    {
+        var left = VectorXY.Zero;
+        var right = new VectorXY(GeometryConstants.GeometryEpsilon, GeometryConstants.GeometryEpsilon);
+
+        Assert.That(left.AlmostEquals(right), Is.False);
+    }
+
+    [Test]
+    public void RoundToInt_UsesMathFRoundMidpointSemantics()
+    {
+        var vector = new VectorXY(2.5f, 3.5f);
+
+        var rounded = vector.RoundToInt();
+
+        Assert.That(rounded, Is.EqualTo(new VectorXYInt(2, 4)));
+    }
+}
