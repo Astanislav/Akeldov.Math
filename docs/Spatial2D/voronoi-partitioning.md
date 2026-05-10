@@ -6,7 +6,6 @@ Items must implement `IHasPosition2D`.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 public sealed class MapCell : IHasPosition2D
 {
@@ -21,36 +20,51 @@ public sealed class MapCell : IHasPosition2D
 }
 ```
 
-## Basic Partitioning
+## Equal Site Power
+
+Use equal powers when each site should compete by distance alone.
 
 ```csharp
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+
 var sites = new[]
 {
-    new Site(new VectorXY(0f, 0f), power: 1f),
-    new Site(new VectorXY(10f, 0f), power: 1f)
+    new Site(new VectorXY(25f, 30f), power: 1f),
+    new Site(new VectorXY(95f, 30f), power: 1f)
 };
 
-var items = new[]
-{
-    new MapCell("left", new VectorXY(1f, 0f)),
-    new MapCell("right", new VectorXY(9f, 0f))
-};
+var partitioner = new VoronoiPartitioner<MapCell>(
+    sites,
+    EmptyCellPolicy.LeaveAsIs);
 
-var partitioner = new VoronoiPartitioner<MapCell>(sites);
 IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
 
-## Weighted Sites
+![Voronoi partition with equal site power](../assets/spatial2d/voronoi/equal-power.svg)
 
-Each `Site` has a `Power`. Higher power affects the closest-site calculation and can pull items toward that site.
+## Weighted Site Power
+
+Increase a site's `Power` to let it claim a larger region.
 
 ```csharp
-var weightedSites = new[]
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+
+var sites = new[]
 {
-    new Site(new VectorXY(0f, 0f), power: 1f),
-    new Site(new VectorXY(10f, 0f), power: 3f)
+    new Site(new VectorXY(25f, 30f), power: 1f),
+    new Site(new VectorXY(95f, 30f), power: 2f)
 };
+
+var partitioner = new VoronoiPartitioner<MapCell>(
+    sites,
+    EmptyCellPolicy.LeaveAsIs);
+
+IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
+
+![Voronoi partition with weighted site power](../assets/spatial2d/voronoi/weighted-power.svg)
 
 ## Empty Cell Policy
 
@@ -59,12 +73,4 @@ Use `EmptyCellPolicy` to choose how empty cells are handled:
 - `ThrowException`
 - `Exclude`
 - `LeaveAsIs`
-
-```csharp
-var partitioner = new VoronoiPartitioner<MapCell>(
-    sites,
-    EmptyCellPolicy.LeaveAsIs);
-```
-
-The partitioner also supports relaxation iterations for centroid-style refinement.
 

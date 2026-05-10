@@ -4,6 +4,8 @@
 
 ## Constant Minimal Distance
 
+Use a single minimal distance when the whole field should have the same sample density.
+
 ```csharp
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
@@ -11,30 +13,44 @@ using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
 
 IReadOnlyList<PoissonDiskPointSample> samples =
-    sampler.Sample(new VectorXY(100f, 100f), minimalDistance: 8f);
+    sampler.Sample(new VectorXY(120f, 80f), minimalDistance: 9f);
+```
 
-foreach (var sample in samples)
+![Poisson disk sampling with a constant minimal distance](../assets/spatial2d/poisson-disk/constant-distance.svg)
+
+## Variable Minimal Distance
+
+Pass an `IFloatField` when the minimal distance should depend on the sampled position.
+
+```csharp
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
+
+var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
+var distanceField = new HorizontalDistanceField();
+
+IReadOnlyList<PoissonDiskPointSample> samples =
+    sampler.Sample(new VectorXY(120f, 80f), distanceField);
+
+public sealed class HorizontalDistanceField : IFloatField
 {
-    VectorXY point = sample.Point;
-    float distance = sample.MinimalDistance;
+    public float Min => 6f;
+    public float Max => 14f;
+
+    public float Sample(VectorXY point)
+    {
+        float t = point.X / 120f;
+        return Min + (Max - Min) * t;
+    }
 }
 ```
 
-## Field-Based Minimal Distance
-
-You can also pass an `IFloatField` to vary spacing over the field.
-
-```csharp
-using Akeldov.Math.Spatial2D.Fields;
-
-IFloatField distanceField = new ConstantFloatField(8f);
-
-var samples = sampler.Sample(new VectorXY(100f, 100f), distanceField);
-```
-
-The field must return positive values. If it returns zero or a negative distance for a sampled point, sampling fails with an exception.
+![Poisson disk sampling with a field-based minimal distance](../assets/spatial2d/poisson-disk/variable-distance.svg)
 
 ## Tuning
 
 `maxAttempts` controls how many candidates are tried around an active point before the sampler retires that point. Higher values can produce denser point sets, but take more work.
+
+The minimal distance must always be positive. If a field returns zero or a negative value for a sampled point, sampling fails with an exception.
 

@@ -24,7 +24,10 @@ nav:
           - Curves: Spatial2D/curves.md
           - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
           - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
-          - Influence Fields: Spatial2D/influence-fields.md
+          - Influence Fields:
+              - Overview: Spatial2D/influence-fields/index.md
+              - Sampling: Spatial2D/influence-fields/sampling.md
+              - Culling: Spatial2D/influence-fields/culling.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
 

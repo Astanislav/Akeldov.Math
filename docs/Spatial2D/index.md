@@ -47,4 +47,4 @@ float distance = projection.Distance;
 - [Curves](curves.md)
 - [Poisson Disk Sampling](poisson-disk-sampling.md)
 - [Voronoi Partitioning](voronoi-partitioning.md)
-- [Influence Fields](influence-fields.md)
+- [Influence Fields](influence-fields/)
