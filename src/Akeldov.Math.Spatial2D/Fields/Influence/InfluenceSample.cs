@@ -1,3 +1,5 @@
+using System;
+
 namespace Akeldov.Math.Spatial2D.Fields
 {
     /// <summary>
@@ -15,6 +17,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="power">The source power at <paramref name="point"/>.</param>
         public InfluenceSample(TValue value, VectorXY point, float distance, float power)
         {
+            if (power < 0f || float.IsNaN(power))
+                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+
             Value = value;
             Point = point;
             Distance = distance;

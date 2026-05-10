@@ -35,8 +35,13 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="valueProvider">The value provider evaluated with the curve projection parameter.</param>
         public FloatCurveInfluenceSource(float power, IProjectableCurve curve, Func<float, float> valueProvider)
-            : this(_ => power, curve, valueProvider)
         {
+            if (power < 0f || float.IsNaN(power))
+                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+
+            _powerProvider = _ => power;
+            _curve = curve ?? throw new ArgumentNullException(nameof(curve));
+            _valueProvider = valueProvider ?? throw new ArgumentNullException(nameof(valueProvider));
         }
 
         /// <summary>
@@ -85,11 +90,16 @@ namespace Akeldov.Math.Spatial2D.Fields
         public InfluenceSample<float> GetInfluence(VectorXY point)
         {
             var projection = Project(point);
+            float power = _powerProvider(projection.Parameter);
+            if (power < 0f || float.IsNaN(power))
+                throw new InvalidOperationException("Power provider returned an invalid influence source power. Power must be non-negative and not NaN.");
+
             return new InfluenceSample<float>(
                 _valueProvider(projection.Parameter),
                 projection.Point,
                 projection.Distance,
-                _powerProvider(projection.Parameter));
+                power);
         }
+
     }
 }

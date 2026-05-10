@@ -1,9 +1,14 @@
+using System;
+
 namespace Akeldov.Math.Spatial2D.Fields
 {
     public class IntPointInfluenceSource : IPointInfluenceSource<int>
     {
         public IntPointInfluenceSource(float power, VectorXY center, int value)
         {
+            if (power < 0f || float.IsNaN(power))
+                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+
             Power = power;
             Center = center;
             Value = value;

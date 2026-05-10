@@ -84,6 +84,22 @@ public class InfluenceSamplerTests
         Assert.That(value, Is.EqualTo(42f));
     }
 
+    [TestCase(0f)]
+    [TestCase(float.PositiveInfinity)]
+    public void InverseDistanceWeightedFloatSampler_WhenPowerIsUnsupported_Throws(float power)
+    {
+        var sources = new[]
+        {
+            FixedSource(0f, new VectorXY(0f, 0f), distance: 2f, power: power),
+            FixedSource(10f, new VectorXY(10f, 0f), distance: 8f)
+        };
+
+        var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
+
+        Assert.Throws<InvalidOperationException>(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
     [Test]
     public void InverseDistanceWeightedSampler_UsesWeightedAdditiveContract()
     {
@@ -98,6 +114,22 @@ public class InfluenceSamplerTests
         WeightedFloat value = sampler.Sample(sources, VectorXY.Zero);
 
         Assert.That(value.Value, Is.EqualTo(2f).Within(0.0001f));
+    }
+
+    [TestCase(0f)]
+    [TestCase(float.PositiveInfinity)]
+    public void InverseDistanceWeightedSampler_WhenPowerIsUnsupported_Throws(float power)
+    {
+        var sources = new[]
+        {
+            FixedSource(new WeightedFloat(0f), new VectorXY(0f, 0f), distance: 2f, power: power),
+            FixedSource(new WeightedFloat(10f), new VectorXY(10f, 0f), distance: 8f)
+        };
+
+        var sampler = new InverseDistanceWeightedSampler<FixedInfluenceSource<WeightedFloat>, WeightedFloat>();
+
+        Assert.Throws<InvalidOperationException>(() =>
+            sampler.Sample(sources, VectorXY.Zero));
     }
 
     [Test]
