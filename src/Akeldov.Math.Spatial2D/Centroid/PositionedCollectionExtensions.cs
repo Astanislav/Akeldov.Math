@@ -70,7 +70,7 @@ namespace Akeldov.Math.Spatial2D
             return baricentricTexel;
         }
 
-        public static Texel GetClosetsTo<Texel>(this Texel[] texels, VectorXY point)
+        public static Texel GetClosestTo<Texel>(this Texel[] texels, VectorXY point)
             where Texel : IHasPosition2D
         {
             var minDist = float.MaxValue;
@@ -89,7 +89,7 @@ namespace Akeldov.Math.Spatial2D
             return baricentricTexel;
         }
 
-        public static Texel GetClosetsTo<Texel>(this IReadOnlyList<Texel> texels, VectorXY point)
+        public static Texel GetClosestTo<Texel>(this IReadOnlyList<Texel> texels, VectorXY point)
             where Texel : IHasPosition2D
         {
             var minDist = float.MaxValue;
