@@ -1,0 +1,27 @@
+site_name: Akeldov.Math
+site_description: Documentation for Akeldov.Math libraries.
+site_url: https://akeldov.github.io/Akeldov.Math/
+repo_url: https://github.com/AStanislav/Akeldov.Math
+repo_name: AStanislav/Akeldov.Math
+
+theme:
+  name: mkdocs
+
+nav:
+  - Home: index.md
+  - Spatial2D:
+      - Overview: Spatial2D/index.md
+      - Getting Started: Spatial2D/getting-started.md
+      - Vectors: Spatial2D/vectors.md
+      - Curves: Spatial2D/curves.md
+      - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
+      - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
+      - Influence Fields: Spatial2D/influence-fields.md
+  - Intervals:
+      - Overview: Intervals/index.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+
