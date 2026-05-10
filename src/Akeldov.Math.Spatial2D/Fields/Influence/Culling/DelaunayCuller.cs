@@ -174,47 +174,50 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (triangles.Count == 0)
                 return Array.Empty<Triangle>();
 
+            var keptTriangles = new List<Triangle>();
+            var edgeCounts = new Dictionary<Edge, int>();
+
             for (int i = 0; i < n; i++)
             {
-                var bad = new List<Triangle>();
+                keptTriangles.Clear();
+                edgeCounts.Clear();
 
                 for (int j = 0; j < triangles.Count; j++)
                 {
                     var t = triangles[j];
                     if (t.InCircumcircle(all[i]))
-                        bad.Add(t);
-                }
-
-                var edges = new List<Edge>(bad.Count * 3);
-                for (int j = 0; j < bad.Count; j++)
-                {
-                    var t = bad[j];
-                    edges.Add(new Edge(t.A, t.B));
-                    edges.Add(new Edge(t.B, t.C));
-                    edges.Add(new Edge(t.C, t.A));
-                }
-
-                triangles.RemoveAll(t => bad.Contains(t));
-
-                for (int e = 0; e < edges.Count; e++)
-                {
-                    bool unique = true;
-                    for (int j = 0; j < edges.Count; j++)
                     {
-                        if (e != j && edges[e].Equals(edges[j]))
-                        {
-                            unique = false;
-                            break;
-                        }
+                        AddEdge(edgeCounts, t.A, t.B);
+                        AddEdge(edgeCounts, t.B, t.C);
+                        AddEdge(edgeCounts, t.C, t.A);
                     }
-
-                    if (unique && Triangle.TryCreate(edges[e].U, edges[e].V, i, all, out var triangle))
-                        triangles.Add(triangle);
+                    else
+                    {
+                        keptTriangles.Add(t);
+                    }
                 }
+
+                var oldTriangles = triangles;
+                triangles = keptTriangles;
+                keptTriangles = oldTriangles;
+
+                foreach (var edgeCount in edgeCounts)
+                    if (edgeCount.Value == 1 &&
+                        Triangle.TryCreate(edgeCount.Key.U, edgeCount.Key.V, i, all, out var triangle))
+                        triangles.Add(triangle);
             }
 
             triangles.RemoveAll(t => t.A >= n || t.B >= n || t.C >= n);
             return triangles.ToArray();
+        }
+
+        private static void AddEdge(Dictionary<Edge, int> edgeCounts, int u, int v)
+        {
+            var edge = new Edge(u, v);
+            if (edgeCounts.TryGetValue(edge, out int count))
+                edgeCounts[edge] = count + 1;
+            else
+                edgeCounts.Add(edge, 1);
         }
 
 
@@ -256,6 +259,10 @@ namespace Akeldov.Math.Spatial2D.Fields
                 else { U = v; V = u; }
             }
             public bool Equals(Edge other) => U == other.U && V == other.V;
+
+            public override bool Equals(object? obj) => obj is Edge other && Equals(other);
+
+            public override int GetHashCode() => HashCode.Combine(U, V);
         }
 
         private bool PointInTriangle(VectorXY p, Triangle t)
