@@ -150,13 +150,20 @@ namespace Akeldov.Math.Spatial2D.Curves
             return MathF.Abs(GetSignedDistance(point));
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Line other && Equals(other);
 
+        /// <summary>
+        /// Indicates whether this line has the same normalized implicit equation as another line.
+        /// </summary>
+        /// <param name="other">The line to compare with this line.</param>
+        /// <returns><see langword="true"/> if both lines are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(Line other) =>
             EquationA.Equals(other.EquationA) &&
             EquationB.Equals(other.EquationB) &&
             EquationC.Equals(other.EquationC);
 
+        /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(EquationA, EquationB, EquationC);
 
         /// <summary>
@@ -237,10 +244,23 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new CurveProjection(projection, parameter, MathF.Abs(signedDistance));
         }
 
+        /// <inheritdoc/>
         public override string ToString() => $"({A} - {B})";
 
+        /// <summary>
+        /// Indicates whether two lines are equal.
+        /// </summary>
+        /// <param name="left">The first line.</param>
+        /// <param name="right">The second line.</param>
+        /// <returns><see langword="true"/> if the lines are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Line left, Line right) => left.Equals(right);
 
+        /// <summary>
+        /// Indicates whether two lines are different.
+        /// </summary>
+        /// <param name="left">The first line.</param>
+        /// <param name="right">The second line.</param>
+        /// <returns><see langword="true"/> if the lines are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Line left, Line right) => !(left == right);
 
         private float GetSignedDistance(VectorXY point)

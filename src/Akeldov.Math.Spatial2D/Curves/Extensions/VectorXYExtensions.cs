@@ -3,8 +3,17 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+    /// <summary>
+    /// Provides curve-related helpers for <see cref="VectorXY"/>.
+    /// </summary>
     public static class VectorXYExtensions
     {
+        /// <summary>
+        /// Determines whether a point lies inside a closed contour made from curves.
+        /// </summary>
+        /// <param name="point">The point to test.</param>
+        /// <param name="curves">The contour curves.</param>
+        /// <returns><see langword="true"/> if the point lies inside or on the contour; otherwise, <see langword="false"/>.</returns>
         public static bool IsInsideContour(this VectorXY point, ICurve[] curves)
         {
             List<VectorXY> intersections = new List<VectorXY>();
@@ -46,6 +55,12 @@ namespace Akeldov.Math.Spatial2D.Curves
             return (intersections.Count + segmentCrossings) % 2 == 1;
         }
 
+        /// <summary>
+        /// Determines whether a point lies inside a closed contour made from segments.
+        /// </summary>
+        /// <param name="point">The point to test.</param>
+        /// <param name="curves">The contour segments.</param>
+        /// <returns><see langword="true"/> if the point lies inside or on the contour; otherwise, <see langword="false"/>.</returns>
         public static bool IsInsideContour(this VectorXY point, Segment[] curves)
         {
             int crossings = 0;
@@ -63,6 +78,12 @@ namespace Akeldov.Math.Spatial2D.Curves
             return crossings % 2 == 1;
         }
 
+        /// <summary>
+        /// Determines whether a point's angular position lies on an arc.
+        /// </summary>
+        /// <param name="point">The point to test.</param>
+        /// <param name="arc">The arc that supplies the center and angular span.</param>
+        /// <returns><see langword="true"/> if the point lies within the arc's angular span; otherwise, <see langword="false"/>.</returns>
         public static bool IsOnTheArc(this VectorXY point, Arc arc)
         {
             VectorXY toPoint = (point - arc.Center).Normalize();

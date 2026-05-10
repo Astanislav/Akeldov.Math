@@ -89,16 +89,36 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Circle other && Equals(other);
 
+        /// <summary>
+        /// Indicates whether this circle has the same center and radius as another circle.
+        /// </summary>
+        /// <param name="other">The circle to compare with this circle.</param>
+        /// <returns><see langword="true"/> if both circles are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(Circle other) => Center.Equals(other.Center) && Radius.Equals(other.Radius);
 
+        /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(Center, Radius);
 
+        /// <inheritdoc/>
         public override string ToString() => $"Circle(center: {Center}, radius: {Radius})";
 
+        /// <summary>
+        /// Indicates whether two circles are equal.
+        /// </summary>
+        /// <param name="left">The first circle.</param>
+        /// <param name="right">The second circle.</param>
+        /// <returns><see langword="true"/> if the circles are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Circle left, Circle right) => left.Equals(right);
 
+        /// <summary>
+        /// Indicates whether two circles are different.
+        /// </summary>
+        /// <param name="left">The first circle.</param>
+        /// <param name="right">The second circle.</param>
+        /// <returns><see langword="true"/> if the circles are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Circle left, Circle right) => !(left == right);
     }
 }

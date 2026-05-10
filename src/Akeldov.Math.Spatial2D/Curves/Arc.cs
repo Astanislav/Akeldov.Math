@@ -97,8 +97,14 @@ namespace Akeldov.Math.Spatial2D.Curves
             );
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Arc other && Equals(other);
 
+        /// <summary>
+        /// Indicates whether this arc has the same center, radius, angles, and full-circle flag as another arc.
+        /// </summary>
+        /// <param name="other">The arc to compare with this arc.</param>
+        /// <returns><see langword="true"/> if both arcs are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(Arc other) =>
             Center.Equals(other.Center) &&
             Radius.Equals(other.Radius) &&
@@ -106,8 +112,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             EndAngle.Equals(other.EndAngle) &&
             IsFullCircle == other.IsFullCircle;
 
+        /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(Center, Radius, StartAngle, EndAngle, IsFullCircle);
 
+        /// <inheritdoc/>
         public override string ToString() => $"Arc(center: {Center}, radius: {Radius}, rad: {StartAngle} - {EndAngle}, fullCircle: {IsFullCircle})";
 
         /// <summary>
@@ -213,8 +221,20 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new CurveProjection(arcEnd, 1f, distEnd);
         }
 
+        /// <summary>
+        /// Indicates whether two arcs are equal.
+        /// </summary>
+        /// <param name="left">The first arc.</param>
+        /// <param name="right">The second arc.</param>
+        /// <returns><see langword="true"/> if the arcs are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Arc left, Arc right) => left.Equals(right);
 
+        /// <summary>
+        /// Indicates whether two arcs are different.
+        /// </summary>
+        /// <param name="left">The first arc.</param>
+        /// <param name="right">The second arc.</param>
+        /// <returns><see langword="true"/> if the arcs are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Arc left, Arc right) => !(left == right);
 
         private float GetParameter(float angle)

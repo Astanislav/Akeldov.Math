@@ -205,16 +205,24 @@ namespace Akeldov.Math.Spatial2D.Curves
             return VectorXY.Cross(toPoint, ray.Dir).IsAlmostZero();
         }
 
+        /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Segment other && Equals(other);
 
+        /// <summary>
+        /// Indicates whether this segment has the same endpoints and endpoint-inclusion flags as another segment.
+        /// </summary>
+        /// <param name="other">The segment to compare with this segment.</param>
+        /// <returns><see langword="true"/> if both segments are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(Segment other) =>
             A.Equals(other.A) &&
             B.Equals(other.B) &&
             IncludesA == other.IncludesA &&
             IncludesB == other.IncludesB;
 
+        /// <inheritdoc/>
         public override int GetHashCode() => HashCode.Combine(A, B, IncludesA, IncludesB);
 
+        /// <inheritdoc/>
         public override string ToString() => $"({A} - {B})";
 
         /// <summary>
@@ -252,12 +260,36 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new CurveProjection(projection, t, point.Distance(projection));
         }
 
+        /// <summary>
+        /// Indicates whether two segments are equal.
+        /// </summary>
+        /// <param name="left">The first segment.</param>
+        /// <param name="right">The second segment.</param>
+        /// <returns><see langword="true"/> if the segments are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Segment left, Segment right) => left.Equals(right);
 
+        /// <summary>
+        /// Indicates whether two segments are different.
+        /// </summary>
+        /// <param name="left">The first segment.</param>
+        /// <param name="right">The second segment.</param>
+        /// <returns><see langword="true"/> if the segments are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Segment left, Segment right) => !(left == right);
 
+        /// <summary>
+        /// Translates a segment by a vector.
+        /// </summary>
+        /// <param name="left">The segment to translate.</param>
+        /// <param name="right">The translation vector.</param>
+        /// <returns>The translated segment.</returns>
         public static Segment operator +(Segment left, VectorXY right) => new Segment(left.A + right, left.B + right, left.IncludesA, left.IncludesB);
 
+        /// <summary>
+        /// Translates a segment by the negated vector.
+        /// </summary>
+        /// <param name="left">The segment to translate.</param>
+        /// <param name="right">The translation vector to subtract.</param>
+        /// <returns>The translated segment.</returns>
         public static Segment operator -(Segment left, VectorXY right) => new Segment(left.A - right, left.B - right, left.IncludesA, left.IncludesB);
     }
 }

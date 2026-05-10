@@ -3,8 +3,20 @@ using System;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
+    /// <summary>
+    /// Provides helpers for constructing curves from corners.
+    /// </summary>
     public static class CornerExtensions
     {
+        /// <summary>
+        /// Creates an arc tangent to both rays of the angle ABC.
+        /// </summary>
+        /// <param name="A">A point on the first side of the angle.</param>
+        /// <param name="B">The angle vertex.</param>
+        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="radius">The radius of the tangent arc.</param>
+        /// <returns>An arc tangent to both sides of the angle.</returns>
+        /// <exception cref="ArgumentException">Thrown when the angle is not greater than zero.</exception>
         public static Arc CreateArcInAngle(VectorXY A, VectorXY B, VectorXY C, float radius)
         {
             VectorXY dirBA = (A - B).Normalize();
@@ -42,6 +54,15 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new Arc(center, radius, startAngle, endAngle);
         }
 
+        /// <summary>
+        /// Creates a circle tangent to both rays of the angle ABC.
+        /// </summary>
+        /// <param name="A">A point on the first side of the angle.</param>
+        /// <param name="B">The angle vertex.</param>
+        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="radius">The circle radius.</param>
+        /// <returns>A circle tangent to both sides of the angle.</returns>
+        /// <exception cref="ArgumentException">Thrown when the angle is not greater than zero.</exception>
         public static Circle CreateIncircleInAngle(VectorXY A, VectorXY B, VectorXY C, float radius)
         {
             VectorXY dirBA = (A - B).Normalize();
