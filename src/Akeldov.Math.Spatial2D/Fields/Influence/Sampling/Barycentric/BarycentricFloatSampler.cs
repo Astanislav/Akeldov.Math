@@ -53,18 +53,18 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n <= 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            var samples = new InfluenceSample<float>[n];
-            for (var i = 0; i < n; i++)
-                samples[i] = sources[i].GetInfluence(point);
+            var sampleA = sources[0].GetInfluence(point);
+            if (n == 1) return sampleA.Value;
 
-            if (n == 1) return samples[0].Value;
-            if (n == 2) return LerpOnSegment(samples[0], samples[1], point);
+            var sampleB = sources[1].GetInfluence(point);
+            if (n == 2) return LerpOnSegment(sampleA, sampleB, point);
 
+            var sampleC = sources[2].GetInfluence(point);
             if (n == 3)
-                return InterpolateTriangle(samples[0], samples[1], samples[2], point);
+                return InterpolateTriangle(sampleA, sampleB, sampleC, point);
 
             int k = System.Math.Min(10, n);
-            var nearest = GetNearestSamples(samples);
+            var nearest = GetNearestSamples(sources, point, k, sampleA, sampleB, sampleC);
 
             for (int i = 0; i < k; i++)
                 for (int j = i + 1; j < k; j++)
@@ -198,19 +198,60 @@ namespace Akeldov.Math.Spatial2D.Fields
             return sample.Distance / power;
         }
 
-        private static InfluenceSample<float>[] GetNearestSamples(InfluenceSample<float>[] samples)
+        private static InfluenceSample<float>[] GetNearestSamples(
+            IReadOnlyList<TSource> sources,
+            VectorXY point,
+            int count,
+            InfluenceSample<float> sampleA,
+            InfluenceSample<float> sampleB,
+            InfluenceSample<float> sampleC)
         {
-            var nearest = new InfluenceSample<float>[samples.Length];
-            Array.Copy(samples, nearest, samples.Length);
-            Array.Sort(nearest, CompareByEffectiveDistance);
+            var nearest = new InfluenceSample<float>[count];
+            var effectiveDistances = new float[count];
+
+            InsertNearest(nearest, effectiveDistances, 0, sampleA);
+            InsertNearest(nearest, effectiveDistances, 1, sampleB);
+            InsertNearest(nearest, effectiveDistances, 2, sampleC);
+
+            for (int i = 3; i < sources.Count; i++)
+            {
+                var sample = sources[i].GetInfluence(point);
+                float effectiveDistance = EffectiveDistance(sample);
+
+                if (i < count || effectiveDistance < effectiveDistances[count - 1])
+                    InsertNearest(nearest, effectiveDistances, System.Math.Min(i, count), sample, effectiveDistance);
+            }
+
             return nearest;
         }
 
-        private static int CompareByEffectiveDistance(
-            InfluenceSample<float> left,
-            InfluenceSample<float> right)
+        private static void InsertNearest(
+            InfluenceSample<float>[] nearest,
+            float[] effectiveDistances,
+            int existingCount,
+            InfluenceSample<float> sample)
         {
-            return EffectiveDistance(left).CompareTo(EffectiveDistance(right));
+            InsertNearest(nearest, effectiveDistances, existingCount, sample, EffectiveDistance(sample));
+        }
+
+        private static void InsertNearest(
+            InfluenceSample<float>[] nearest,
+            float[] effectiveDistances,
+            int existingCount,
+            InfluenceSample<float> sample,
+            float effectiveDistance)
+        {
+            int index = System.Math.Min(existingCount, nearest.Length - 1);
+
+            while (index > 0 && effectiveDistance < effectiveDistances[index - 1])
+            {
+                nearest[index] = nearest[index - 1];
+                effectiveDistances[index] = effectiveDistances[index - 1];
+                index--;
+            }
+
+            nearest[index] = sample;
+            effectiveDistances[index] = effectiveDistance;
         }
 
         private static float Cross(VectorXY u, VectorXY v)
