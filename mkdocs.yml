@@ -10,25 +10,24 @@ theme:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
     - navigation.path
     - search.suggest
     - search.highlight
 
 nav:
-  - Home:
-      - Overview: index.md
-      - Libraries:
-          - Akeldov.Math.Spatial2D:
-              - Overview: Spatial2D/index.md
-              - Getting Started: Spatial2D/getting-started.md
-              - Vectors: Spatial2D/vectors.md
-              - Curves: Spatial2D/curves.md
-              - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
-              - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
-              - Influence Fields: Spatial2D/influence-fields.md
-          - Akeldov.Math.Intervals:
-              - Overview: Intervals/index.md
+  - Home: index.md
+  - Libraries:
+      - Overview: Libraries/index.md
+      - Akeldov.Math.Spatial2D:
+          - Overview: Spatial2D/index.md
+          - Getting Started: Spatial2D/getting-started.md
+          - Vectors: Spatial2D/vectors.md
+          - Curves: Spatial2D/curves.md
+          - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
+          - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
+          - Influence Fields: Spatial2D/influence-fields.md
+      - Akeldov.Math.Intervals:
+          - Overview: Intervals/index.md
 
 markdown_extensions:
   - admonition
