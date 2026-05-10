@@ -25,13 +25,24 @@ public class VoronoiPartitionerTests
             () => new VoronoiPartitioner<TestItem>(sites, relaxationIterations: -1, EmptyCellPolicy.ThrowException));
     }
 
-    [TestCase(0f)]
     [TestCase(-1f)]
-    public void Constructor_WhenSitePowerIsNotPositive_Throws(float power)
+    [TestCase(float.NaN)]
+    [TestCase(float.NegativeInfinity)]
+    public void SiteConstructor_WhenPowerIsNegativeOrNaN_Throws(float power)
     {
-        var sites = new[] { new Site(VectorXY.Zero, power) };
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Site(VectorXY.Zero, power));
+    }
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new VoronoiPartitioner<TestItem>(sites));
+    [Test]
+    public void SiteConstructor_WhenPowerIsZero_DoesNotThrow()
+    {
+        Assert.DoesNotThrow(() => new Site(VectorXY.Zero, 0f));
+    }
+
+    [Test]
+    public void SiteConstructor_WhenPowerIsPositiveInfinity_DoesNotThrow()
+    {
+        Assert.DoesNotThrow(() => new Site(VectorXY.Zero, float.PositiveInfinity));
     }
 
     [Test]
@@ -74,6 +85,48 @@ public class VoronoiPartitionerTests
 
         Assert.That(cells[0].Items, Is.Empty);
         Assert.That(cells[1].Items.Select(item => item.Id), Is.EqualTo(new[] { "weighted-right" }));
+    }
+
+    [Test]
+    public void Partition_WhenSitePowerIsZero_AssignsOnlyExactSitePointToIt()
+    {
+        var sites = new[]
+        {
+            new Site(new VectorXY(0f, 0f), 0f),
+            new Site(new VectorXY(10f, 0f), 1f)
+        };
+        var texels = new[]
+        {
+            new TestItem("exact-zero", VectorXY.Zero),
+            new TestItem("near-zero", new VectorXY(1f, 0f))
+        };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var cells = partitioner.Partition(texels);
+
+        Assert.That(cells[0].Items.Select(item => item.Id), Is.EqualTo(new[] { "exact-zero" }));
+        Assert.That(cells[1].Items.Select(item => item.Id), Is.EqualTo(new[] { "near-zero" }));
+    }
+
+    [Test]
+    public void Partition_WhenSitePowerIsPositiveInfinity_AssignsFinitePointsToIt()
+    {
+        var sites = new[]
+        {
+            new Site(new VectorXY(0f, 0f), 1f),
+            new Site(new VectorXY(10f, 0f), float.PositiveInfinity)
+        };
+        var texels = new[]
+        {
+            new TestItem("far-from-infinite", new VectorXY(-100f, 0f)),
+            new TestItem("near-infinite", new VectorXY(9f, 0f))
+        };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var cells = partitioner.Partition(texels);
+
+        Assert.That(cells[0].Items, Is.Empty);
+        Assert.That(cells[1].Items.Select(item => item.Id), Is.EqualTo(new[] { "far-from-infinite", "near-infinite" }));
     }
 
     [Test]

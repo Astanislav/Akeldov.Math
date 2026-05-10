@@ -36,7 +36,20 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         private static void Update(ref float best, ref int bestIdx, int idx, float px, float py, float x, float y, float power)
         {
             float dx = x - px; float dy = y - py;
-            float weightedD2 = (dx * dx + dy * dy) / (power * power);
+            float d2 = dx * dx + dy * dy;
+
+            if (power == 0f)
+            {
+                if (d2 <= GeometryConstants.GeometryEpsilonSquared && 0f < best)
+                {
+                    best = 0f;
+                    bestIdx = idx;
+                }
+
+                return;
+            }
+
+            float weightedD2 = d2 / (power * power);
             if (weightedD2 < best) { best = weightedD2; bestIdx = idx; }
         }
     }

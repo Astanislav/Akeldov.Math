@@ -34,8 +34,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             _sites = new Site[sites.Count];
             for (int i = 0; i < sites.Count; i++)
             {
-                if (sites[i].Power <= 0f)
-                    throw new ArgumentOutOfRangeException(nameof(sites), "Site power must be positive.");
+                if (sites[i].Power < 0f || float.IsNaN(sites[i].Power))
+                    throw new ArgumentOutOfRangeException(nameof(sites), "Site power must be non-negative and not NaN.");
 
                 _sites[i] = sites[i];
             }
