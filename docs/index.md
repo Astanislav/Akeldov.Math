@@ -1,1 +1,1 @@
-# Akeldov.Math.Spatial2D Wiki
+# Akeldov.Math Wiki
