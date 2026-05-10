@@ -5,7 +5,14 @@ repo_url: https://github.com/AStanislav/Akeldov.Math
 repo_name: AStanislav/Akeldov.Math
 
 theme:
-  name: mkdocs
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - search.suggest
+    - search.highlight
 
 nav:
   - Home: index.md
@@ -24,4 +31,3 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
-
