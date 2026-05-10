@@ -32,7 +32,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _influenceSourceCuller = null;
-            _influenceSources = influenceSources;
+            _influenceSources = CopyInfluenceSources(influenceSources);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _influenceSourceCuller = influenceSourceCuller ?? throw new ArgumentNullException(nameof(influenceSourceCuller));
-            _influenceSources = influenceSources;
+            _influenceSources = CopyInfluenceSources(influenceSources);
         }
 
         /// <summary>
@@ -90,6 +90,15 @@ namespace Akeldov.Math.Spatial2D.Fields
                     "Influence source culler returned an empty source list. Culler implementations must return at least one source.");
 
             return _sampler.Sample(selectedSources, point);
+        }
+
+        private static TSource[] CopyInfluenceSources(IReadOnlyList<TSource> influenceSources)
+        {
+            var copy = new TSource[influenceSources.Count];
+            for (int i = 0; i < influenceSources.Count; i++)
+                copy[i] = influenceSources[i];
+
+            return copy;
         }
     }
 }

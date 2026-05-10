@@ -26,7 +26,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             IReadOnlyList<IntPointInfluenceSource> influenceSources)
             : base(sampler, influenceSources)
         {
-            (_min, _max, _distinctValues) = GetRangeAndDistinctValues(influenceSources);
+            (_min, _max, _distinctValues) = GetRangeAndDistinctValues(InfluencePoints);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             IInfluenceSourceCuller<IntPointInfluenceSource> influenceSourceCuller)
             : base(sampler, influenceSources, influenceSourceCuller)
         {
-            (_min, _max, _distinctValues) = GetRangeAndDistinctValues(influenceSources);
+            (_min, _max, _distinctValues) = GetRangeAndDistinctValues(InfluencePoints);
         }
 
         /// <inheritdoc/>

@@ -6,6 +6,27 @@ namespace Akeldov.Math.Spatial2D.Tests.Fields;
 public class InfluenceFieldClampingTests
 {
     [Test]
+    public void PointInfluenceFloatField_WhenSourceListChangesAfterConstruction_UsesOriginalSources()
+    {
+        var sources = new List<FloatPointInfluenceSource>
+        {
+            new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
+            new FloatPointInfluenceSource(1f, new VectorXY(10f, 0f), 10f)
+        };
+        var field = new PointInfluenceFloatField(
+            new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
+            sources);
+
+        sources.Clear();
+        sources.Add(new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
+
+        Assert.That(field.InfluencePoints, Has.Count.EqualTo(2));
+        Assert.That(field.Min, Is.EqualTo(0f));
+        Assert.That(field.Max, Is.EqualTo(10f));
+        Assert.That(field.Sample(new VectorXY(10f, 0f)), Is.EqualTo(10f));
+    }
+
+    [Test]
     public void PointInfluenceFloatField_WhenSamplerReturnsBelowMin_ClampsToMin()
     {
         var field = new PointInfluenceFloatField(
