@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D
@@ -13,9 +14,17 @@ namespace Akeldov.Math.Spatial2D
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
         /// <returns>The arithmetic center of item positions.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static VectorXY GetBarycenter<TItem>(this IReadOnlyList<TItem> items)
             where TItem : IHasPosition2D
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (items.Count == 0)
+                throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
+
             var sum = VectorXY.Zero;
             for (int k = 0; k < items.Count; k++)
             {
@@ -31,9 +40,17 @@ namespace Akeldov.Math.Spatial2D
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
         /// <returns>The arithmetic center of item positions.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static VectorXY GetBarycenter<TItem>(this TItem[] items)
             where TItem : IHasPosition2D
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (items.Length == 0)
+                throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
+
             var sum = VectorXY.Zero;
             for (int k = 0; k < items.Length; k++)
             {
@@ -49,6 +66,8 @@ namespace Akeldov.Math.Spatial2D
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
         /// <returns>The item closest to the arithmetic center.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static TItem GetBarycentric<TItem>(this IReadOnlyList<TItem> items)
             where TItem : IHasPosition2D
         {
@@ -76,6 +95,8 @@ namespace Akeldov.Math.Spatial2D
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
         /// <returns>The item closest to the arithmetic center.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static TItem GetBarycentric<TItem>(this TItem[] items)
             where TItem : IHasPosition2D
         {
@@ -104,9 +125,17 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="items">The positioned items.</param>
         /// <param name="point">The target point.</param>
         /// <returns>The item closest to the target point.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static TItem GetClosestTo<TItem>(this TItem[] items, VectorXY point)
             where TItem : IHasPosition2D
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (items.Length == 0)
+                throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
+
             var closestItem = items[0];
             var minDist = closestItem.Center.Distance(point);
             for (int k = 1; k < items.Length; k++)
@@ -130,9 +159,17 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="items">The positioned items.</param>
         /// <param name="point">The target point.</param>
         /// <returns>The item closest to the target point.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
         public static TItem GetClosestTo<TItem>(this IReadOnlyList<TItem> items, VectorXY point)
             where TItem : IHasPosition2D
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (items.Count == 0)
+                throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
+
             var closestItem = items[0];
             var minDist = closestItem.Center.Distance(point);
             for (int k = 1; k < items.Count; k++)
