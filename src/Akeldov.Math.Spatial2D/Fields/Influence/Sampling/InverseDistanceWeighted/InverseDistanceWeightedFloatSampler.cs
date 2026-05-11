@@ -6,12 +6,22 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// <summary>
     /// Samples floating-point values using inverse-distance weighting across influence sources.
     /// </summary>
+    /// <typeparam name="TSource">The influence source type to sample from.</typeparam>
     public class InverseDistanceWeightedFloatSampler<TSource> : IInfluenceSampler<TSource, float>
         where TSource : IInfluenceSource<float>
     {
+        /// <summary>
+        /// Initializes a new inverse-distance weighted floating-point sampler.
+        /// </summary>
         public InverseDistanceWeightedFloatSampler()
         { }
 
+        /// <summary>
+        /// Samples a floating-point value at the specified point.
+        /// </summary>
+        /// <param name="sources">The influence sources used for weighting.</param>
+        /// <param name="point">The point to sample.</param>
+        /// <returns>The inverse-distance weighted value.</returns>
         public float Sample(IReadOnlyList<TSource> sources, VectorXY point)
         {
             if (sources == null)

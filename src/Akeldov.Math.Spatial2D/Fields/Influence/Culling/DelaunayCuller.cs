@@ -12,6 +12,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// source points cannot form a non-degenerate hull, it falls back to half-plane culling and
     /// keeps at most two sources.
     /// </remarks>
+    /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public sealed class DelaunayCuller<TPointSource> : IInfluenceSourceCuller<TPointSource>
         where TPointSource : IPointInfluenceSource
     {
@@ -23,6 +24,10 @@ namespace Akeldov.Math.Spatial2D.Fields
         private readonly int[] _hull;
         private readonly HalfPlaneCuller<TPointSource> _fallbackCuller;
 
+        /// <summary>
+        /// Initializes a new Delaunay influence source culler.
+        /// </summary>
+        /// <param name="sourcePoints">The point influence sources used to build the triangulation.</param>
         public DelaunayCuller(IReadOnlyList<TPointSource> sourcePoints)
         {
             if (sourcePoints == null)
@@ -57,6 +62,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             }
         }
 
+        /// <summary>
+        /// Returns influence sources selected for the specified point.
+        /// </summary>
+        /// <param name="point">The point being sampled.</param>
+        /// <returns>
+        /// The containing triangle sources, nearest hull feature sources, or fallback sources.
+        /// </returns>
         public List<TPointSource> Cull(VectorXY point)
         {
             var res = new List<TPointSource>(3);

@@ -4,11 +4,19 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
+    /// <summary>
+    /// Generates two-dimensional Poisson disk point samples.
+    /// </summary>
     public class PoissonDiskPointSampler
     {
         private readonly Random _random;
         private readonly int _maxAttempts;
 
+        /// <summary>
+        /// Initializes a new Poisson disk point sampler.
+        /// </summary>
+        /// <param name="random">The random number generator used for sampling.</param>
+        /// <param name="maxAttempts">The maximum number of candidates to try around each active point.</param>
         public PoissonDiskPointSampler(Random random, int maxAttempts)
         {
             if (maxAttempts <= 0)
@@ -18,6 +26,12 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             _maxAttempts = maxAttempts;
         }
 
+        /// <summary>
+        /// Samples points in the rectangular field using a constant minimal distance.
+        /// </summary>
+        /// <param name="fieldSize">The positive field size.</param>
+        /// <param name="minimalDistance">The positive minimal distance between samples.</param>
+        /// <returns>The generated point samples.</returns>
         public IReadOnlyList<PoissonDiskPointSample> Sample(VectorXY fieldSize, float minimalDistance)
         {
             if (minimalDistance <= 0)
@@ -26,6 +40,12 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             return Sample(fieldSize, new ConstantFloatField(minimalDistance));
         }
 
+        /// <summary>
+        /// Samples points in the rectangular field using a spatially varying minimal distance field.
+        /// </summary>
+        /// <param name="fieldSize">The positive field size.</param>
+        /// <param name="minimalDistanceField">The positive minimal distance field.</param>
+        /// <returns>The generated point samples.</returns>
         public IReadOnlyList<PoissonDiskPointSample> Sample(VectorXY fieldSize, IFloatField minimalDistanceField)
         {
             if (fieldSize.X <= 0 || fieldSize.Y <= 0)
