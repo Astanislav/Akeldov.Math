@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Fields
@@ -22,6 +23,10 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="influenceSources">The influence curves used by the field.</param>
         /// <param name="min">The minimum value returned by the field.</param>
         /// <param name="max">The maximum value returned by the field.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="min"/> or <paramref name="max"/> is NaN, or when
+        /// <paramref name="min"/> is greater than <paramref name="max"/>.
+        /// </exception>
         public CurveInfluenceFloatField(
             IInfluenceSampler<ICurveInfluenceSource<float>, float> sampler,
             IReadOnlyList<ICurveInfluenceSource<float>> influenceSources,
@@ -29,6 +34,8 @@ namespace Akeldov.Math.Spatial2D.Fields
             float max)
             : base(sampler, influenceSources)
         {
+            ValidateRange(min, max);
+
             _min = min;
             _max = max;
         }
@@ -41,6 +48,10 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="min">The minimum value returned by the field.</param>
         /// <param name="max">The maximum value returned by the field.</param>
         /// <param name="influenceSourceCuller">The culler used to select a subset of curves for each sampled point.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="min"/> or <paramref name="max"/> is NaN, or when
+        /// <paramref name="min"/> is greater than <paramref name="max"/>.
+        /// </exception>
         public CurveInfluenceFloatField(
             IInfluenceSampler<ICurveInfluenceSource<float>, float> sampler,
             IReadOnlyList<ICurveInfluenceSource<float>> influenceSources,
@@ -49,6 +60,8 @@ namespace Akeldov.Math.Spatial2D.Fields
             IInfluenceSourceCuller<ICurveInfluenceSource<float>> influenceSourceCuller)
             : base(sampler, influenceSources, influenceSourceCuller)
         {
+            ValidateRange(min, max);
+
             _min = min;
             _max = max;
         }
@@ -63,6 +76,18 @@ namespace Akeldov.Math.Spatial2D.Fields
         public override float Sample(VectorXY point)
         {
             return base.Sample(point).Clamp(Min, Max);
+        }
+
+        private static void ValidateRange(float min, float max)
+        {
+            if (float.IsNaN(min))
+                throw new ArgumentOutOfRangeException(nameof(min), "Curve influence field minimum must not be NaN.");
+
+            if (float.IsNaN(max))
+                throw new ArgumentOutOfRangeException(nameof(max), "Curve influence field maximum must not be NaN.");
+
+            if (min > max)
+                throw new ArgumentOutOfRangeException(nameof(min), "Curve influence field minimum must be less than or equal to maximum.");
         }
     }
 }

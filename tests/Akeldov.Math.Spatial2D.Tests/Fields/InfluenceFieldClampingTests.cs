@@ -61,19 +61,58 @@ public class InfluenceFieldClampingTests
     [Test]
     public void CurveInfluenceFloatField_WhenSamplerReturnsOutsideRange_ClampsToRange()
     {
-        var curve = new Segment(VectorXY.Zero, new VectorXY(10f, 0f));
         var field = new CurveInfluenceFloatField(
             new ConstantSampler<ICurveInfluenceSource<float>, float>(100f),
-            new ICurveInfluenceSource<float>[]
-            {
-                new FloatCurveInfluenceSource(1f, curve, 0f)
-            },
+            CreateCurveSources(),
             min: -2f,
             max: 3f);
 
         float value = field.Sample(new VectorXY(10f, 10f));
 
         Assert.That(value, Is.EqualTo(3f));
+    }
+
+    [TestCase(3f, 2f, "min")]
+    [TestCase(float.NaN, 2f, "min")]
+    [TestCase(1f, float.NaN, "max")]
+    public void CurveInfluenceFloatField_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new CurveInfluenceFloatField(
+                new ConstantSampler<ICurveInfluenceSource<float>, float>(0f),
+                CreateCurveSources(),
+                min,
+                max));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
+    [TestCase(3f, 2f, "min")]
+    [TestCase(float.NaN, 2f, "min")]
+    [TestCase(1f, float.NaN, "max")]
+    public void CurveInfluenceFloatField_WithCuller_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
+    {
+        var sources = CreateCurveSources();
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new CurveInfluenceFloatField(
+                new ConstantSampler<ICurveInfluenceSource<float>, float>(0f),
+                sources,
+                min,
+                max,
+                new FixedCurveCuller(sources)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
+    private static ICurveInfluenceSource<float>[] CreateCurveSources()
+    {
+        var curve = new Segment(VectorXY.Zero, new VectorXY(10f, 0f));
+
+        return new ICurveInfluenceSource<float>[]
+        {
+            new FloatCurveInfluenceSource(1f, curve, 0f)
+        };
     }
 
     private sealed class ConstantSampler<TSource, TValue> : IInfluenceSampler<TSource, TValue>
@@ -89,6 +128,21 @@ public class InfluenceFieldClampingTests
         public TValue Sample(IReadOnlyList<TSource> influenceSources, VectorXY point)
         {
             return _value;
+        }
+    }
+
+    private sealed class FixedCurveCuller : IInfluenceSourceCuller<ICurveInfluenceSource<float>>
+    {
+        private readonly List<ICurveInfluenceSource<float>> _sources;
+
+        public FixedCurveCuller(IReadOnlyList<ICurveInfluenceSource<float>> sources)
+        {
+            _sources = new List<ICurveInfluenceSource<float>>(sources);
+        }
+
+        public List<ICurveInfluenceSource<float>> Cull(VectorXY point)
+        {
+            return _sources;
         }
     }
 }
