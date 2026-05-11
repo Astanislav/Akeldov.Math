@@ -91,7 +91,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 }
             }
 
-            return (min, max, distinctValues);
+            return (min, max, distinctValues.AsReadOnly());
         }
     }
 }

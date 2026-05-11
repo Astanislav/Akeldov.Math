@@ -9,6 +9,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     public sealed class Contour : IContour
     {
         private readonly ICurve[] _curves;
+        private readonly IReadOnlyList<ICurve> _readOnlyCurves;
 
         /// <summary>
         /// Initializes a new contour from the specified curves.
@@ -28,10 +29,12 @@ namespace Akeldov.Math.Spatial2D.Curves
             {
                 _curves[i] = curves[i] ?? throw new ArgumentException("A contour cannot contain null curves.", nameof(curves));
             }
+
+            _readOnlyCurves = Array.AsReadOnly(_curves);
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<ICurve> Curves => _curves;
+        public IReadOnlyList<ICurve> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
         public bool Contains(VectorXY point)

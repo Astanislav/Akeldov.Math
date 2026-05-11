@@ -23,6 +23,16 @@ public class ContourTests
     }
 
     [Test]
+    public void Curves_WhenAccessed_ReturnsReadOnlyView()
+    {
+        var contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+
+        Assert.That(contour.Curves, Is.Not.InstanceOf<ICurve[]>());
+        Assert.Throws<NotSupportedException>(() =>
+            ((IList<ICurve>)contour.Curves)[0] = new Circle(VectorXY.Zero, 2f));
+    }
+
+    [Test]
     public void Contains_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
         var contour = new Contour(new ICurve[]

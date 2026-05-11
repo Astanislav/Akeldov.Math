@@ -13,7 +13,8 @@ namespace Akeldov.Math.Spatial2D.Fields
     {
         private readonly IInfluenceSampler<TSource, TValue> _sampler;
         private readonly IInfluenceSourceCuller<TSource>? _influenceSourceCuller;
-        private readonly IReadOnlyList<TSource> _influenceSources;
+        private readonly TSource[] _influenceSources;
+        private readonly IReadOnlyList<TSource> _readOnlyInfluenceSources;
 
         /// <summary>
         /// Initializes a new influence field with the specified sampler and influence sources.
@@ -33,6 +34,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _influenceSourceCuller = null;
             _influenceSources = CopyInfluenceSources(influenceSources);
+            _readOnlyInfluenceSources = Array.AsReadOnly(_influenceSources);
         }
 
         /// <summary>
@@ -57,12 +59,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             _sampler = sampler ?? throw new ArgumentNullException(nameof(sampler));
             _influenceSourceCuller = influenceSourceCuller ?? throw new ArgumentNullException(nameof(influenceSourceCuller));
             _influenceSources = CopyInfluenceSources(influenceSources);
+            _readOnlyInfluenceSources = Array.AsReadOnly(_influenceSources);
         }
 
         /// <summary>
         /// Gets all influence sources configured for this field.
         /// </summary>
-        public IReadOnlyList<TSource> InfluenceSources => _influenceSources;
+        public IReadOnlyList<TSource> InfluenceSources => _readOnlyInfluenceSources;
 
         /// <summary>
         /// Samples the field value at the specified point by delegating to the configured sampler.

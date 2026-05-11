@@ -27,6 +27,53 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
+    public void PointInfluenceFloatField_WhenInfluencePointsAccessed_ReturnsReadOnlyView()
+    {
+        var field = new PointInfluenceFloatField(
+            new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
+            new[]
+            {
+                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
+                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+            });
+
+        Assert.That(field.InfluencePoints, Is.Not.InstanceOf<FloatPointInfluenceSource[]>());
+        Assert.Throws<NotSupportedException>(() =>
+            ((IList<FloatPointInfluenceSource>)field.InfluencePoints)[0] =
+                new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
+    }
+
+    [Test]
+    public void PointInfluenceFloatField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
+    {
+        var field = new PointInfluenceFloatField(
+            new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
+            new[]
+            {
+                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
+                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+            });
+
+        Assert.That(field.DistinctValues, Is.Not.InstanceOf<List<float>>());
+        Assert.Throws<NotSupportedException>(() => ((IList<float>)field.DistinctValues)[0] = 100f);
+    }
+
+    [Test]
+    public void PointInfluenceIntField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
+    {
+        var field = new PointInfluenceIntField(
+            new NearestIntInfluenceSampler<IntPointInfluenceSource>(),
+            new[]
+            {
+                new IntPointInfluenceSource(1f, VectorXY.Zero, 2),
+                new IntPointInfluenceSource(1f, VectorXY.One, 7)
+            });
+
+        Assert.That(field.DistinctValues, Is.Not.InstanceOf<List<int>>());
+        Assert.Throws<NotSupportedException>(() => ((IList<int>)field.DistinctValues)[0] = 100);
+    }
+
+    [Test]
     public void PointInfluenceFloatField_WhenSamplerReturnsBelowMin_ClampsToMin()
     {
         var field = new PointInfluenceFloatField(
