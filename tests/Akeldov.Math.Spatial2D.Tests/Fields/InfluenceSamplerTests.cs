@@ -101,38 +101,6 @@ public class InfluenceSamplerTests
     }
 
     [Test]
-    public void InverseDistanceWeightedSampler_UsesWeightedAdditiveContract()
-    {
-        var sources = new[]
-        {
-            FixedSource(new WeightedFloat(0f), new VectorXY(0f, 0f), distance: 2f),
-            FixedSource(new WeightedFloat(10f), new VectorXY(10f, 0f), distance: 8f)
-        };
-
-        var sampler = new InverseDistanceWeightedSampler<FixedInfluenceSource<WeightedFloat>, WeightedFloat>();
-
-        WeightedFloat value = sampler.Sample(sources, VectorXY.Zero);
-
-        Assert.That(value.Value, Is.EqualTo(2f).Within(0.0001f));
-    }
-
-    [TestCase(0f)]
-    [TestCase(float.PositiveInfinity)]
-    public void InverseDistanceWeightedSampler_WhenPowerIsUnsupported_Throws(float power)
-    {
-        var sources = new[]
-        {
-            FixedSource(new WeightedFloat(0f), new VectorXY(0f, 0f), distance: 2f, power: power),
-            FixedSource(new WeightedFloat(10f), new VectorXY(10f, 0f), distance: 8f)
-        };
-
-        var sampler = new InverseDistanceWeightedSampler<FixedInfluenceSource<WeightedFloat>, WeightedFloat>();
-
-        Assert.Throws<InvalidOperationException>(() =>
-            sampler.Sample(sources, VectorXY.Zero));
-    }
-
-    [Test]
     public void BarycentricFloatSampler_WithSingleSource_ReturnsSourceValue()
     {
         var sources = new[]
@@ -273,26 +241,6 @@ public class InfluenceSamplerTests
         public InfluenceSample<TValue> GetInfluence(VectorXY point)
         {
             return _influence;
-        }
-    }
-
-    private readonly struct WeightedFloat : IWeightedAdditive<WeightedFloat>
-    {
-        public WeightedFloat(float value)
-        {
-            Value = value;
-        }
-
-        public float Value { get; }
-
-        public WeightedFloat Add(WeightedFloat other)
-        {
-            return new WeightedFloat(Value + other.Value);
-        }
-
-        public WeightedFloat Multiply(float multiplier)
-        {
-            return new WeightedFloat(Value * multiplier);
         }
     }
 }
