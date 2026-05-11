@@ -1,30 +1,18 @@
 # Akeldov.Math
 
-A set of small .NET mathematical libraries.
+Akeldov.Math is a repository for .NET math libraries.
 
-## Libraries
-
-- `Akeldov.Math.Spatial2D`: two-dimensional geometry, vector math, spatial sampling, partitioning, and influence field utilities.
-- `Akeldov.Math.Intervals`: interval primitives for numeric ranges.
+The solution keeps related libraries together so they can share conventions, tests, documentation, and release workflow.
 
 ## Documentation
 
-The repository documentation is built with MkDocs from the `docs` directory.
+The project documentation is published at:
 
-```powershell
-pip install -r requirements.txt
-```
+[https://akeldov.github.io/Akeldov.Math/](https://akeldov.github.io/Akeldov.Math/)
 
-```powershell
-mkdocs serve
-```
+## Libraries
 
-```powershell
-mkdocs build
-```
-
-Published documentation is intended to live at:
-
-- `https://akeldov.github.io/Akeldov.Math/`
-- `https://akeldov.github.io/Akeldov.Math/Spatial2D/`
-- `https://akeldov.github.io/Akeldov.Math/Intervals/`
+| Library | Version | Description |
+| --- | --- | --- |
+| [Akeldov.Math.Spatial2D](https://akeldov.github.io/Akeldov.Math/Spatial2D/) | `0.1.0` | Two-dimensional geometry, vector math, spatial sampling, partitioning, and influence field utilities. |
+| [Akeldov.Math.Intervals](https://akeldov.github.io/Akeldov.Math/Intervals/) | Not packaged | Interval primitives for numeric ranges. |
