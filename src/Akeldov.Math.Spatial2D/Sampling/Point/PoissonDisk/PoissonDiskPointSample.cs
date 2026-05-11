@@ -1,17 +1,36 @@
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
+    /// <summary>
+    /// Represents a point produced by Poisson disk sampling.
+    /// </summary>
     public readonly struct PoissonDiskPointSample
     {
+        /// <summary>
+        /// Initializes a new Poisson disk point sample.
+        /// </summary>
+        /// <param name="point">The sampled point.</param>
+        /// <param name="minimalDistance">The minimal distance associated with the sampled point.</param>
         public PoissonDiskPointSample(VectorXY point, float minimalDistance)
         {
             Point = point;
             MinimalDistance = minimalDistance;
         }
 
+        /// <summary>
+        /// Gets the sampled point.
+        /// </summary>
         public VectorXY Point { get; }
 
+        /// <summary>
+        /// Gets the minimal distance associated with the sampled point.
+        /// </summary>
         public float MinimalDistance { get; }
 
+        /// <summary>
+        /// Deconstructs the sample into its point and minimal distance.
+        /// </summary>
+        /// <param name="point">The sampled point.</param>
+        /// <param name="minimalDistance">The minimal distance associated with the sampled point.</param>
         public void Deconstruct(out VectorXY point, out float minimalDistance)
         {
             point = Point;

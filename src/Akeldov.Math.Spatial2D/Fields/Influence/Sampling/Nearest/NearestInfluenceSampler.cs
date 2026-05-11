@@ -6,12 +6,23 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// <summary>
     /// Samples the value contributed by the nearest influence source.
     /// </summary>
+    /// <typeparam name="TSource">The influence source type to sample from.</typeparam>
+    /// <typeparam name="TValue">The sampled value type.</typeparam>
     public class NearestInfluenceSampler<TSource, TValue> : IInfluenceSampler<TSource, TValue>
         where TSource : IInfluenceSource<TValue>
     {
+        /// <summary>
+        /// Initializes a new nearest-source influence sampler.
+        /// </summary>
         public NearestInfluenceSampler()
         { }
 
+        /// <summary>
+        /// Samples the value of the nearest influence source at the specified point.
+        /// </summary>
+        /// <param name="sources">The influence sources to search.</param>
+        /// <param name="point">The point to sample.</param>
+        /// <returns>The value contributed by the nearest source.</returns>
         public TValue Sample(IReadOnlyList<TSource> sources, VectorXY point)
         {
             if (sources == null)

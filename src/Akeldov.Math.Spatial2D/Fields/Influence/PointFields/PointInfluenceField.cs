@@ -2,9 +2,19 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Fields
 {
+    /// <summary>
+    /// Represents a field whose value is sampled from point influence sources.
+    /// </summary>
+    /// <typeparam name="TPointSource">The point influence source type.</typeparam>
+    /// <typeparam name="TValue">The sampled value type.</typeparam>
     public class PointInfluenceField<TPointSource, TValue> : InfluenceField<TPointSource, TValue>
         where TPointSource : IPointInfluenceSource<TValue>
     {
+        /// <summary>
+        /// Initializes a new point influence field.
+        /// </summary>
+        /// <param name="sampler">The strategy used to combine point influence sources.</param>
+        /// <param name="influenceSources">The point influence sources used by the field.</param>
         public PointInfluenceField(
             IInfluenceSampler<TPointSource, TValue> sampler,
             IReadOnlyList<TPointSource> influenceSources)
@@ -12,6 +22,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         {
         }
 
+        /// <summary>
+        /// Initializes a new point influence field with source culling.
+        /// </summary>
+        /// <param name="sampler">The strategy used to combine point influence sources.</param>
+        /// <param name="influenceSources">The point influence sources used by the field.</param>
+        /// <param name="influenceSourceCuller">The culler used to select sources for each sampled point.</param>
         public PointInfluenceField(
             IInfluenceSampler<TPointSource, TValue> sampler,
             IReadOnlyList<TPointSource> influenceSources,
@@ -20,6 +36,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         {
         }
 
+        /// <summary>
+        /// Gets all point influence sources configured for this field.
+        /// </summary>
         public IReadOnlyList<TPointSource> InfluencePoints => InfluenceSources;
     }
 }
