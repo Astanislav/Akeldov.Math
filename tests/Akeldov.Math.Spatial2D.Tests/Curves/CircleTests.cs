@@ -4,10 +4,15 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class CircleTests
 {
-    [Test]
-    public void Constructor_WhenRadiusIsNegative_Throws()
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Constructor_WhenRadiusIsInvalid_Throws(float radius)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Circle(VectorXY.Zero, -1f));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Circle(VectorXY.Zero, radius));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     [Test]

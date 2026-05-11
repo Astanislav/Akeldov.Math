@@ -16,10 +16,15 @@ public class ArcTests
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
-    [Test]
-    public void Constructor_WhenRadiusIsNegative_Throws()
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Constructor_WhenRadiusIsInvalid_Throws(float radius)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Arc(VectorXY.Zero, -1f, 0f, MathF.PI));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Arc(VectorXY.Zero, radius, 0f, MathF.PI));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
     [Test]

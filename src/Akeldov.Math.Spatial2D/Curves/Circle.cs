@@ -17,11 +17,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The circle radius.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite.</exception>
         public Circle(VectorXY center, float radius)
         {
-            if (radius < 0f)
-                throw new ArgumentOutOfRangeException(nameof(radius));
+            if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
+                throw new ArgumentOutOfRangeException(nameof(radius), "Circle radius must be finite and non-negative.");
 
             _center = center;
             _radius = radius;

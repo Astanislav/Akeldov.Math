@@ -25,11 +25,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="radius">The radius of the source circle.</param>
         /// <param name="startAngleRad">The start angle in radians.</param>
         /// <param name="stopAngleRad">The stop angle in radians.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite.</exception>
         public Arc(VectorXY center, float radius, float startAngleRad, float stopAngleRad)
         {
-            if (radius < 0f)
-                throw new ArgumentOutOfRangeException(nameof(radius));
+            if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
+                throw new ArgumentOutOfRangeException(nameof(radius), "Arc radius must be finite and non-negative.");
 
             _center = center;
             _radius = radius;
