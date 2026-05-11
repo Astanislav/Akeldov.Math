@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D
 {
+    /// <summary>
+    /// Provides affine transformation helpers for <see cref="VectorXY"/>.
+    /// </summary>
     public static partial class VectorXYExtensions
     {
         /// <summary>

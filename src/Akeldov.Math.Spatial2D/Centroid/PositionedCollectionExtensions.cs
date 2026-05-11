@@ -2,110 +2,151 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D
 {
+    /// <summary>
+    /// Provides centroid and nearest-item helpers for positioned collections.
+    /// </summary>
     public static class PositionedCollectionExtensions
     {
-        public static VectorXY GetBarycenter<Texel>(this IReadOnlyList<Texel> texels)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the arithmetic center of item positions.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <returns>The arithmetic center of item positions.</returns>
+        public static VectorXY GetBarycenter<TItem>(this IReadOnlyList<TItem> items)
+            where TItem : IHasPosition2D
         {
             var sum = VectorXY.Zero;
-            for (int k = 0; k < texels.Count; k++)
+            for (int k = 0; k < items.Count; k++)
             {
-                sum = sum + texels[k].Center;
+                sum = sum + items[k].Center;
             }
-            var res = sum / texels.Count;
+            var res = sum / items.Count;
             return res;
         }
 
-        public static VectorXY GetBarycenter<Texel>(this Texel[] texels)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the arithmetic center of item positions.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <returns>The arithmetic center of item positions.</returns>
+        public static VectorXY GetBarycenter<TItem>(this TItem[] items)
+            where TItem : IHasPosition2D
         {
             var sum = VectorXY.Zero;
-            for (int k = 0; k < texels.Length; k++)
+            for (int k = 0; k < items.Length; k++)
             {
-                sum = sum + texels[k].Center;
+                sum = sum + items[k].Center;
             }
-            var res = sum / texels.Length;
+            var res = sum / items.Length;
             return res;
         }
 
-        public static Texel GetBarycentric<Texel>(this IReadOnlyList<Texel> texels)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the item closest to the arithmetic center of item positions.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <returns>The item closest to the arithmetic center.</returns>
+        public static TItem GetBarycentric<TItem>(this IReadOnlyList<TItem> items)
+            where TItem : IHasPosition2D
         {
-            var barycenter = texels.GetBarycenter();
+            var barycenter = items.GetBarycenter();
 
             var minDist = float.MaxValue;
-            var baricentricTexel = texels[0];
-            for (int k = 1; k < texels.Count; k++)
+            var closestItem = items[0];
+            for (int k = 1; k < items.Count; k++)
             {
-                var texel = texels[k];
-                var distance = texel.Center.Distance(barycenter);
+                var item = items[k];
+                var distance = item.Center.Distance(barycenter);
 
                 if (distance < minDist)
                 {
                     minDist = distance;
-                    baricentricTexel = texel;
+                    closestItem = item;
                 }
             }
-            return baricentricTexel;
+            return closestItem;
         }
 
-        public static Texel GetBarycentric<Texel>(this Texel[] texels)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the item closest to the arithmetic center of item positions.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <returns>The item closest to the arithmetic center.</returns>
+        public static TItem GetBarycentric<TItem>(this TItem[] items)
+            where TItem : IHasPosition2D
         {
-            var barycenter = texels.GetBarycenter();
+            var barycenter = items.GetBarycenter();
 
             var minDist = float.MaxValue;
-            var baricentricTexel = texels[0];
-            for (int k = 1; k < texels.Length; k++)
+            var closestItem = items[0];
+            for (int k = 1; k < items.Length; k++)
             {
-                var texel = texels[k];
-                var distance = texel.Center.Distance(barycenter);
+                var item = items[k];
+                var distance = item.Center.Distance(barycenter);
 
                 if (distance < minDist)
                 {
                     minDist = distance;
-                    baricentricTexel = texel;
+                    closestItem = item;
                 }
             }
-            return baricentricTexel;
+            return closestItem;
         }
 
-        public static Texel GetClosestTo<Texel>(this Texel[] texels, VectorXY point)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the item closest to the specified point.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <param name="point">The target point.</param>
+        /// <returns>The item closest to the target point.</returns>
+        public static TItem GetClosestTo<TItem>(this TItem[] items, VectorXY point)
+            where TItem : IHasPosition2D
         {
             var minDist = float.MaxValue;
-            var baricentricTexel = texels[0];
-            for (int k = 1; k < texels.Length; k++)
+            var closestItem = items[0];
+            for (int k = 1; k < items.Length; k++)
             {
-                var texel = texels[k];
-                var distance = texel.Center.Distance(point);
+                var item = items[k];
+                var distance = item.Center.Distance(point);
 
                 if (distance < minDist)
                 {
                     minDist = distance;
-                    baricentricTexel = texel;
+                    closestItem = item;
                 }
             }
-            return baricentricTexel;
+            return closestItem;
         }
 
-        public static Texel GetClosestTo<Texel>(this IReadOnlyList<Texel> texels, VectorXY point)
-            where Texel : IHasPosition2D
+        /// <summary>
+        /// Returns the item closest to the specified point.
+        /// </summary>
+        /// <typeparam name="TItem">The positioned item type.</typeparam>
+        /// <param name="items">The positioned items.</param>
+        /// <param name="point">The target point.</param>
+        /// <returns>The item closest to the target point.</returns>
+        public static TItem GetClosestTo<TItem>(this IReadOnlyList<TItem> items, VectorXY point)
+            where TItem : IHasPosition2D
         {
             var minDist = float.MaxValue;
-            var baricentricTexel = texels[0];
-            for (int k = 1; k < texels.Count; k++)
+            var closestItem = items[0];
+            for (int k = 1; k < items.Count; k++)
             {
-                var texel = texels[k];
-                var distance = texel.Center.Distance(point);
+                var item = items[k];
+                var distance = item.Center.Distance(point);
 
                 if (distance < minDist)
                 {
                     minDist = distance;
-                    baricentricTexel = texel;
+                    closestItem = item;
                 }
             }
-            return baricentricTexel;
+            return closestItem;
         }
     }
 }

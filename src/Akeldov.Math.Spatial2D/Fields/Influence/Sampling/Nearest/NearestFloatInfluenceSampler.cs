@@ -6,12 +6,22 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// <summary>
     /// Samples the floating-point value contributed by the nearest influence source.
     /// </summary>
+    /// <typeparam name="TSource">The influence source type to sample from.</typeparam>
     public class NearestFloatInfluenceSampler<TSource> : IInfluenceSampler<TSource, float>
         where TSource : IInfluenceSource<float>
     {
+        /// <summary>
+        /// Initializes a new nearest-source floating-point influence sampler.
+        /// </summary>
         public NearestFloatInfluenceSampler()
         { }
 
+        /// <summary>
+        /// Samples the value of the nearest influence source at the specified point.
+        /// </summary>
+        /// <param name="sources">The influence sources to search.</param>
+        /// <param name="point">The point to sample.</param>
+        /// <returns>The floating-point value contributed by the nearest source.</returns>
         public float Sample(IReadOnlyList<TSource> sources, VectorXY point)
         {
             if (sources == null)
@@ -32,6 +42,5 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             return nearestInfluence.Value;
         }
-
     }
 }
