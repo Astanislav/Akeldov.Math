@@ -1,28 +1,26 @@
 # Akeldov.Math.Spatial2D
 
-Akeldov.Math.Spatial2D is a small .NET library for two-dimensional geometry and spatial math.
-
-It focuses on practical building blocks for simulations, procedural generation, map processing, and geometry-heavy application code.
+Akeldov.Math.Spatial2D is a .NET library for practical two-dimensional geometry, spatial sampling, partitioning, and value fields.
 
 ## Features
 
-- `VectorXY` and `VectorXYInt` for float and integer 2D coordinates.
+The library provides:
+
+- Float and integer vector types: `VectorXY` and `VectorXYInt`.
 - Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
-- Projection, distance, intersection, and contour helpers.
-- Poisson disk point sampling with constant or field-based minimal distance.
-- Weighted Voronoi partitioning over positioned items.
-- Influence fields with nearest, inverse-distance-weighted, and barycentric sampling strategies.
+- Projection, distance, intersection, angle, contour, and centroid helpers.
+- Poisson disk point sampling with constant or spatially varying minimal distance.
+- Weighted Voronoi partitioning for positioned items.
+- Influence fields for sampling values from point or curve sources.
+- Source culling and interpolation strategies for local field behavior.
+
+Most primitives are immutable, and public collection inputs are copied where mutation would otherwise leak into library state. Geometry comparisons use the shared `GeometryConstants.GeometryEpsilon` tolerance where exact floating-point equality would be too brittle.
 
 ## Installation
 
 ```powershell
 dotnet add package Akeldov.Math.Spatial2D
 ```
-
-## Target Frameworks
-
-- .NET Standard 2.1
-- .NET 6.0
 
 ## Quick Example
 
@@ -40,11 +38,7 @@ VectorXY closestPoint = projection.Point;
 float distance = projection.Distance;
 ```
 
-## Contents
+## Target Frameworks
 
-- [Getting Started](getting-started.md)
-- [Vectors](vectors.md)
-- [Curves](curves.md)
-- [Poisson Disk Sampling](poisson-disk-sampling.md)
-- [Voronoi Partitioning](voronoi-partitioning.md)
-- [Influence Fields](influence-fields/)
+- .NET Standard 2.1
+- .NET 6.0
