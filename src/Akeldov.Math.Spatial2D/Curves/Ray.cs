@@ -29,8 +29,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="origin">The ray origin.</param>
         /// <param name="angleRad">The ray direction angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angleRad"/> is NaN or infinite.</exception>
         public Ray(VectorXY origin, float angleRad)
         {
+            if (float.IsNaN(angleRad) || float.IsInfinity(angleRad))
+                throw new ArgumentOutOfRangeException(nameof(angleRad), "Ray angle must be finite.");
+
             _origin = origin;
             _angleRad = angleRad;
             _dir = new VectorXY(MathF.Cos(angleRad), MathF.Sin(angleRad));

@@ -75,7 +75,11 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <inheritdoc/>
         public override float Sample(VectorXY point)
         {
-            return base.Sample(point).Clamp(Min, Max);
+            float value = base.Sample(point);
+            if (float.IsNaN(value))
+                throw new InvalidOperationException("Influence sampler returned an invalid field value. Value must not be NaN.");
+
+            return value.Clamp(Min, Max);
         }
 
         private static void ValidateRange(float min, float max)

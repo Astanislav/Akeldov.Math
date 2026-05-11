@@ -24,8 +24,16 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="value">The constant source value.</param>
         public FloatCurveInfluenceSource(float power, IProjectableCurve curve, float value)
-            : this(power, curve, _ => value)
         {
+            if (power < 0f || float.IsNaN(power))
+                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+
+            if (float.IsNaN(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
+
+            _powerProvider = _ => power;
+            _curve = curve ?? throw new ArgumentNullException(nameof(curve));
+            _valueProvider = _ => value;
         }
 
         /// <summary>
@@ -51,8 +59,13 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="value">The constant source value.</param>
         public FloatCurveInfluenceSource(Func<float, float> powerProvider, IProjectableCurve curve, float value)
-            : this(powerProvider, curve, _ => value)
         {
+            if (float.IsNaN(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
+
+            _powerProvider = powerProvider ?? throw new ArgumentNullException(nameof(powerProvider));
+            _curve = curve ?? throw new ArgumentNullException(nameof(curve));
+            _valueProvider = _ => value;
         }
 
         /// <summary>
@@ -94,12 +107,15 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (power < 0f || float.IsNaN(power))
                 throw new InvalidOperationException("Power provider returned an invalid influence source power. Power must be non-negative and not NaN.");
 
+            float value = _valueProvider(projection.Parameter);
+            if (float.IsNaN(value))
+                throw new InvalidOperationException("Value provider returned an invalid influence source value. Value must not be NaN.");
+
             return new InfluenceSample<float>(
-                _valueProvider(projection.Parameter),
+                value,
                 projection.Point,
                 projection.Distance,
                 power);
         }
-
     }
 }

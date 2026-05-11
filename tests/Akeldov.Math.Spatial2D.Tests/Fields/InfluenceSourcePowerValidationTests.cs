@@ -22,6 +22,15 @@ public class InfluenceSourcePowerValidationTests
             new FloatPointInfluenceSource(power, VectorXY.Zero, 1f));
     }
 
+    [Test]
+    public void FloatPointInfluenceSource_WhenValueIsNaN_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FloatPointInfluenceSource(1f, VectorXY.Zero, float.NaN));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("value"));
+    }
+
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
@@ -58,6 +67,27 @@ public class InfluenceSourcePowerValidationTests
 
         Assert.DoesNotThrow(() =>
             new FloatCurveInfluenceSource(power, curve, 1f));
+    }
+
+    [Test]
+    public void FloatCurveInfluenceSource_WhenConstantValueIsNaN_Throws()
+    {
+        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FloatCurveInfluenceSource(1f, curve, float.NaN));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("value"));
+    }
+
+    [Test]
+    public void FloatCurveInfluenceSource_WhenValueProviderReturnsNaN_Throws()
+    {
+        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var source = new FloatCurveInfluenceSource(1f, curve, _ => float.NaN);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            source.GetInfluence(VectorXY.Zero));
     }
 
     [TestCase(-1f)]

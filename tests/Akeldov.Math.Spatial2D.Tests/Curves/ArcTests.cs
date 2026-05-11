@@ -27,6 +27,28 @@ public class ArcTests
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
+    [TestCase(float.NaN, "startAngleRad")]
+    [TestCase(float.PositiveInfinity, "startAngleRad")]
+    [TestCase(float.NegativeInfinity, "startAngleRad")]
+    public void Constructor_WhenStartAngleIsInvalid_Throws(float startAngle, string paramName)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Arc(VectorXY.Zero, 1f, startAngle, MathF.PI));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
+    [TestCase(float.NaN, "stopAngleRad")]
+    [TestCase(float.PositiveInfinity, "stopAngleRad")]
+    [TestCase(float.NegativeInfinity, "stopAngleRad")]
+    public void Constructor_WhenStopAngleIsInvalid_Throws(float stopAngle, string paramName)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Arc(VectorXY.Zero, 1f, 0f, stopAngle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
     [Test]
     public void RayIntersections_WhenRayHitsArc_ReturnsIntersectionOnArc()
     {
@@ -153,6 +175,18 @@ public class ArcTests
 
         AssertVector(projection.Point, 1f, 1f);
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void RayIntersections_WhenRadiusIsZeroAndRayPassesThroughCenter_ReturnsCenter()
+    {
+        var arc = new Arc(new VectorXY(1f, 1f), 0f, MathF.PI / 2f, MathF.PI);
+        var ray = new Ray(new VectorXY(1f, -1f), MathF.PI / 2f);
+
+        var intersections = arc.RayIntersections(ray);
+
+        Assert.That(intersections, Has.Count.EqualTo(1));
+        AssertVector(intersections[0], 1f, 1f);
     }
 
     [Test]

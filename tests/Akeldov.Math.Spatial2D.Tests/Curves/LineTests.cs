@@ -22,6 +22,23 @@ public class LineTests
         Assert.Throws<ArgumentException>(() => new Line(0f, 0f, 1f));
     }
 
+    [TestCase(float.NaN, 1f, 0f, "a")]
+    [TestCase(float.PositiveInfinity, 1f, 0f, "a")]
+    [TestCase(1f, float.NaN, 0f, "b")]
+    [TestCase(1f, float.NegativeInfinity, 0f, "b")]
+    [TestCase(1f, 0f, float.NaN, "c")]
+    [TestCase(1f, 0f, float.PositiveInfinity, "c")]
+    public void Constructor_WhenEquationCoefficientIsInvalid_Throws(
+        float a,
+        float b,
+        float c,
+        string paramName)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Line(a, b, c));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
     [Test]
     public void Constructor_FromEquation_NormalizesCoefficientsAndFixesSign()
     {

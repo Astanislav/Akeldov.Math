@@ -14,12 +14,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="segment">The segment to shorten.</param>
         /// <param name="amount">The amount removed from each end.</param>
         /// <returns>The shortened segment.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the segment is too short.</exception>
         public static Segment Shorten(this Segment segment, float amount)
         {
-            if (amount < 0f)
-                throw new ArgumentOutOfRangeException(nameof(amount));
+            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
+                throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
 
             float length = segment.A.Distance(segment.B);
 
@@ -40,12 +40,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="segment">The segment to extend.</param>
         /// <param name="amount">The amount added to each end.</param>
         /// <returns>The extended segment.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
         /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints.</exception>
         public static Segment Extend(this Segment segment, float amount)
         {
-            if (amount < 0f)
-                throw new ArgumentOutOfRangeException(nameof(amount));
+            if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
+                throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
 
             VectorXY direction = (segment.B - segment.A).Normalize();
 

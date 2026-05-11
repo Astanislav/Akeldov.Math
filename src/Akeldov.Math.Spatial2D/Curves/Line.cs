@@ -71,6 +71,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="b">The Y coefficient.</param>
         /// <param name="c">The offset coefficient.</param>
         /// <exception cref="ArgumentException">Thrown when both linear coefficients are zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when an equation coefficient is NaN or infinite.</exception>
         public Line(float a, float b, float c)
             : this(a, b, c, VectorXY.Zero)
         {
@@ -85,8 +86,18 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="c">The offset coefficient.</param>
         /// <param name="referencePoint">The point whose projection becomes the parameter origin.</param>
         /// <exception cref="ArgumentException">Thrown when both linear coefficients are zero.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when an equation coefficient is NaN or infinite.</exception>
         public Line(float a, float b, float c, VectorXY referencePoint)
         {
+            if (float.IsNaN(a) || float.IsInfinity(a))
+                throw new ArgumentOutOfRangeException(nameof(a), "Line equation coefficients must be finite.");
+
+            if (float.IsNaN(b) || float.IsInfinity(b))
+                throw new ArgumentOutOfRangeException(nameof(b), "Line equation coefficients must be finite.");
+
+            if (float.IsNaN(c) || float.IsInfinity(c))
+                throw new ArgumentOutOfRangeException(nameof(c), "Line equation coefficients must be finite.");
+
             Initialize(a, b, c, referencePoint,
                 out _equationA,
                 out _equationB,

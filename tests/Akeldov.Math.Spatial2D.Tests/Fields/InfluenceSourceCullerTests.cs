@@ -17,6 +17,21 @@ public class InfluenceSourceCullerTests
     }
 
     [Test]
+    public void HalfPlaneCuller_WhenSourceListChangesAfterConstruction_UsesOriginalSources()
+    {
+        var source = new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f);
+        var sources = new List<FloatPointInfluenceSource> { source };
+        var culler = new HalfPlaneCuller<FloatPointInfluenceSource>(sources);
+
+        sources.Clear();
+
+        List<FloatPointInfluenceSource> selectedSources = culler.Cull(new VectorXY(3f, 4f));
+
+        Assert.That(selectedSources, Has.Count.EqualTo(1));
+        Assert.That(selectedSources[0], Is.SameAs(source));
+    }
+
+    [Test]
     public void DelaunayCuller_WithTriangleContainingPoint_ReturnsTriangleSources()
     {
         var sources = new[]

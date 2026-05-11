@@ -43,6 +43,20 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
+    public void PointInfluenceFloatField_WhenSamplerReturnsNaN_Throws()
+    {
+        var field = new PointInfluenceFloatField(
+            new ConstantSampler<FloatPointInfluenceSource, float>(float.NaN),
+            new[]
+            {
+                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
+                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+            });
+
+        Assert.Throws<InvalidOperationException>(() => field.Sample(new VectorXY(10f, 10f)));
+    }
+
+    [Test]
     public void PointInfluenceIntField_WhenSamplerReturnsAboveMax_ClampsToMax()
     {
         var field = new PointInfluenceIntField(
@@ -70,6 +84,18 @@ public class InfluenceFieldClampingTests
         float value = field.Sample(new VectorXY(10f, 10f));
 
         Assert.That(value, Is.EqualTo(3f));
+    }
+
+    [Test]
+    public void CurveInfluenceFloatField_WhenSamplerReturnsNaN_Throws()
+    {
+        var field = new CurveInfluenceFloatField(
+            new ConstantSampler<ICurveInfluenceSource<float>, float>(float.NaN),
+            CreateCurveSources(),
+            min: -2f,
+            max: 3f);
+
+        Assert.Throws<InvalidOperationException>(() => field.Sample(new VectorXY(10f, 10f)));
     }
 
     [TestCase(3f, 2f, "min")]

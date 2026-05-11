@@ -25,11 +25,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="radius">The radius of the source circle.</param>
         /// <param name="startAngleRad">The start angle in radians.</param>
         /// <param name="stopAngleRad">The stop angle in radians.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite, or when an angle is NaN or infinite.</exception>
         public Arc(VectorXY center, float radius, float startAngleRad, float stopAngleRad)
         {
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Arc radius must be finite and non-negative.");
+
+            if (float.IsNaN(startAngleRad) || float.IsInfinity(startAngleRad))
+                throw new ArgumentOutOfRangeException(nameof(startAngleRad), "Arc start angle must be finite.");
+
+            if (float.IsNaN(stopAngleRad) || float.IsInfinity(stopAngleRad))
+                throw new ArgumentOutOfRangeException(nameof(stopAngleRad), "Arc stop angle must be finite.");
 
             _center = center;
             _radius = radius;
@@ -145,6 +151,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         public List<VectorXY> RayIntersections(Ray ray)
         {
             var intersections = new List<VectorXY>();
+
+            if (_radius <= GeometryConstants.GeometryEpsilon)
+            {
+                VectorXY toCenter = _center - ray.Origin;
+                if (VectorXY.Dot(toCenter, ray.Dir) >= -GeometryConstants.GeometryEpsilon &&
+                    VectorXY.Cross(toCenter, ray.Dir).IsAlmostZero())
+                {
+                    intersections.AddDistinct(_center);
+                }
+
+                return intersections;
+            }
+
             var circleIntersections = new List<VectorXY>();
             VectorXY dir = ray.Dir;
             var circle = new Circle(Center, Radius);
@@ -285,5 +304,6 @@ namespace Akeldov.Math.Spatial2D.Curves
             float turns = delta / (2f * MathF.PI);
             return turns.AlmostEquals(MathF.Round(turns));
         }
+
     }
 }

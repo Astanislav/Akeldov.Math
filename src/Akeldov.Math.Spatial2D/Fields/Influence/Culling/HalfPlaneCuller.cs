@@ -25,7 +25,11 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (sourcePoints.Count == 0)
                 throw new ArgumentException("Influence source collection must not be empty.", nameof(sourcePoints));
 
-            _sourcePoints = sourcePoints;
+            var copy = new TPointSource[sourcePoints.Count];
+            for (int i = 0; i < sourcePoints.Count; i++)
+                copy[i] = sourcePoints[i];
+
+            _sourcePoints = copy;
         }
 
         /// <summary>
@@ -84,5 +88,6 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             return result;
         }
+
     }
 }

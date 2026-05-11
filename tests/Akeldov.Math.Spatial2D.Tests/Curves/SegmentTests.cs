@@ -4,6 +4,32 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class SegmentTests
 {
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Shorten_WhenAmountIsInvalid_Throws(float amount)
+    {
+        var segment = new Segment(VectorXY.Zero, new VectorXY(10f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => segment.Shorten(amount));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("amount"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Extend_WhenAmountIsInvalid_Throws(float amount)
+    {
+        var segment = new Segment(VectorXY.Zero, new VectorXY(10f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => segment.Extend(amount));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("amount"));
+    }
+
     [Test]
     public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
     {

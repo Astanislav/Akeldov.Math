@@ -18,6 +18,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (power < 0f || float.IsNaN(power))
                 throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
 
+            if (float.IsNaN(value))
+                throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
+
             Power = power;
             Center = center;
             Value = value;

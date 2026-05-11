@@ -4,6 +4,16 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class RayTests
 {
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Constructor_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Ray(VectorXY.Zero, angle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angleRad"));
+    }
+
     [Test]
     public void RayIntersections_WhenThisRayOriginBelongsToOtherCollinearRay_ReturnsThisOrigin()
     {
