@@ -36,15 +36,25 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// </item>
     /// </list>
     /// </remarks>
+    /// <typeparam name="TSource">The influence source type to sample from.</typeparam>
     public class BarycentricFloatSampler<TSource> : IInfluenceSampler<TSource, float>
         where TSource : IInfluenceSource<float>
     {
         private const float Eps = GeometryConstants.GeometryEpsilon;
         private const float PowerEps = GeometryConstants.GeometryEpsilon;
 
+        /// <summary>
+        /// Initializes a new barycentric floating-point influence sampler.
+        /// </summary>
         public BarycentricFloatSampler()
         { }
 
+        /// <summary>
+        /// Samples a floating-point value at the specified point.
+        /// </summary>
+        /// <param name="sources">The influence sources used for interpolation.</param>
+        /// <param name="point">The point to sample.</param>
+        /// <returns>The interpolated or extrapolated floating-point value.</returns>
         public float Sample(IReadOnlyList<TSource> sources, VectorXY point)
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));

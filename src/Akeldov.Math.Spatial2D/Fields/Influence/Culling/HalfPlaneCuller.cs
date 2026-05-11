@@ -4,11 +4,19 @@ using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Fields
 {
+    /// <summary>
+    /// Selects point influence sources by excluding sources hidden behind half-plane boundaries.
+    /// </summary>
+    /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public class HalfPlaneCuller<TPointSource> : IInfluenceSourceCuller<TPointSource>
         where TPointSource : IPointInfluenceSource
     {
         private readonly IReadOnlyList<TPointSource> _sourcePoints;
 
+        /// <summary>
+        /// Initializes a new half-plane influence source culler.
+        /// </summary>
+        /// <param name="sourcePoints">The source points available for culling.</param>
         public HalfPlaneCuller(IReadOnlyList<TPointSource> sourcePoints)
         {
             if (sourcePoints == null)
@@ -20,6 +28,11 @@ namespace Akeldov.Math.Spatial2D.Fields
             _sourcePoints = sourcePoints;
         }
 
+        /// <summary>
+        /// Returns influence sources that are visible from the specified point.
+        /// </summary>
+        /// <param name="point">The point being sampled.</param>
+        /// <returns>The culled source list.</returns>
         public List<TPointSource> Cull(VectorXY point)
         {
             var orderedSourcePoints = OrderBy(_sourcePoints, x => x.Center.Distance(point));

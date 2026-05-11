@@ -11,15 +11,25 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// the selected segment or triangle, it may extrapolate and return a value outside the range of
     /// the source values. Bounded fields clamp the sampler result to their public range.
     /// </remarks>
+    /// <typeparam name="TSource">The influence source type to sample from.</typeparam>
     public class BarycentricIntSampler<TSource> : IInfluenceSampler<TSource, int>
         where TSource : IInfluenceSource<int>
     {
         private const float Eps = GeometryConstants.GeometryEpsilon;
         private const float PowerEps = GeometryConstants.GeometryEpsilon;
 
+        /// <summary>
+        /// Initializes a new barycentric integer influence sampler.
+        /// </summary>
         public BarycentricIntSampler()
         { }
 
+        /// <summary>
+        /// Samples an integer value at the specified point.
+        /// </summary>
+        /// <param name="sources">The influence sources used for interpolation.</param>
+        /// <param name="point">The point to sample.</param>
+        /// <returns>The interpolated or extrapolated value, rounded to the nearest integer.</returns>
         public int Sample(IReadOnlyList<TSource> sources, VectorXY point)
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));
