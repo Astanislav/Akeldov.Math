@@ -22,14 +22,15 @@ nav:
       - Akeldov.Math.Spatial2D:
           - Overview: Spatial2D/index.md
           - Getting Started: Spatial2D/getting-started.md
-          - Vectors: Spatial2D/vectors.md
-          - Curves: Spatial2D/curves.md
-          - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
-          - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
-          - Influence Fields:
-              - Overview: Spatial2D/influence-fields/index.md
-              - Sampling: Spatial2D/influence-fields/sampling.md
-              - Culling: Spatial2D/influence-fields/culling.md
+          - Learn:
+              - Vectors: Spatial2D/vectors.md
+              - Curves: Spatial2D/curves.md
+              - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
+              - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
+              - Influence Fields:
+                  - Overview: Spatial2D/influence-fields/index.md
+                  - Sampling: Spatial2D/influence-fields/sampling.md
+                  - Culling: Spatial2D/influence-fields/culling.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
 
