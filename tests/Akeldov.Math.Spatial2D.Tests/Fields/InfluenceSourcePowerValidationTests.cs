@@ -130,4 +130,24 @@ public class InfluenceSourcePowerValidationTests
         Assert.DoesNotThrow(() =>
             new InfluenceSample<float>(1f, VectorXY.Zero, 0f, power));
     }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void InfluenceSample_WhenDistanceIsInvalid_Throws(float distance)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new InfluenceSample<float>(1f, VectorXY.Zero, distance, 1f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("distance"));
+    }
+
+    [TestCase(0f)]
+    [TestCase(1f)]
+    public void InfluenceSample_WhenDistanceIsAllowed_DoesNotThrow(float distance)
+    {
+        Assert.DoesNotThrow(() =>
+            new InfluenceSample<float>(1f, VectorXY.Zero, distance, 1f));
+    }
 }
