@@ -6,6 +6,8 @@ repo_name: AStanislav/Akeldov.Math
 
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.png
   features:
     - navigation.tabs
     - navigation.tabs.sticky
