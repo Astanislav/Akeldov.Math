@@ -54,8 +54,8 @@ namespace Akeldov.Math.Spatial2D
         {
             var barycenter = items.GetBarycenter();
 
-            var minDist = float.MaxValue;
             var closestItem = items[0];
+            var minDist = closestItem.Center.Distance(barycenter);
             for (int k = 1; k < items.Count; k++)
             {
                 var item = items[k];
@@ -81,8 +81,8 @@ namespace Akeldov.Math.Spatial2D
         {
             var barycenter = items.GetBarycenter();
 
-            var minDist = float.MaxValue;
             var closestItem = items[0];
+            var minDist = closestItem.Center.Distance(barycenter);
             for (int k = 1; k < items.Length; k++)
             {
                 var item = items[k];
@@ -107,8 +107,8 @@ namespace Akeldov.Math.Spatial2D
         public static TItem GetClosestTo<TItem>(this TItem[] items, VectorXY point)
             where TItem : IHasPosition2D
         {
-            var minDist = float.MaxValue;
             var closestItem = items[0];
+            var minDist = closestItem.Center.Distance(point);
             for (int k = 1; k < items.Length; k++)
             {
                 var item = items[k];
@@ -133,8 +133,8 @@ namespace Akeldov.Math.Spatial2D
         public static TItem GetClosestTo<TItem>(this IReadOnlyList<TItem> items, VectorXY point)
             where TItem : IHasPosition2D
         {
-            var minDist = float.MaxValue;
             var closestItem = items[0];
+            var minDist = closestItem.Center.Distance(point);
             for (int k = 1; k < items.Count; k++)
             {
                 var item = items[k];
