@@ -12,8 +12,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;sampling;voronoi;poisson-disk</PackageTags>
-		<RepositoryUrl>https://github.com/AStanislav/Akeldov.Math</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/AStanislav/Akeldov.Math</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
+		<PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Spatial2D/</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

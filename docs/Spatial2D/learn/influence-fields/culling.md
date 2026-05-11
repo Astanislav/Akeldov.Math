@@ -32,4 +32,4 @@ var field = new PointInfluenceFloatField(sampler, sources, culler);
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
 
-![Delaunay culler output](../../assets/spatial2d/influence/delaunay-culler.png)
+![Delaunay culler output](../../../assets/spatial2d/influence/delaunay-culler.png)

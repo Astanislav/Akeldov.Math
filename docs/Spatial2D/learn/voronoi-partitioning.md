@@ -41,7 +41,7 @@ var partitioner = new VoronoiPartitioner<MapCell>(
 IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
 
-![Voronoi partition with equal site power](../assets/spatial2d/voronoi/equal-power.svg)
+![Voronoi partition with equal site power](../../assets/spatial2d/voronoi/equal-power.svg)
 
 ## Weighted Site Power
 
@@ -64,7 +64,7 @@ var partitioner = new VoronoiPartitioner<MapCell>(
 IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
 
-![Voronoi partition with weighted site power](../assets/spatial2d/voronoi/weighted-power.svg)
+![Voronoi partition with weighted site power](../../assets/spatial2d/voronoi/weighted-power.svg)
 
 ## Power Edge Cases
 

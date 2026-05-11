@@ -1,8 +1,8 @@
 site_name: Akeldov.Math
 site_description: Documentation for Akeldov.Math libraries.
 site_url: https://akeldov.github.io/Akeldov.Math/
-repo_url: https://github.com/AStanislav/Akeldov.Math
-repo_name: AStanislav/Akeldov.Math
+repo_url: https://github.com/Akeldov/Akeldov.Math
+repo_name: Akeldov/Akeldov.Math
 
 theme:
   name: material
@@ -23,14 +23,15 @@ nav:
           - Overview: Spatial2D/index.md
           - Getting Started: Spatial2D/getting-started.md
           - Learn:
-              - Vectors: Spatial2D/vectors.md
-              - Curves: Spatial2D/curves.md
-              - Poisson Disk Sampling: Spatial2D/poisson-disk-sampling.md
-              - Voronoi Partitioning: Spatial2D/voronoi-partitioning.md
+              - Overview: Spatial2D/learn/index.md
+              - Vectors: Spatial2D/learn/vectors.md
+              - Curves: Spatial2D/learn/curves.md
+              - Poisson Disk Sampling: Spatial2D/learn/poisson-disk-sampling.md
+              - Voronoi Partitioning: Spatial2D/learn/voronoi-partitioning.md
               - Influence Fields:
-                  - Overview: Spatial2D/influence-fields/index.md
-                  - Sampling: Spatial2D/influence-fields/sampling.md
-                  - Culling: Spatial2D/influence-fields/culling.md
+                  - Overview: Spatial2D/learn/influence-fields/index.md
+                  - Sampling: Spatial2D/learn/influence-fields/sampling.md
+                  - Culling: Spatial2D/learn/influence-fields/culling.md
       - Akeldov.Math.Intervals:
           - Overview: Intervals/index.md
 

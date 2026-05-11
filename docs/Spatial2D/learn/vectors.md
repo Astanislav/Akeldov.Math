@@ -49,4 +49,3 @@ var point = new VectorXY(10f, 0f);
 var rotated = point.Rotate(MathF.PI / 2f);
 var clamped = rotated.Clamp(new VectorXY(0f, 0f), new VectorXY(10f, 10f));
 ```
-

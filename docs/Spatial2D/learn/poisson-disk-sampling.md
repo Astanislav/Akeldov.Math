@@ -17,7 +17,7 @@ List<PoissonDiskPointSample> samples =
     sampler.Sample(new VectorXY(120f, 80f), minimalDistance: 9f);
 ```
 
-![Poisson disk sampling with a constant minimal distance](../assets/spatial2d/poisson-disk/constant-distance.svg)
+![Poisson disk sampling with a constant minimal distance](../../assets/spatial2d/poisson-disk/constant-distance.svg)
 
 ## Variable Minimal Distance
 
@@ -48,7 +48,7 @@ public sealed class HorizontalDistanceField : IFloatField
 }
 ```
 
-![Poisson disk sampling with a field-based minimal distance](../assets/spatial2d/poisson-disk/variable-distance.svg)
+![Poisson disk sampling with a field-based minimal distance](../../assets/spatial2d/poisson-disk/variable-distance.svg)
 
 ## Tuning
 

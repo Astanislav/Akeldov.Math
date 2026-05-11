@@ -27,7 +27,7 @@ var field = new PointInfluenceFloatField(sampler, sources);
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
 
-![Nearest influence sampler output](../../assets/spatial2d/influence/nearest-sampler.png)
+![Nearest influence sampler output](../../../assets/spatial2d/influence/nearest-sampler.png)
 
 ## Inverse-Distance Weighted Sampling
 
@@ -40,7 +40,7 @@ var field = new PointInfluenceFloatField(sampler, sources);
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
 
-![Inverse-distance weighted influence sampler output](../../assets/spatial2d/influence/inverse-distance-weighted-sampler.png)
+![Inverse-distance weighted influence sampler output](../../../assets/spatial2d/influence/inverse-distance-weighted-sampler.png)
 
 ## Barycentric Sampling
 
@@ -53,5 +53,4 @@ var field = new PointInfluenceFloatField(sampler, sources);
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
 
-![Barycentric influence sampler output](../../assets/spatial2d/influence/barycentric-sampler.png)
-
+![Barycentric influence sampler output](../../../assets/spatial2d/influence/barycentric-sampler.png)
