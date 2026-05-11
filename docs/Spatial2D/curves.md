@@ -7,6 +7,7 @@ The curves package contains basic 2D primitives:
 - `Segment`
 - `Circle`
 - `Arc`
+- `Contour`
 
 These types support distance, projection, and intersection-style workflows.
 
@@ -47,14 +48,24 @@ var arc = new Arc(VectorXY.Zero, radius: 5f, startAngleRad: 0f, stopAngleRad: Ma
 
 float circleDistance = circle.Distance(new VectorXY(3f, 0f));
 var arcProjection = arc.Project(new VectorXY(0f, 8f));
+bool isWithinArcSpan = arc.ContainsAngularPosition(new VectorXY(1f, 1f));
+```
+
+## Contours
+
+```csharp
+var contour = new Contour(new ICurve[]
+{
+    new Circle(VectorXY.Zero, radius: 5f)
+});
+
+bool isInside = contour.Contains(new VectorXY(3f, 0f));
 ```
 
 ## Helpers
 
 Curve extension methods include:
 
-- `IsInsideContour` for closed contours.
-- `IsOnTheArc` for point-to-arc checks.
 - `Shorten` and `Extend` for segments.
 - `PerpendicularAt` and `IsSameSide` for lines.
 - `CreateArcInAngle` and `CreateIncircleInAngle` for corner construction.

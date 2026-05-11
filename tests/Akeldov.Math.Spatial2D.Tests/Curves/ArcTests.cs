@@ -57,6 +57,26 @@ public class ArcTests
     }
 
     [Test]
+    public void ContainsAngularPosition_WhenPointAngleIsWithinArc_ReturnsTrue()
+    {
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);
+
+        bool contains = arc.ContainsAngularPosition(new VectorXY(2f, 2f));
+
+        Assert.That(contains, Is.True);
+    }
+
+    [Test]
+    public void ContainsAngularPosition_WhenPointAngleIsOutsideArc_ReturnsFalse()
+    {
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);
+
+        bool contains = arc.ContainsAngularPosition(new VectorXY(-1f, 1f));
+
+        Assert.That(contains, Is.False);
+    }
+
+    [Test]
     public void Project_WhenStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 0f);

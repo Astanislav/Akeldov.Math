@@ -97,6 +97,19 @@ namespace Akeldov.Math.Spatial2D.Curves
             );
         }
 
+        /// <summary>
+        /// Determines whether the specified point's angular position lies within this arc's angular span.
+        /// </summary>
+        /// <param name="point">The point to test.</param>
+        /// <returns><see langword="true"/> if the point's angular position lies within this arc; otherwise, <see langword="false"/>.</returns>
+        public bool ContainsAngularPosition(VectorXY point)
+        {
+            VectorXY toPoint = (point - Center).Normalize();
+            float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
+
+            return ContainsAngle(angle);
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Arc other && Equals(other);
 
@@ -156,7 +169,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 VectorXY point1 = ray.Origin + dir * t1;
                 circleIntersections.AddDistinct(point1);
 
-                if (point1.IsOnTheArc(this))
+                if (ContainsAngularPosition(point1))
                     intersections.AddDistinct(point1);
             }
 
@@ -165,7 +178,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 VectorXY point2 = ray.Origin + dir * t2;
                 circleIntersections.AddDistinct(point2);
 
-                if (point2.IsOnTheArc(this))
+                if (ContainsAngularPosition(point2))
                     intersections.AddDistinct(point2);
             }
 
@@ -202,7 +215,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float angleToPoint = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
 
-            if (IsFullCircle || angleToPoint.IsAngleWithinArc(_startAngle, _endAngle))
+            if (ContainsAngle(angleToPoint))
             {
                 VectorXY projected = _center + toPoint.Normalize() * _radius;
                 float parameter = GetParameter(angleToPoint);
@@ -247,6 +260,11 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return 0f;
 
             return PositiveAngleDelta(_startAngle, angle) / span;
+        }
+
+        private bool ContainsAngle(float angle)
+        {
+            return IsFullCircle || angle.IsAngleWithinArc(_startAngle, _endAngle);
         }
 
         private static float PositiveAngleDelta(float from, float to)
