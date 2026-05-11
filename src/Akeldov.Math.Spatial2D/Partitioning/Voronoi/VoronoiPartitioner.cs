@@ -50,14 +50,22 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             if (relaxationIterations < 0)
                 throw new ArgumentOutOfRangeException(nameof(relaxationIterations));
 
+            bool hasNonZeroPower = false;
+
             _sites = new Site[sites.Count];
             for (int i = 0; i < sites.Count; i++)
             {
                 if (sites[i].Power < 0f || float.IsNaN(sites[i].Power))
                     throw new ArgumentOutOfRangeException(nameof(sites), "Site power must be non-negative and not NaN.");
 
+                if (sites[i].Power > 0f)
+                    hasNonZeroPower = true;
+
                 _sites[i] = sites[i];
             }
+
+            if (!hasNonZeroPower)
+                throw new ArgumentException("At least one site power must be positive.", nameof(sites));
 
             _relaxationIterations = relaxationIterations;
             _emptyCellPolicy = emptyCellPolicy;

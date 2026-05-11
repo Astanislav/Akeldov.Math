@@ -66,6 +66,12 @@ IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 
 ![Voronoi partition with weighted site power](../assets/spatial2d/voronoi/weighted-power.svg)
 
+## Power Edge Cases
+
+At least one site must have positive power. A zero-power site only receives items that are located at that site position.
+
+If an item is located at a site position, that site is selected before any weighted-distance comparison. If no site contains the item and one or more sites have `float.PositiveInfinity` power, the nearest infinite-power site is selected. Otherwise, sites compete by squared distance divided by squared power.
+
 ## Empty Cell Policy
 
 Use `EmptyCellPolicy` to choose how empty cells are handled:
@@ -73,4 +79,3 @@ Use `EmptyCellPolicy` to choose how empty cells are handled:
 - `ThrowException`
 - `Exclude`
 - `LeaveAsIs`
-

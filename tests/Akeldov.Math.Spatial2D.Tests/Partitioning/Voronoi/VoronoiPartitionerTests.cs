@@ -40,6 +40,21 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
+    public void Constructor_WhenAllSitePowersAreZero_Throws()
+    {
+        var sites = new[]
+        {
+            new Site(VectorXY.Zero, 0f),
+            new Site(VectorXY.One, 0f)
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("sites"));
+    }
+
+    [Test]
     public void SiteConstructor_WhenPowerIsPositiveInfinity_DoesNotThrow()
     {
         Assert.DoesNotThrow(() => new Site(VectorXY.Zero, float.PositiveInfinity));
@@ -176,6 +191,48 @@ public class VoronoiPartitionerTests
 
         Assert.That(cells[0].Items, Is.Empty);
         Assert.That(cells[1].Items.Select(item => item.Id), Is.EqualTo(new[] { "far-from-infinite", "near-infinite" }));
+    }
+
+    [Test]
+    public void Partition_WhenPointMatchesFiniteSiteAndInfiniteSiteExists_AssignsExactSite()
+    {
+        var sites = new[]
+        {
+            new Site(new VectorXY(10f, 0f), float.PositiveInfinity),
+            new Site(VectorXY.Zero, 1f)
+        };
+        var texels = new[]
+        {
+            new TestItem("exact-finite", VectorXY.Zero)
+        };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var cells = partitioner.Partition(texels);
+
+        Assert.That(cells[0].Items, Is.Empty);
+        Assert.That(cells[1].Items.Select(item => item.Id), Is.EqualTo(new[] { "exact-finite" }));
+    }
+
+    [Test]
+    public void Partition_WhenMultipleInfiniteSitesExist_AssignsNearestInfiniteSite()
+    {
+        var sites = new[]
+        {
+            new Site(new VectorXY(0f, 100f), 100f),
+            new Site(new VectorXY(0f, 0f), float.PositiveInfinity),
+            new Site(new VectorXY(10f, 0f), float.PositiveInfinity)
+        };
+        var texels = new[]
+        {
+            new TestItem("nearest-infinite", new VectorXY(9f, 0f))
+        };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var cells = partitioner.Partition(texels);
+
+        Assert.That(cells[0].Items, Is.Empty);
+        Assert.That(cells[1].Items, Is.Empty);
+        Assert.That(cells[2].Items.Select(item => item.Id), Is.EqualTo(new[] { "nearest-infinite" }));
     }
 
     [Test]

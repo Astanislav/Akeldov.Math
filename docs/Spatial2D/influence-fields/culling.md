@@ -22,6 +22,8 @@ var sources = new[]
 
 `DelaunayCuller<TPointSource>` selects the Delaunay triangle containing the sampled point. Outside the triangulated area, it falls back to the nearest convex hull feature.
 
+The current culler implementation uses float geometry with the library geometry tolerance. It builds the triangulation up front, then checks triangles linearly for each sampled point. It is intended for moderate source counts; for very large source sets, benchmark the workload before relying on it in a hot path.
+
 ```csharp
 var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
 var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
@@ -31,4 +33,3 @@ float value = field.Sample(new VectorXY(40f, 30f));
 ```
 
 ![Delaunay culler output](../../assets/spatial2d/influence/delaunay-culler.png)
-
