@@ -27,7 +27,13 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             var copy = new TPointSource[sourcePoints.Count];
             for (int i = 0; i < sourcePoints.Count; i++)
-                copy[i] = sourcePoints[i];
+            {
+                var sourcePoint = sourcePoints[i];
+                if (sourcePoint is null)
+                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(sourcePoints));
+
+                copy[i] = sourcePoint;
+            }
 
             _sourcePoints = copy;
         }

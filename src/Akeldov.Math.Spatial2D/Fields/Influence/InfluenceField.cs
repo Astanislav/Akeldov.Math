@@ -99,7 +99,13 @@ namespace Akeldov.Math.Spatial2D.Fields
         {
             var copy = new TSource[influenceSources.Count];
             for (int i = 0; i < influenceSources.Count; i++)
-                copy[i] = influenceSources[i];
+            {
+                var source = influenceSources[i];
+                if (source is null)
+                    throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(influenceSources));
+
+                copy[i] = source;
+            }
 
             return copy;
         }

@@ -42,8 +42,12 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 0; i < n; i++)
             {
-                _sources[i] = sourcePoints[i];
-                _points[i] = sourcePoints[i].Center;
+                var sourcePoint = sourcePoints[i];
+                if (sourcePoint is null)
+                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(sourcePoints));
+
+                _sources[i] = sourcePoint;
+                _points[i] = sourcePoint.Center;
             }
 
             ThrowIfAnyDuplicatePoint(_points, nameof(sourcePoints));

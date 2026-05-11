@@ -68,6 +68,55 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
+    public void Partition_WhenItemsContainNull_Throws()
+    {
+        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var texels = new TestItem[] { null! };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var exception = Assert.Throws<ArgumentException>(() => partitioner.Partition(texels));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("items"));
+    }
+
+    [Test]
+    public void Partition_WhenCellItemsAccessed_ReturnsReadOnlyView()
+    {
+        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var texels = new[] { new TestItem("item", VectorXY.Zero) };
+        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var cells = partitioner.Partition(texels);
+
+        Assert.That(cells[0].Items, Is.Not.InstanceOf<List<TestItem>>());
+        Assert.Throws<NotSupportedException>(() =>
+            ((IList<TestItem>)cells[0].Items)[0] = new TestItem("replacement", VectorXY.One));
+    }
+
+    [Test]
+    public void VoronoiCell_WhenItemListChangesAfterConstruction_UsesOriginalItems()
+    {
+        var items = new List<TestItem> { new TestItem("original", VectorXY.Zero) };
+        var cell = new VoronoiCell<TestItem>(new Site(VectorXY.Zero, 1f), items);
+
+        items.Clear();
+
+        Assert.That(cell.Items, Has.Count.EqualTo(1));
+        Assert.That(cell.Items[0].Id, Is.EqualTo("original"));
+    }
+
+    [Test]
+    public void VoronoiCell_WhenItemsContainNull_Throws()
+    {
+        var items = new TestItem[] { null! };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new VoronoiCell<TestItem>(new Site(VectorXY.Zero, 1f), items));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("items"));
+    }
+
+    [Test]
     public void Partition_WhenSiteHasLargerPower_AssignsFartherItemToIt()
     {
         var sites = new[]

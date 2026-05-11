@@ -32,6 +32,17 @@ public class InfluenceSourceCullerTests
     }
 
     [Test]
+    public void HalfPlaneCuller_WhenSourcePointsContainNull_Throws()
+    {
+        var sources = new FloatPointInfluenceSource[] { null! };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new HalfPlaneCuller<FloatPointInfluenceSource>(sources));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
+    }
+
+    [Test]
     public void DelaunayCuller_WithTriangleContainingPoint_ReturnsTriangleSources()
     {
         var sources = new[]
@@ -49,6 +60,22 @@ public class InfluenceSourceCullerTests
         Assert.That(selectedSources, Does.Contain(sources[0]));
         Assert.That(selectedSources, Does.Contain(sources[1]));
         Assert.That(selectedSources, Does.Contain(sources[2]));
+    }
+
+    [Test]
+    public void DelaunayCuller_WhenSourcePointsContainNull_Throws()
+    {
+        var sources = new FloatPointInfluenceSource[]
+        {
+            new FloatPointInfluenceSource(1f, new VectorXY(0f, 0f), 1f),
+            null!,
+            new FloatPointInfluenceSource(1f, new VectorXY(0f, 10f), 3f)
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new DelaunayCuller<FloatPointInfluenceSource>(sources));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
     }
 
     [Test]

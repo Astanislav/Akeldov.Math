@@ -24,6 +24,19 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
+    public void Constructor_WhenInfluenceSourcesContainNull_Throws()
+    {
+        var sources = new FloatPointInfluenceSource[] { null! };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new InfluenceField<FloatPointInfluenceSource, float>(
+                new SourceCountSampler(),
+                sources));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("influenceSources"));
+    }
+
+    [Test]
     public void Sample_WhenCullerReturnsNull_ThrowsInvalidOperationException()
     {
         var sources = new[]

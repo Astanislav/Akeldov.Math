@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
@@ -17,7 +18,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         public VoronoiCell(Site site, IReadOnlyList<TItem> items)
         {
             Site = site;
-            Items = items;
+            Items = CopyItems(items);
         }
 
         /// <summary>
@@ -29,5 +30,23 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// Gets the items assigned to this cell.
         /// </summary>
         public IReadOnlyList<TItem> Items { get; }
+
+        private static IReadOnlyList<TItem> CopyItems(IReadOnlyList<TItem> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            var copy = new TItem[items.Count];
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                if (item is null)
+                    throw new ArgumentException("Voronoi cell items cannot contain null elements.", nameof(items));
+
+                copy[i] = item;
+            }
+
+            return Array.AsReadOnly(copy);
+        }
     }
 }

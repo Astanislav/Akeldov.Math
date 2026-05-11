@@ -111,6 +111,19 @@ public class PoissonDiskValidationTests
     }
 
     [Test]
+    public void Sample_WhenResultAccessed_ReturnsMutableList()
+    {
+        var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);
+
+        List<PoissonDiskPointSample> result = sampler.Sample(new VectorXY(20f, 20f), 5f);
+        int originalCount = result.Count;
+
+        result.Add(new PoissonDiskPointSample(VectorXY.Zero, 1f));
+
+        Assert.That(result, Has.Count.EqualTo(originalCount + 1));
+    }
+
+    [Test]
     public void Sample_WhenCandidateIsOutsideSamplingArea_DoesNotSampleMinimalDistanceFieldThere()
     {
         var random = new SequenceRandom(0.5, 0.5, 0.0, 0.5);
