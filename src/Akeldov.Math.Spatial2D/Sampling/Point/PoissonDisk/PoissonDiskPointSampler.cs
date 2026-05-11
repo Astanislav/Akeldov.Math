@@ -29,13 +29,13 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <summary>
         /// Samples points in the rectangular field using a constant minimal distance.
         /// </summary>
-        /// <param name="fieldSize">The positive field size.</param>
-        /// <param name="minimalDistance">The positive minimal distance between samples.</param>
+        /// <param name="fieldSize">The finite positive field size.</param>
+        /// <param name="minimalDistance">The finite positive minimal distance between samples.</param>
         /// <returns>The generated point samples.</returns>
         public IReadOnlyList<PoissonDiskPointSample> Sample(VectorXY fieldSize, float minimalDistance)
         {
-            if (minimalDistance <= 0)
-                throw new ArgumentOutOfRangeException(nameof(minimalDistance));
+            if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
+                throw new ArgumentOutOfRangeException(nameof(minimalDistance), "Minimal distance must be finite and positive.");
 
             return Sample(fieldSize, new ConstantFloatField(minimalDistance));
         }
@@ -43,24 +43,29 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <summary>
         /// Samples points in the rectangular field using a spatially varying minimal distance field.
         /// </summary>
-        /// <param name="fieldSize">The positive field size.</param>
-        /// <param name="minimalDistanceField">The positive minimal distance field.</param>
+        /// <param name="fieldSize">The finite positive field size.</param>
+        /// <param name="minimalDistanceField">The finite positive minimal distance field.</param>
         /// <returns>The generated point samples.</returns>
         public IReadOnlyList<PoissonDiskPointSample> Sample(VectorXY fieldSize, IFloatField minimalDistanceField)
         {
-            if (fieldSize.X <= 0 || fieldSize.Y <= 0)
-                throw new ArgumentOutOfRangeException(nameof(fieldSize));
+            if (fieldSize.X <= 0f || float.IsNaN(fieldSize.X) || float.IsInfinity(fieldSize.X) ||
+                fieldSize.Y <= 0f || float.IsNaN(fieldSize.Y) || float.IsInfinity(fieldSize.Y))
+                throw new ArgumentOutOfRangeException(nameof(fieldSize), "Field size must be finite and positive.");
 
             if (minimalDistanceField == null)
                 throw new ArgumentNullException(nameof(minimalDistanceField));
 
-            if (minimalDistanceField.Min <= 0 || minimalDistanceField.Max <= 0)
-                throw new ArgumentOutOfRangeException(nameof(minimalDistanceField));
+            float minimalDistanceMin = minimalDistanceField.Min;
+            float minimalDistanceMax = minimalDistanceField.Max;
+            if (minimalDistanceMin <= 0f || float.IsNaN(minimalDistanceMin) || float.IsInfinity(minimalDistanceMin) ||
+                minimalDistanceMax <= 0f || float.IsNaN(minimalDistanceMax) || float.IsInfinity(minimalDistanceMax) ||
+                minimalDistanceMin > minimalDistanceMax)
+                throw new ArgumentOutOfRangeException(nameof(minimalDistanceField), "Minimal distance field range must be finite, positive, and ordered.");
 
             // The grid uses the maximum possible distance so every conflicting point must be in
             // the candidate cell or one of its immediate neighbours. Smaller cells require a
             // wider search radius to preserve the variable-distance invariant.
-            float cellSize = minimalDistanceField.Max;
+            float cellSize = minimalDistanceMax;
 
             var processList = new List<VectorXY>();
             var samples = new List<PoissonDiskPointSample>();
@@ -110,8 +115,8 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         private static float SampleMinimalDistance(IFloatField minimalDistanceField, VectorXY point)
         {
             float minimalDistance = minimalDistanceField.Sample(point);
-            if (minimalDistance <= 0f)
-                throw new InvalidOperationException("Minimal distance field returned a non-positive value.");
+            if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
+                throw new InvalidOperationException("Minimal distance field returned an invalid value. Minimal distance must be finite and positive.");
 
             return minimalDistance;
         }

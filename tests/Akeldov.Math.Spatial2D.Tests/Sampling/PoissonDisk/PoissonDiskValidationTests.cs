@@ -20,22 +20,37 @@ public class PoissonDiskValidationTests
 
     [TestCase(0f)]
     [TestCase(-1f)]
-    public void Sample_WhenMinimalDistanceIsNotPositive_Throws(float minimalDistance)
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Sample_WhenMinimalDistanceIsInvalid_Throws(float minimalDistance)
     {
         var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => sampler.Sample(new VectorXY(10f, 10f), minimalDistance));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => sampler.Sample(new VectorXY(10f, 10f), minimalDistance));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("minimalDistance"));
     }
 
     [TestCase(0f, 10f)]
     [TestCase(10f, 0f)]
     [TestCase(-1f, 10f)]
     [TestCase(10f, -1f)]
-    public void Sample_WhenFieldSizeIsNotPositive_Throws(float width, float height)
+    [TestCase(float.NaN, 10f)]
+    [TestCase(10f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 10f)]
+    [TestCase(10f, float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity, 10f)]
+    [TestCase(10f, float.NegativeInfinity)]
+    public void Sample_WhenFieldSizeIsInvalid_Throws(float width, float height)
     {
         var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => sampler.Sample(new VectorXY(width, height), 2f));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => sampler.Sample(new VectorXY(width, height), 2f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("fieldSize"));
     }
 
     [Test]
@@ -50,22 +65,38 @@ public class PoissonDiskValidationTests
     [TestCase(1f, 0f)]
     [TestCase(-1f, 1f)]
     [TestCase(1f, -1f)]
-    public void Sample_WhenMinimalDistanceFieldRangeIsNotPositive_Throws(float min, float max)
+    [TestCase(3f, 2f)]
+    [TestCase(float.NaN, 1f)]
+    [TestCase(1f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 1f)]
+    [TestCase(1f, float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity, 1f)]
+    [TestCase(1f, float.NegativeInfinity)]
+    public void Sample_WhenMinimalDistanceFieldRangeIsInvalid_Throws(float min, float max)
     {
         var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);
         var field = new TestFloatField(min, max);
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => sampler.Sample(new VectorXY(10f, 10f), field));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => sampler.Sample(new VectorXY(10f, 10f), field));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("minimalDistanceField"));
     }
 
     [TestCase(0f)]
     [TestCase(-1f)]
-    public void Sample_WhenMinimalDistanceFieldReturnsNonPositiveValue_Throws(float value)
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Sample_WhenMinimalDistanceFieldReturnsInvalidValue_Throws(float value)
     {
         var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);
         var field = new InvalidSampleFloatField(value);
 
-        Assert.Throws<InvalidOperationException>(() => sampler.Sample(new VectorXY(10f, 10f), field));
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => sampler.Sample(new VectorXY(10f, 10f), field));
+
+        Assert.That(exception!.Message, Does.Contain("finite and positive"));
     }
 
     [Test]
