@@ -11,15 +11,15 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Initializes a new integer influence source.
         /// </summary>
         /// <param name="power">The source power used by influence samplers.</param>
-        /// <param name="center">The source position.</param>
+        /// <param name="position">The source position.</param>
         /// <param name="value">The value contributed by this source.</param>
-        public IntPointInfluenceSource(float power, VectorXY center, int value)
+        public IntPointInfluenceSource(float power, VectorXY position, int value)
         {
             if (power < 0f || float.IsNaN(power))
                 throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
 
             Power = power;
-            Position = center;
+            Position = position;
             Value = value;
         }
 
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Returns the distance from this source to the specified point.
         /// </summary>
         /// <param name="point">The point to measure to.</param>
-        /// <returns>The Euclidean distance from the source center to the point.</returns>
+        /// <returns>The Euclidean distance from the source position to the point.</returns>
         public float Distance(VectorXY point)
         {
             return Position.Distance(point);

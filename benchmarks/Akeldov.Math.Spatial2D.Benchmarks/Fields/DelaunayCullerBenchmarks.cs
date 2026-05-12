@@ -28,7 +28,7 @@ public class DelaunayCullerBenchmarks
         {
             _sources[i] = new FloatPointInfluenceSource(
                 power: 1f,
-                center: NextPoint(random, 1000f),
+                position: NextPoint(random, 1000f),
                 value: random.NextSingle());
         }
 

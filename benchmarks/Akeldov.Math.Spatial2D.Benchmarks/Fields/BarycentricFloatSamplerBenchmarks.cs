@@ -28,7 +28,7 @@ public class BarycentricFloatSamplerBenchmarks
         {
             _sources[i] = new FloatPointInfluenceSource(
                 power: 0.5f + random.NextSingle() * 2f,
-                center: NextPoint(random, 1000f),
+                position: NextPoint(random, 1000f),
                 value: random.NextSingle() * 100f);
         }
 

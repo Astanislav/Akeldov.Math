@@ -9,14 +9,14 @@ using Akeldov.Math.Spatial2D;
 
 public sealed class MapCell : IHasPosition2D
 {
-    public MapCell(string id, VectorXY center)
+    public MapCell(string id, VectorXY position)
     {
         Id = id;
-        Center = center;
+        Position = position;
     }
 
     public string Id { get; }
-    public VectorXY Center { get; }
+    public VectorXY Position { get; }
 }
 ```
 
