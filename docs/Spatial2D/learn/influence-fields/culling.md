@@ -27,7 +27,7 @@ The current culler implementation uses float geometry with the library geometry 
 ```csharp
 var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
 var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
-var field = new PointInfluenceFloatField(sampler, sources, culler);
+var field = new FloatPointInfluenceField(sampler, sources, culler);
 
 float value = field.Sample(new VectorXY(40f, 30f));
 ```

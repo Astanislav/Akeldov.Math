@@ -6,14 +6,14 @@ namespace Akeldov.Math.Spatial2D.Tests.Fields;
 public class InfluenceFieldClampingTests
 {
     [Test]
-    public void PointInfluenceFloatField_WhenSourceListChangesAfterConstruction_UsesOriginalSources()
+    public void FloatPointInfluenceField_WhenSourceListChangesAfterConstruction_UsesOriginalSources()
     {
         var sources = new List<FloatPointInfluenceSource>
         {
             new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
             new FloatPointInfluenceSource(1f, new VectorXY(10f, 0f), 10f)
         };
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             sources);
 
@@ -27,9 +27,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WhenInfluenceSourcesAccessed_ReturnsReadOnlyView()
+    public void FloatPointInfluenceField_WhenInfluenceSourcesAccessed_ReturnsReadOnlyView()
     {
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             new[]
             {
@@ -44,9 +44,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
+    public void FloatPointInfluenceField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
     {
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             new[]
             {
@@ -74,9 +74,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WhenSamplerReturnsBelowMin_ClampsToMin()
+    public void FloatPointInfluenceField_WhenSamplerReturnsBelowMin_ClampsToMin()
     {
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             new ConstantSampler<FloatPointInfluenceSource, float>(-10f),
             new[]
             {
@@ -90,9 +90,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WhenSamplerReturnsNaN_Throws()
+    public void FloatPointInfluenceField_WhenSamplerReturnsNaN_Throws()
     {
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             new ConstantSampler<FloatPointInfluenceSource, float>(float.NaN),
             new[]
             {

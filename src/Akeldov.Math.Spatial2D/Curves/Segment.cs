@@ -9,59 +9,59 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public readonly struct Segment : IProjectableCurve, IEquatable<Segment>
     {
-        private readonly VectorXY _a;
-        private readonly VectorXY _b;
+        private readonly VectorXY _startPoint;
+        private readonly VectorXY _endPoint;
 
-        private readonly bool _includesA;
-        private readonly bool _includesB;
+        private readonly bool _includesStartPoint;
+        private readonly bool _includesEndPoint;
 
         /// <summary>
         /// Initializes a new segment with both endpoints included.
         /// </summary>
-        /// <param name="a">The first endpoint.</param>
-        /// <param name="b">The second endpoint.</param>
-        public Segment(VectorXY a, VectorXY b)
+        /// <param name="startPoint">The start point.</param>
+        /// <param name="endPoint">The end point.</param>
+        public Segment(VectorXY startPoint, VectorXY endPoint)
         {
-            _a = a;
-            _b = b;
-            _includesA = true;
-            _includesB = true;
+            _startPoint = startPoint;
+            _endPoint = endPoint;
+            _includesStartPoint = true;
+            _includesEndPoint = true;
         }
 
         /// <summary>
         /// Initializes a new segment with explicit endpoint inclusion.
         /// </summary>
-        /// <param name="a">The first endpoint.</param>
-        /// <param name="b">The second endpoint.</param>
-        /// <param name="includesA">Whether the first endpoint belongs to the segment.</param>
-        /// <param name="includesB">Whether the second endpoint belongs to the segment.</param>
-        public Segment(VectorXY a, VectorXY b, bool includesA, bool includesB)
+        /// <param name="startPoint">The start point.</param>
+        /// <param name="endPoint">The end point.</param>
+        /// <param name="includesStartPoint">Whether the start point belongs to the segment.</param>
+        /// <param name="includesEndPoint">Whether the end point belongs to the segment.</param>
+        public Segment(VectorXY startPoint, VectorXY endPoint, bool includesStartPoint, bool includesEndPoint)
         {
-            _a = a;
-            _b = b;
-            _includesA = includesA;
-            _includesB = includesB;
+            _startPoint = startPoint;
+            _endPoint = endPoint;
+            _includesStartPoint = includesStartPoint;
+            _includesEndPoint = includesEndPoint;
         }
 
         /// <summary>
-        /// Gets the first endpoint.
+        /// Gets the start point.
         /// </summary>
-        public VectorXY A => _a;
+        public VectorXY StartPoint => _startPoint;
 
         /// <summary>
-        /// Gets the second endpoint.
+        /// Gets the end point.
         /// </summary>
-        public VectorXY B => _b;
+        public VectorXY EndPoint => _endPoint;
 
         /// <summary>
-        /// Gets a value indicating whether the first endpoint belongs to the segment.
+        /// Gets a value indicating whether the start point belongs to the segment.
         /// </summary>
-        public bool IncludesA => _includesA;
+        public bool IncludesStartPoint => _includesStartPoint;
 
         /// <summary>
-        /// Gets a value indicating whether the second endpoint belongs to the segment.
+        /// Gets a value indicating whether the end point belongs to the segment.
         /// </summary>
-        public bool IncludesB => _includesB;
+        public bool IncludesEndPoint => _includesEndPoint;
 
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray is collinear with the segment
@@ -75,8 +75,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             List<VectorXY> intersections = new List<VectorXY>();
 
             VectorXY rayDir = ray.Direction;
-            VectorXY segDir = B - A;
-            VectorXY delta = A - ray.Origin;
+            VectorXY segDir = EndPoint - StartPoint;
+            VectorXY delta = StartPoint - ray.Origin;
 
             float det = rayDir.X * (-segDir.Y) + rayDir.Y * segDir.X;
 
@@ -93,14 +93,14 @@ namespace Akeldov.Math.Spatial2D.Curves
             {
                 VectorXY intersection = ray.Origin + t * rayDir;
 
-                if (intersection.AlmostEquals(A))
+                if (intersection.AlmostEquals(StartPoint))
                 {
-                    if (IncludesA)
+                    if (IncludesStartPoint)
                         intersections.AddDistinct(intersection);
                 }
-                else if (intersection.AlmostEquals(B))
+                else if (intersection.AlmostEquals(EndPoint))
                 {
-                    if (IncludesB)
+                    if (IncludesEndPoint)
                         intersections.AddDistinct(intersection);
                 }
                 else
@@ -114,41 +114,41 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private void AddFirstCollinearIntersection(Ray ray, List<VectorXY> intersections)
         {
-            VectorXY segDir = B - A;
-            VectorXY originToA = A - ray.Origin;
+            VectorXY segDir = EndPoint - StartPoint;
+            VectorXY originToStart = StartPoint - ray.Origin;
 
-            if (!VectorXY.Cross(originToA, ray.Direction).IsAlmostZero())
+            if (!VectorXY.Cross(originToStart, ray.Direction).IsAlmostZero())
                 return;
 
             if (segDir.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
-                if ((IncludesA || IncludesB) && IsPointOnRay(A, ray, out _))
-                    intersections.AddDistinct(A);
+                if ((IncludesStartPoint || IncludesEndPoint) && IsPointOnRay(StartPoint, ray, out _))
+                    intersections.AddDistinct(StartPoint);
 
                 return;
             }
 
-            float tA = VectorXY.Dot(A - ray.Origin, ray.Direction);
-            float tB = VectorXY.Dot(B - ray.Origin, ray.Direction);
+            float tStart = VectorXY.Dot(StartPoint - ray.Origin, ray.Direction);
+            float tEnd = VectorXY.Dot(EndPoint - ray.Origin, ray.Direction);
 
             VectorXY startPoint;
             bool startIncluded;
             float startT;
             float endT;
 
-            if (tA <= tB)
+            if (tStart <= tEnd)
             {
-                startPoint = A;
-                startIncluded = IncludesA;
-                startT = tA;
-                endT = tB;
+                startPoint = StartPoint;
+                startIncluded = IncludesStartPoint;
+                startT = tStart;
+                endT = tEnd;
             }
             else
             {
-                startPoint = B;
-                startIncluded = IncludesB;
-                startT = tB;
-                endT = tA;
+                startPoint = EndPoint;
+                startIncluded = IncludesEndPoint;
+                startT = tEnd;
+                endT = tStart;
             }
 
             if (endT < -GeometryConstants.GeometryEpsilon)
@@ -172,23 +172,23 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private bool IncludesPoint(VectorXY point)
         {
-            VectorXY ab = B - A;
-            VectorXY ap = point - A;
+            VectorXY segmentVector = EndPoint - StartPoint;
+            VectorXY startToPoint = point - StartPoint;
 
-            if (!VectorXY.Cross(ab, ap).IsAlmostZero())
+            if (!VectorXY.Cross(segmentVector, startToPoint).IsAlmostZero())
                 return false;
 
-            float dot = VectorXY.Dot(ap, ab);
+            float dot = VectorXY.Dot(startToPoint, segmentVector);
             if (dot < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            if (dot > ab.SquaredLength + GeometryConstants.GeometryEpsilon)
+            if (dot > segmentVector.SquaredLength + GeometryConstants.GeometryEpsilon)
                 return false;
 
-            if (point.AlmostEquals(A) && !IncludesA)
+            if (point.AlmostEquals(StartPoint) && !IncludesStartPoint)
                 return false;
 
-            if (point.AlmostEquals(B) && !IncludesB)
+            if (point.AlmostEquals(EndPoint) && !IncludesEndPoint)
                 return false;
 
             return true;
@@ -214,16 +214,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="other">The segment to compare with this segment.</param>
         /// <returns><see langword="true"/> if both segments are equal; otherwise, <see langword="false"/>.</returns>
         public bool Equals(Segment other) =>
-            A.Equals(other.A) &&
-            B.Equals(other.B) &&
-            IncludesA == other.IncludesA &&
-            IncludesB == other.IncludesB;
+            StartPoint.Equals(other.StartPoint) &&
+            EndPoint.Equals(other.EndPoint) &&
+            IncludesStartPoint == other.IncludesStartPoint &&
+            IncludesEndPoint == other.IncludesEndPoint;
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(A, B, IncludesA, IncludesB);
+        public override int GetHashCode() => HashCode.Combine(StartPoint, EndPoint, IncludesStartPoint, IncludesEndPoint);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({A} - {B})";
+        public override string ToString() => $"({StartPoint} - {EndPoint})";
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this segment.
@@ -242,22 +242,22 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point, segment length coordinate, and distance to this segment.</returns>
         public CurvePointProjection Project(VectorXY point)
         {
-            VectorXY ab = B - A;
-            VectorXY ap = point - A;
+            VectorXY segmentVector = EndPoint - StartPoint;
+            VectorXY startToPoint = point - StartPoint;
 
-            float abSquared = ab.SquaredLength;
-            if (abSquared <= GeometryConstants.GeometryEpsilonSquared)
-                return new CurvePointProjection(A, 0f, point.Distance(A));
+            float segmentLengthSquared = segmentVector.SquaredLength;
+            if (segmentLengthSquared <= GeometryConstants.GeometryEpsilonSquared)
+                return new CurvePointProjection(StartPoint, 0f, point.Distance(StartPoint));
 
-            float normalizedParameter = VectorXY.Dot(ap, ab) / abSquared;
+            float normalizedParameter = VectorXY.Dot(startToPoint, segmentVector) / segmentLengthSquared;
 
             if (normalizedParameter < 0f)
                 normalizedParameter = 0f;
             else if (normalizedParameter > 1f)
                 normalizedParameter = 1f;
 
-            VectorXY projection = A + normalizedParameter * ab;
-            float curveCoordinate = normalizedParameter * MathF.Sqrt(abSquared);
+            VectorXY projection = StartPoint + normalizedParameter * segmentVector;
+            float curveCoordinate = normalizedParameter * MathF.Sqrt(segmentLengthSquared);
             return new CurvePointProjection(projection, curveCoordinate, point.Distance(projection));
         }
 
@@ -283,7 +283,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The segment to translate.</param>
         /// <param name="right">The translation vector.</param>
         /// <returns>The translated segment.</returns>
-        public static Segment operator +(Segment left, VectorXY right) => new Segment(left.A + right, left.B + right, left.IncludesA, left.IncludesB);
+        public static Segment operator +(Segment left, VectorXY right) => new Segment(
+            left.StartPoint + right,
+            left.EndPoint + right,
+            left.IncludesStartPoint,
+            left.IncludesEndPoint);
 
         /// <summary>
         /// Translates a segment by the negated vector.
@@ -291,6 +295,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The segment to translate.</param>
         /// <param name="right">The translation vector to subtract.</param>
         /// <returns>The translated segment.</returns>
-        public static Segment operator -(Segment left, VectorXY right) => new Segment(left.A - right, left.B - right, left.IncludesA, left.IncludesB);
+        public static Segment operator -(Segment left, VectorXY right) => new Segment(
+            left.StartPoint - right,
+            left.EndPoint - right,
+            left.IncludesStartPoint,
+            left.IncludesEndPoint);
     }
 }

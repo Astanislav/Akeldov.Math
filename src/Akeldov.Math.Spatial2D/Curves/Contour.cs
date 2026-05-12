@@ -80,14 +80,14 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private static bool CrossesPositiveXRay(VectorXY point, Segment segment)
         {
-            VectorXY a = segment.A;
-            VectorXY b = segment.B;
+            VectorXY startPoint = segment.StartPoint;
+            VectorXY endPoint = segment.EndPoint;
 
-            bool straddlesRay = (a.Y > point.Y) != (b.Y > point.Y);
+            bool straddlesRay = (startPoint.Y > point.Y) != (endPoint.Y > point.Y);
             if (!straddlesRay)
                 return false;
 
-            float x = a.X + (point.Y - a.Y) * (b.X - a.X) / (b.Y - a.Y);
+            float x = startPoint.X + (point.Y - startPoint.Y) * (endPoint.X - startPoint.X) / (endPoint.Y - startPoint.Y);
             return x > point.X + GeometryConstants.GeometryEpsilon;
         }
 

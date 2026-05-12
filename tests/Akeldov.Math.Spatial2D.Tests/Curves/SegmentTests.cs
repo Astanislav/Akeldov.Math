@@ -45,7 +45,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenEndpointIsExcluded_DoesNotReturnThatEndpoint()
     {
-        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: false, includesB: true);
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: false, includesEndPoint: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -56,7 +56,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenEndpointIsIncluded_ReturnsThatEndpoint()
     {
-        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: true, includesB: true);
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: true, includesEndPoint: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -92,7 +92,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenCollinearSegmentStartsAtExcludedRayOrigin_ReturnsEmpty()
     {
-        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesA: false, includesB: true);
+        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesStartPoint: false, includesEndPoint: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -138,7 +138,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenDegenerateSegmentPointIsExcluded_ReturnsEmpty()
     {
-        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesA: false, includesB: false);
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesStartPoint: false, includesEndPoint: false);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -173,8 +173,8 @@ public class SegmentTests
     [Test]
     public void Equals_WhenEndpointInclusionDiffers_ReturnsFalse()
     {
-        var closed = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: true, includesB: true);
-        var openAtA = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: false, includesB: true);
+        var closed = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: true, includesEndPoint: true);
+        var openAtA = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: false, includesEndPoint: true);
 
         Assert.That(closed, Is.Not.EqualTo(openAtA));
         Assert.That(closed.GetHashCode(), Is.Not.EqualTo(openAtA.GetHashCode()));

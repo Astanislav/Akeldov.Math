@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <remarks>
         /// <para>For lines this is signed distance from <see cref="Line.Origin"/> along <see cref="Line.Direction"/>.</para>
         /// <para>For rays this is distance from <see cref="Ray.Origin"/> along <see cref="Ray.Direction"/>.</para>
-        /// <para>For segments this is distance from <see cref="Segment.A"/> along the segment.</para>
+        /// <para>For segments this is distance from <see cref="Segment.StartPoint"/> along the segment.</para>
         /// <para>For arcs this is arc length from the start point along the arc.</para>
         /// </remarks>
         public float CurveCoordinate { get; }

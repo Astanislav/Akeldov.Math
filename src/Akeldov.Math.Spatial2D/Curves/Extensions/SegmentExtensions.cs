@@ -21,17 +21,17 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
                 throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
 
-            float length = segment.A.Distance(segment.B);
+            float length = segment.StartPoint.Distance(segment.EndPoint);
 
             if (2 * amount >= length)
                 throw new InvalidOperationException("The segment is too short to shorten by the requested amount.");
 
-            VectorXY direction = (segment.B - segment.A).Normalize();
+            VectorXY direction = (segment.EndPoint - segment.StartPoint).Normalize();
 
-            var a = segment.A + direction * amount;
-            var b = segment.B - direction * amount;
+            var startPoint = segment.StartPoint + direction * amount;
+            var endPoint = segment.EndPoint - direction * amount;
 
-            return new Segment(a, b);
+            return new Segment(startPoint, endPoint);
         }
 
         /// <summary>
@@ -47,15 +47,15 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
                 throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
 
-            VectorXY direction = (segment.B - segment.A).Normalize();
+            VectorXY direction = (segment.EndPoint - segment.StartPoint).Normalize();
 
             if (direction == VectorXY.Zero)
                 throw new InvalidOperationException("Cannot extend a segment with equal endpoints.");
 
-            var a = segment.A - direction * amount;
-            var b = segment.B + direction * amount;
+            var startPoint = segment.StartPoint - direction * amount;
+            var endPoint = segment.EndPoint + direction * amount;
 
-            return new Segment(a, b);
+            return new Segment(startPoint, endPoint);
         }
     }
 }

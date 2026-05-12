@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// from <see cref="Min"/> to <see cref="Max"/>. The configured sampler may compute
     /// an extrapolated value, but this field preserves the <see cref="IFloatField"/> range contract.
     /// </remarks>
-    public class PointInfluenceFloatField : PointInfluenceField<FloatPointInfluenceSource, float>, IFloatField
+    public class FloatPointInfluenceField : PointInfluenceField<FloatPointInfluenceSource, float>, IFloatField
     {
         private readonly float _min;
         private readonly float _max;
@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence points.</param>
         /// <param name="influenceSources">The influence points used by the field.</param>
-        public PointInfluenceFloatField(
+        public FloatPointInfluenceField(
             IInfluenceSampler<FloatPointInfluenceSource, float> sampler,
             IReadOnlyList<FloatPointInfluenceSource> influenceSources)
             : base(sampler, influenceSources)
@@ -36,7 +36,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sampler">The strategy used to combine influence points.</param>
         /// <param name="influenceSources">The influence points used by the field.</param>
         /// <param name="influenceSourceCuller">The culler used to select a subset of points for each sampled point.</param>
-        public PointInfluenceFloatField(
+        public FloatPointInfluenceField(
             IInfluenceSampler<FloatPointInfluenceSource, float> sampler,
             IReadOnlyList<FloatPointInfluenceSource> influenceSources,
             IInfluenceSourceCuller<FloatPointInfluenceSource> influenceSourceCuller)

@@ -8,11 +8,11 @@ public class InfluenceSnapshotTests
     private static readonly VectorXY CullerFieldSize = new VectorXY(100f, 70f);
 
     [Test]
-    public void PointInfluenceFloatField_WithNearestSampler_MatchesApprovedImage()
+    public void FloatPointInfluenceField_WithNearestSampler_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateFieldSources();
         var sampler = new NearestFloatInfluenceSampler<FloatPointInfluenceSource>();
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             sampler,
             sources);
 
@@ -22,11 +22,11 @@ public class InfluenceSnapshotTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WithInverseDistanceWeightedSampler_MatchesApprovedImage()
+    public void FloatPointInfluenceField_WithInverseDistanceWeightedSampler_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateFieldSources();
         var sampler = new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>();
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             sampler,
             sources);
 
@@ -36,11 +36,11 @@ public class InfluenceSnapshotTests
     }
 
     [Test]
-    public void PointInfluenceFloatField_WithBarycentricSampler_MatchesApprovedImage()
+    public void FloatPointInfluenceField_WithBarycentricSampler_MatchesApprovedImage()
     {
         FloatPointInfluenceSource[] sources = CreateBarycentricFieldSources();
         var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
-        var field = new PointInfluenceFloatField(
+        var field = new FloatPointInfluenceField(
             sampler,
             sources);
 

@@ -22,7 +22,7 @@ Nearest sampling returns the value of the closest source.
 
 ```csharp
 var sampler = new NearestFloatInfluenceSampler<FloatPointInfluenceSource>();
-var field = new PointInfluenceFloatField(sampler, sources);
+var field = new FloatPointInfluenceField(sampler, sources);
 
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
@@ -35,7 +35,7 @@ Inverse-distance weighted sampling blends all selected sources, weighted by dist
 
 ```csharp
 var sampler = new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>();
-var field = new PointInfluenceFloatField(sampler, sources);
+var field = new FloatPointInfluenceField(sampler, sources);
 
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
@@ -48,7 +48,7 @@ Barycentric sampling interpolates over nearby source triangles.
 
 ```csharp
 var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
-var field = new PointInfluenceFloatField(sampler, sources);
+var field = new FloatPointInfluenceField(sampler, sources);
 
 float value = field.Sample(new VectorXY(40f, 30f));
 ```
