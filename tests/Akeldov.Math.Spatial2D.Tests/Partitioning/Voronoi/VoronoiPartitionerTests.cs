@@ -28,19 +28,19 @@ public class VoronoiPartitionerTests
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void SiteConstructor_WhenPowerIsNegativeOrNaN_Throws(float power)
+    public void SiteConstructor_WhenWeightIsNegativeOrNaN_Throws(float weight)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Site(VectorXY.Zero, power));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Site(VectorXY.Zero, weight));
     }
 
     [Test]
-    public void SiteConstructor_WhenPowerIsZero_DoesNotThrow()
+    public void SiteConstructor_WhenWeightIsZero_DoesNotThrow()
     {
         Assert.DoesNotThrow(() => new Site(VectorXY.Zero, 0f));
     }
 
     [Test]
-    public void Constructor_WhenAllSitePowersAreZero_Throws()
+    public void Constructor_WhenAllSiteWeightsAreZero_Throws()
     {
         var sites = new[]
         {
@@ -55,7 +55,7 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void SiteConstructor_WhenPowerIsPositiveInfinity_DoesNotThrow()
+    public void SiteConstructor_WhenWeightIsPositiveInfinity_DoesNotThrow()
     {
         Assert.DoesNotThrow(() => new Site(VectorXY.Zero, float.PositiveInfinity));
     }
@@ -132,7 +132,7 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void Partition_WhenSiteHasLargerPower_AssignsFartherItemToIt()
+    public void Partition_WhenSiteHasLargerWeight_AssignsFartherItemToIt()
     {
         var sites = new[]
         {
@@ -152,7 +152,7 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void Partition_WhenSitePowerIsZero_AssignsOnlyExactSitePointToIt()
+    public void Partition_WhenSiteWeightIsZero_AssignsOnlyExactSitePointToIt()
     {
         var sites = new[]
         {
@@ -173,7 +173,7 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void Partition_WhenSitePowerIsPositiveInfinity_AssignsFinitePointsToIt()
+    public void Partition_WhenSiteWeightIsPositiveInfinity_AssignsFinitePointsToIt()
     {
         var sites = new[]
         {

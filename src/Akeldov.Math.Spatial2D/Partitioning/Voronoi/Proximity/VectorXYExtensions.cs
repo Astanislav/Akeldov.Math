@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// </summary>
         /// <param name="sites">The weighted Voronoi sites to search.</param>
         /// <param name="point">The point to assign to a site.</param>
-        /// <returns>The nearest site index, using site power as a distance weight.</returns>
+        /// <returns>The nearest site index, using site weight for weighted-distance comparison.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static int GetNearestWeightedSiteIndex(this Site[] sites, VectorXY point)
         {
@@ -37,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     py,
                     s0.Position.X,
                     s0.Position.Y,
-                    s0.Power))
+                    s0.Weight))
                     return i + 0;
 
                 if (TryUpdate(
@@ -50,7 +50,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     py,
                     s1.Position.X,
                     s1.Position.Y,
-                    s1.Power))
+                    s1.Weight))
                     return i + 1;
 
                 if (TryUpdate(
@@ -63,7 +63,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     py,
                     s2.Position.X,
                     s2.Position.Y,
-                    s2.Power))
+                    s2.Weight))
                     return i + 2;
 
                 if (TryUpdate(
@@ -76,7 +76,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     py,
                     s3.Position.X,
                     s3.Position.Y,
-                    s3.Power))
+                    s3.Weight))
                     return i + 3;
             }
             for (; i < n; i++)
@@ -92,7 +92,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     py,
                     s.Position.X,
                     s.Position.Y,
-                    s.Power))
+                    s.Weight))
                     return i;
             }
 
@@ -110,7 +110,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             float py,
             float x,
             float y,
-            float power)
+            float weight)
         {
             float dx = x - px; float dy = y - py;
             float d2 = dx * dx + dy * dy;
@@ -118,7 +118,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             if (d2 <= GeometryConstants.GeometryEpsilonSquared)
                 return true;
 
-            if (float.IsPositiveInfinity(power))
+            if (float.IsPositiveInfinity(weight))
             {
                 if (d2 < bestInfiniteDistance)
                 {
@@ -129,10 +129,10 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 return false;
             }
 
-            if (power == 0f)
+            if (weight == 0f)
                 return false;
 
-            float weightedD2 = d2 / (power * power);
+            float weightedD2 = d2 / (weight * weight);
             if (weightedD2 < bestWeightedDistance)
             {
                 bestWeightedDistance = weightedD2;

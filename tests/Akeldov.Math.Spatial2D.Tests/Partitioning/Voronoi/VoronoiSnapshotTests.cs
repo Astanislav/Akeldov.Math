@@ -7,7 +7,7 @@ public class VoronoiSnapshotTests
     private static readonly VectorXY FieldSize = new VectorXY(120f, 60f);
 
     [Test]
-    public void Partition_WithEqualPowerSites_MatchesApprovedImage()
+    public void Partition_WithEqualWeightSites_MatchesApprovedImage()
     {
         var sites = new[]
         {
@@ -21,11 +21,11 @@ public class VoronoiSnapshotTests
 
         Assert.That(cells[0].Items, Has.Count.EqualTo(144));
         Assert.That(cells[1].Items, Has.Count.EqualTo(144));
-        AssertMatchesApprovedSvg("equal-power.svg", cells, FieldSize);
+        AssertMatchesApprovedSvg("equal-site-weights.svg", cells, FieldSize);
     }
 
     [Test]
-    public void Partition_WithWeightedPowerSites_MatchesApprovedImage()
+    public void Partition_WithWeightedSites_MatchesApprovedImage()
     {
         var sites = new[]
         {
@@ -39,7 +39,7 @@ public class VoronoiSnapshotTests
 
         Assert.That(cells[0].Items, Has.Count.EqualTo(110));
         Assert.That(cells[1].Items, Has.Count.EqualTo(178));
-        AssertMatchesApprovedSvg("weighted-power.svg", cells, FieldSize);
+        AssertMatchesApprovedSvg("weighted-sites.svg", cells, FieldSize);
     }
 
     private static TestItem[] CreateGridTexels(VectorXY fieldSize, float step)

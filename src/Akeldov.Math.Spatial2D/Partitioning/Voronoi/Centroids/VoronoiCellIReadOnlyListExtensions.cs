@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 var items = cell.Items;
                 if (items.Count == 0) { newSites[i] = site; continue; }
                 var centroid = items.GetCentroid();
-                newSites[i] = new Site(centroid, site.Power);
+                newSites[i] = new Site(centroid, site.Weight);
             }
 
             return newSites;

@@ -13,17 +13,17 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// Initializes a new weighted Voronoi site.
         /// </summary>
         /// <param name="position">The site position.</param>
-        /// <param name="power">The non-negative site power.</param>
+        /// <param name="weight">The non-negative site weight.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when <paramref name="power"/> is negative or NaN.
+        /// Thrown when <paramref name="weight"/> is negative or NaN.
         /// </exception>
-        public Site(VectorXY position, float power)
+        public Site(VectorXY position, float weight)
         {
-            if (power < 0f || float.IsNaN(power))
-                throw new ArgumentOutOfRangeException(nameof(power), "Site power must be non-negative and not NaN.");
+            if (weight < 0f || float.IsNaN(weight))
+                throw new ArgumentOutOfRangeException(nameof(weight), "Site weight must be non-negative and not NaN.");
 
             Position = position;
-            Power = power;
+            Weight = weight;
         }
 
         /// <summary>
@@ -32,25 +32,25 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         public VectorXY Position { get; }
 
         /// <summary>
-        /// Gets the site power.
+        /// Gets the site weight used by weighted-distance comparison.
         /// </summary>
-        public float Power { get; }
+        public float Weight { get; }
 
         /// <summary>
-        /// Indicates whether this site has the same point and power as another site.
+        /// Indicates whether this site has the same point and weight as another site.
         /// </summary>
         /// <param name="other">The site to compare with this site.</param>
         /// <returns><see langword="true"/> if both sites are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(Site other) => Position.Equals(other.Position) && Power.Equals(other.Power);
+        public bool Equals(Site other) => Position.Equals(other.Position) && Weight.Equals(other.Weight);
 
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Site other && Equals(other);
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Position, Power);
+        public override int GetHashCode() => HashCode.Combine(Position, Weight);
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Position}, {Power})";
+        public override string ToString() => $"({Position}, {Weight})";
 
         /// <summary>
         /// Indicates whether two sites are equal.

@@ -20,9 +20,9 @@ public sealed class MapCell : IHasPosition2D
 }
 ```
 
-## Equal Site Power
+## Equal Site Weights
 
-Use equal powers when each site should compete by distance alone.
+Use equal weights when each site should compete by distance alone.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
@@ -30,8 +30,8 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 var sites = new[]
 {
-    new Site(new VectorXY(25f, 30f), power: 1f),
-    new Site(new VectorXY(95f, 30f), power: 1f)
+    new Site(new VectorXY(25f, 30f), weight: 1f),
+    new Site(new VectorXY(95f, 30f), weight: 1f)
 };
 
 var partitioner = new VoronoiPartitioner<MapCell>(
@@ -41,11 +41,11 @@ var partitioner = new VoronoiPartitioner<MapCell>(
 IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
 
-![Voronoi partition with equal site power](../../assets/spatial2d/voronoi/equal-power.svg)
+![Voronoi partition with equal site weights](../../assets/spatial2d/voronoi/equal-site-weights.svg)
 
-## Weighted Site Power
+## Weighted Sites
 
-Increase a site's `Power` to let it claim a larger region.
+Increase a site's `Weight` to let it claim a larger region.
 
 ```csharp
 using Akeldov.Math.Spatial2D;
@@ -53,8 +53,8 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 var sites = new[]
 {
-    new Site(new VectorXY(25f, 30f), power: 1f),
-    new Site(new VectorXY(95f, 30f), power: 2f)
+    new Site(new VectorXY(25f, 30f), weight: 1f),
+    new Site(new VectorXY(95f, 30f), weight: 2f)
 };
 
 var partitioner = new VoronoiPartitioner<MapCell>(
@@ -64,13 +64,13 @@ var partitioner = new VoronoiPartitioner<MapCell>(
 IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
 ```
 
-![Voronoi partition with weighted site power](../../assets/spatial2d/voronoi/weighted-power.svg)
+![Voronoi partition with weighted sites](../../assets/spatial2d/voronoi/weighted-sites.svg)
 
-## Power Edge Cases
+## Weight Edge Cases
 
-At least one site must have positive power. A zero-power site only receives items that are located at that site position.
+At least one site must have positive weight. A zero-weight site only receives items that are located at that site position.
 
-If an item is located at a site position, that site is selected before any weighted-distance comparison. If no site contains the item and one or more sites have `float.PositiveInfinity` power, the nearest infinite-power site is selected. Otherwise, sites compete by squared distance divided by squared power.
+If an item is located at a site position, that site is selected before any weighted-distance comparison. If no site contains the item and one or more sites have `float.PositiveInfinity` weight, the nearest infinite-weight site is selected. Otherwise, sites compete by squared distance divided by squared weight.
 
 ## Empty Cell Policy
 

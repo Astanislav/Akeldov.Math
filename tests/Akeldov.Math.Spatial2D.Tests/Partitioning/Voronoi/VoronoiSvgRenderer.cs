@@ -45,7 +45,7 @@ internal static class VoronoiSvgRenderer
         for (int i = 0; i < cells.Count; i++)
         {
             Site site = cells[i].Site;
-            builder.AppendLine($"    <circle cx=\"{Format(site.Position.X)}\" cy=\"{Format(site.Position.Y)}\" r=\"{Format(site.Power * 2f)}\"/>");
+            builder.AppendLine($"    <circle cx=\"{Format(site.Position.X)}\" cy=\"{Format(site.Position.Y)}\" r=\"{Format(site.Weight * 2f)}\"/>");
         }
 
         builder.AppendLine("  </g>");
