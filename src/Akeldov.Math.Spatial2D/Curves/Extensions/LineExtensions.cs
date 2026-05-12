@@ -1,5 +1,4 @@
 using Akeldov.Math.Spatial2D;
-using System;
 
 namespace Akeldov.Math.Spatial2D.Curves
 {
@@ -14,26 +13,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="line">The source line.</param>
         /// <param name="point">The point the perpendicular line must pass through.</param>
         /// <returns>A line perpendicular to <paramref name="line"/> at <paramref name="point"/>.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when a perpendicular line cannot be built.</exception>
         public static Line PerpendicularAt(this Line line, VectorXY point)
         {
-            var dir = line.B - line.A;
-            float dirLen = dir.Length;
-            if (dirLen <= GeometryConstants.GeometryEpsilon)
-                throw new InvalidOperationException("Cannot build a perpendicular line for a line with equal endpoints.");
-
-            var perp = new VectorXY(-dir.Y, dir.X);
-
-            float perpLen = perp.Length;
-            perp = perp * (1.0f / perpLen);
-
-            float halfLen = dirLen * 0.5f;
-            perp = perp * halfLen;
-
-            var a = point - perp;
-            var b = point + perp;
-
-            return new Line(a, b);
+            return new Line(point, point + line.Normal);
         }
 
         /// <summary>
@@ -60,9 +42,8 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private static float Side(Line line, VectorXY p)
         {
-            var ab = line.B - line.A;
-            var ap = p - line.A;
-            return ab.X * ap.Y - ab.Y * ap.X;
+            var originToPoint = p - line.Origin;
+            return VectorXY.Cross(line.Direction, originToPoint);
         }
     }
 }

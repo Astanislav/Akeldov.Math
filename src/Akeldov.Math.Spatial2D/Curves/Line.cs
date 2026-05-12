@@ -107,16 +107,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Gets a representative point on the line.
-        /// </summary>
-        public VectorXY A => _origin;
-
-        /// <summary>
-        /// Gets a second representative point on the line.
-        /// </summary>
-        public VectorXY B => _origin + _direction;
-
-        /// <summary>
         /// Gets the normalized X coefficient of the implicit equation <c>ax + by + c = 0</c>.
         /// </summary>
         public float EquationA => _equationA;
@@ -246,7 +236,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({A} - {B})";
+        public override string ToString() => $"({Origin} + t*{Direction})";
 
         /// <summary>
         /// Indicates whether two lines are equal.
