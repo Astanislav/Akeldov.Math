@@ -1,37 +1,20 @@
 # Akeldov.Math.Spatial2D
 
-Akeldov.Math.Spatial2D is a small .NET library for two-dimensional geometry and spatial math.
+Akeldov.Math.Spatial2D is a .NET library for practical two-dimensional geometry, spatial sampling, partitioning, and value fields.
 
-It includes:
+## Features
 
-- float and integer 2D vectors
-- lines, rays, segments, circles, and arcs
-- curve projection and intersection helpers
-- Voronoi partitioning
-- Poisson disk point sampling
-- influence fields and influence samplers
+The library provides:
 
-## Installation
+- Float and integer vector types: `VectorXY` and `VectorXYInt`.
+- Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
+- Projection, distance, intersection, angle, contour, and centroid helpers.
+- Poisson disk point sampling with constant or spatially varying minimal distance.
+- Weighted Voronoi partitioning for positioned items.
+- Influence fields for sampling values from point or curve sources.
+- Source culling and interpolation strategies for local field behavior.
 
-```powershell
-dotnet add package Akeldov.Math.Spatial2D
-```
-
-## Vectors
-
-```csharp
-using Akeldov.Math.Spatial2D;
-
-var a = new VectorXY(3f, 4f);
-var b = new VectorXY(1f, 2f);
-
-VectorXY sum = a + b;
-float length = a.Length;
-float dot = VectorXY.Dot(a, b);
-float distance = a.Distance(b);
-```
-
-## Curves
+## Quick Example
 
 ```csharp
 using Akeldov.Math.Spatial2D;
@@ -47,28 +30,8 @@ VectorXY closestPoint = projection.Point;
 float distance = projection.Distance;
 ```
 
-## Poisson Disk Sampling
+## Documentation
 
-```csharp
-using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
+Documentation is available at:
 
-var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
-var samples = sampler.Sample(new VectorXY(100f, 100f), minimalDistance: 8f);
-
-foreach (var sample in samples)
-{
-    VectorXY point = sample.Point;
-}
-```
-
-## Target Frameworks
-
-The package targets:
-
-- .NET Standard 2.1
-- .NET 6.0
-
-## License
-
-MIT
+[https://akeldov.github.io/Akeldov.Math/Spatial2D/](https://akeldov.github.io/Akeldov.Math/Spatial2D/)
