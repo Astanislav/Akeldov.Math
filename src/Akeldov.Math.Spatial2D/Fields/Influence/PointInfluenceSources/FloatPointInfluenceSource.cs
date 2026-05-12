@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
 
             Power = power;
-            Center = center;
+            Position = center;
             Value = value;
         }
 
@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Gets the source position.
         /// </summary>
-        public VectorXY Center { get; }
+        public VectorXY Position { get; }
 
         /// <summary>
         /// Gets the value contributed by this source.
@@ -48,7 +48,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>The Euclidean distance from the source center to the point.</returns>
         public float Distance(VectorXY point)
         {
-            return Center.Distance(point);
+            return Position.Distance(point);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>The value, source point, distance, and power used by influence samplers.</returns>
         public InfluenceSample<float> GetInfluence(VectorXY point)
         {
-            return new InfluenceSample<float>(Value, Center, Distance(point), Power);
+            return new InfluenceSample<float>(Value, Position, Distance(point), Power);
         }
     }
 }

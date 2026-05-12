@@ -6,8 +6,8 @@ namespace Akeldov.Math.Spatial2D
     public interface IHasPosition2D
     {
         /// <summary>
-        /// Gets the object's center position.
+        /// Gets the object's position.
         /// </summary>
-        VectorXY Center { get; }
+        VectorXY Position { get; }
     }
 }

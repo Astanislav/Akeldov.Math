@@ -29,8 +29,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     i + 0,
                     px,
                     py,
-                    s0.Point.X,
-                    s0.Point.Y,
+                    s0.Position.X,
+                    s0.Position.Y,
                     s0.Power))
                     return i + 0;
 
@@ -42,8 +42,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     i + 1,
                     px,
                     py,
-                    s1.Point.X,
-                    s1.Point.Y,
+                    s1.Position.X,
+                    s1.Position.Y,
                     s1.Power))
                     return i + 1;
 
@@ -55,8 +55,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     i + 2,
                     px,
                     py,
-                    s2.Point.X,
-                    s2.Point.Y,
+                    s2.Position.X,
+                    s2.Position.Y,
                     s2.Power))
                     return i + 2;
 
@@ -68,8 +68,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     i + 3,
                     px,
                     py,
-                    s3.Point.X,
-                    s3.Point.Y,
+                    s3.Position.X,
+                    s3.Position.Y,
                     s3.Power))
                     return i + 3;
             }
@@ -84,8 +84,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                     i,
                     px,
                     py,
-                    s.Point.X,
-                    s.Point.Y,
+                    s.Position.X,
+                    s.Position.Y,
                     s.Power))
                     return i;
             }

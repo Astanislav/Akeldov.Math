@@ -33,7 +33,7 @@ internal static class VoronoiSvgRenderer
             var items = cells[i].Items;
             for (int j = 0; j < items.Count; j++)
             {
-                VectorXY point = items[j].Center;
+                VectorXY point = items[j].Position;
                 builder.AppendLine($"    <circle cx=\"{Format(point.X)}\" cy=\"{Format(point.Y)}\" r=\"1.45\"/>");
             }
 
@@ -45,7 +45,7 @@ internal static class VoronoiSvgRenderer
         for (int i = 0; i < cells.Count; i++)
         {
             Site site = cells[i].Site;
-            builder.AppendLine($"    <circle cx=\"{Format(site.Point.X)}\" cy=\"{Format(site.Point.Y)}\" r=\"{Format(site.Power * 2f)}\"/>");
+            builder.AppendLine($"    <circle cx=\"{Format(site.Position.X)}\" cy=\"{Format(site.Position.Y)}\" r=\"{Format(site.Power * 2f)}\"/>");
         }
 
         builder.AppendLine("  </g>");
@@ -53,7 +53,7 @@ internal static class VoronoiSvgRenderer
 
         for (int i = 0; i < cells.Count; i++)
         {
-            VectorXY point = cells[i].Site.Point;
+            VectorXY point = cells[i].Site.Position;
             builder.AppendLine($"    <circle cx=\"{Format(point.X)}\" cy=\"{Format(point.Y)}\" r=\"2.4\"/>");
         }
 

@@ -118,8 +118,8 @@ internal static class InfluencePngRenderer
 
         for (int i = 0; i < sources.Count; i++)
         {
-            int x = ToPixelX(sources[i].Center, width, fieldSize);
-            int y = ToPixelY(sources[i].Center, height, fieldSize);
+            int x = ToPixelX(sources[i].Position, width, fieldSize);
+            int y = ToPixelY(sources[i].Position, height, fieldSize);
 
             DrawCircle(pixels, width, height, x, y, 7, stroke);
             DrawCircle(pixels, width, height, x, y, 5, SourceColor(i));
@@ -138,8 +138,8 @@ internal static class InfluencePngRenderer
 
         for (int i = 0; i < hullIndices.Count; i++)
         {
-            VectorXY start = sources[hullIndices[i]].Center;
-            VectorXY end = sources[hullIndices[(i + 1) % hullIndices.Count]].Center;
+            VectorXY start = sources[hullIndices[i]].Position;
+            VectorXY end = sources[hullIndices[(i + 1) % hullIndices.Count]].Position;
 
             DrawLine(
                 pixels,
@@ -223,9 +223,9 @@ internal static class InfluencePngRenderer
     {
         return new[]
         {
-            new FloatPointInfluenceSource(sources[0].Power, sources[0].Center, activeIndex == 0 ? 1f : 0f),
-            new FloatPointInfluenceSource(sources[1].Power, sources[1].Center, activeIndex == 1 ? 1f : 0f),
-            new FloatPointInfluenceSource(sources[2].Power, sources[2].Center, activeIndex == 2 ? 1f : 0f)
+            new FloatPointInfluenceSource(sources[0].Power, sources[0].Position, activeIndex == 0 ? 1f : 0f),
+            new FloatPointInfluenceSource(sources[1].Power, sources[1].Position, activeIndex == 1 ? 1f : 0f),
+            new FloatPointInfluenceSource(sources[2].Power, sources[2].Position, activeIndex == 2 ? 1f : 0f)
         };
     }
 
@@ -306,8 +306,8 @@ internal static class InfluencePngRenderer
         int start = 0;
         for (int i = 1; i < sources.Count; i++)
         {
-            VectorXY candidate = sources[i].Center;
-            VectorXY current = sources[start].Center;
+            VectorXY candidate = sources[i].Position;
+            VectorXY current = sources[start].Position;
             if (candidate.X < current.X || (candidate.X == current.X && candidate.Y < current.Y))
                 start = i;
         }
@@ -325,9 +325,9 @@ internal static class InfluencePngRenderer
                 if (i == currentIndex)
                     continue;
 
-                VectorXY current = sources[currentIndex].Center;
-                VectorXY next = sources[nextIndex].Center;
-                VectorXY candidate = sources[i].Center;
+                VectorXY current = sources[currentIndex].Position;
+                VectorXY next = sources[nextIndex].Position;
+                VectorXY candidate = sources[i].Position;
                 float cross = Cross(next - current, candidate - current);
 
                 if (cross < -GeometryConstants.GeometryEpsilon ||
@@ -354,8 +354,8 @@ internal static class InfluencePngRenderer
 
         for (int i = 0; i < hullIndices.Count; i++)
         {
-            VectorXY a = sources[hullIndices[i]].Center;
-            VectorXY b = sources[hullIndices[j]].Center;
+            VectorXY a = sources[hullIndices[i]].Position;
+            VectorXY b = sources[hullIndices[j]].Position;
 
             if (PointOnSegment(point, a, b))
                 return true;

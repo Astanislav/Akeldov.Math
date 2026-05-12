@@ -122,11 +122,11 @@ public class PositionedCollectionExtensionsTests
         public PositionedItem(string name, VectorXY center)
         {
             Name = name;
-            Center = center;
+            Position = center;
         }
 
         public string Name { get; }
 
-        public VectorXY Center { get; }
+        public VectorXY Position { get; }
     }
 }

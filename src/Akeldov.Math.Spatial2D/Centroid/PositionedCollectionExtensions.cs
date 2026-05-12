@@ -28,7 +28,7 @@ namespace Akeldov.Math.Spatial2D
             var sum = VectorXY.Zero;
             for (int k = 0; k < items.Count; k++)
             {
-                sum = sum + items[k].Center;
+                sum = sum + items[k].Position;
             }
             var res = sum / items.Count;
             return res;
@@ -54,7 +54,7 @@ namespace Akeldov.Math.Spatial2D
             var sum = VectorXY.Zero;
             for (int k = 0; k < items.Length; k++)
             {
-                sum = sum + items[k].Center;
+                sum = sum + items[k].Position;
             }
             var res = sum / items.Length;
             return res;
@@ -74,11 +74,11 @@ namespace Akeldov.Math.Spatial2D
             var barycenter = items.GetBarycenter();
 
             var closestItem = items[0];
-            var minDist = closestItem.Center.Distance(barycenter);
+            var minDist = closestItem.Position.Distance(barycenter);
             for (int k = 1; k < items.Count; k++)
             {
                 var item = items[k];
-                var distance = item.Center.Distance(barycenter);
+                var distance = item.Position.Distance(barycenter);
 
                 if (distance < minDist)
                 {
@@ -103,11 +103,11 @@ namespace Akeldov.Math.Spatial2D
             var barycenter = items.GetBarycenter();
 
             var closestItem = items[0];
-            var minDist = closestItem.Center.Distance(barycenter);
+            var minDist = closestItem.Position.Distance(barycenter);
             for (int k = 1; k < items.Length; k++)
             {
                 var item = items[k];
-                var distance = item.Center.Distance(barycenter);
+                var distance = item.Position.Distance(barycenter);
 
                 if (distance < minDist)
                 {
@@ -137,11 +137,11 @@ namespace Akeldov.Math.Spatial2D
                 throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
 
             var closestItem = items[0];
-            var minDist = closestItem.Center.Distance(point);
+            var minDist = closestItem.Position.Distance(point);
             for (int k = 1; k < items.Length; k++)
             {
                 var item = items[k];
-                var distance = item.Center.Distance(point);
+                var distance = item.Position.Distance(point);
 
                 if (distance < minDist)
                 {
@@ -171,11 +171,11 @@ namespace Akeldov.Math.Spatial2D
                 throw new ArgumentException("Positioned items collection must not be empty.", nameof(items));
 
             var closestItem = items[0];
-            var minDist = closestItem.Center.Distance(point);
+            var minDist = closestItem.Position.Distance(point);
             for (int k = 1; k < items.Count; k++)
             {
                 var item = items[k];
-                var distance = item.Center.Distance(point);
+                var distance = item.Position.Distance(point);
 
                 if (distance < minDist)
                 {

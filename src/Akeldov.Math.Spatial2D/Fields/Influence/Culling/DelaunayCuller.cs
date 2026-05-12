@@ -47,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                     throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(sourcePoints));
 
                 _sources[i] = sourcePoint;
-                _points[i] = sourcePoint.Center;
+                _points[i] = sourcePoint.Position;
             }
 
             ThrowIfAnyDuplicatePoint(_points, nameof(sourcePoints));
@@ -106,13 +106,13 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             int bestA = 0;
             int bestB = 1;
-            float bestDistanceSquared = DistanceToSegmentSquared(sources[0].Center, sources[1].Center, point);
+            float bestDistanceSquared = DistanceToSegmentSquared(sources[0].Position, sources[1].Position, point);
 
             for (int i = 0; i < sources.Count; i++)
             {
                 for (int j = i + 1; j < sources.Count; j++)
                 {
-                    float distanceSquared = DistanceToSegmentSquared(sources[i].Center, sources[j].Center, point);
+                    float distanceSquared = DistanceToSegmentSquared(sources[i].Position, sources[j].Position, point);
                     if (distanceSquared < bestDistanceSquared)
                     {
                         bestA = i;

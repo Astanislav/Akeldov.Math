@@ -53,11 +53,11 @@ public class VoronoiPartitionerBenchmarks
 
     public sealed class PointItem : IHasPosition2D
     {
-        public PointItem(VectorXY center)
+        public PointItem(VectorXY position)
         {
-            Center = center;
+            Position = position;
         }
 
-        public VectorXY Center { get; }
+        public VectorXY Position { get; }
     }
 }

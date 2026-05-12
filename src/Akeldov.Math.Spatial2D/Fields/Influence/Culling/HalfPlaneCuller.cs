@@ -45,7 +45,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>The culled source list.</returns>
         public List<TPointSource> Cull(VectorXY point)
         {
-            var orderedSourcePoints = OrderBy(_sourcePoints, x => x.Center.Distance(point));
+            var orderedSourcePoints = OrderBy(_sourcePoints, x => x.Position.Distance(point));
             var culledSourcePoints = new List<TPointSource>();
             var lines = new List<Line>();
             for (int i = 0; i < orderedSourcePoints.Count; i++)
@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 for (int j = 0; j < lines.Count; j++)
                 {
                     var line = lines[j];
-                    if (!line.IsSameSide(point, sourcePoint.Center))
+                    if (!line.IsSameSide(point, sourcePoint.Position))
                     {
                         isExcluded = true;
                         break;
@@ -67,11 +67,11 @@ namespace Akeldov.Math.Spatial2D.Fields
                 {
                     culledSourcePoints.Add(sourcePoint);
 
-                    if (sourcePoint.Center.Distance(point) <= GeometryConstants.GeometryEpsilon)
+                    if (sourcePoint.Position.Distance(point) <= GeometryConstants.GeometryEpsilon)
                         continue;
 
-                    var line = new Line(point, sourcePoint.Center);
-                    var perpendicular = line.PerpendicularAt(sourcePoint.Center);
+                    var line = new Line(point, sourcePoint.Position);
+                    var perpendicular = line.PerpendicularAt(sourcePoint.Position);
                     lines.Add(perpendicular);
                 }
             }

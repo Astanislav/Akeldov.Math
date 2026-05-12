@@ -307,11 +307,11 @@ public class VoronoiPartitionerTests
         public TestItem(string id, VectorXY center)
         {
             Id = id;
-            Center = center;
+            Position = center;
         }
 
         public string Id { get; }
 
-        public VectorXY Center { get; }
+        public VectorXY Position { get; }
     }
 }

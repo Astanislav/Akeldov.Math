@@ -5,8 +5,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
     internal static partial class VoronoiCellIReadOnlyListExtensions
     {
-        public static IReadOnlyList<VoronoiCell<TTexel>> ThrowIfAnyEmptyCell<TTexel>(this IReadOnlyList<VoronoiCell<TTexel>> cells)
-            where TTexel : IHasPosition2D
+        public static IReadOnlyList<VoronoiCell<TItem>> ThrowIfAnyEmptyCell<TItem>(this IReadOnlyList<VoronoiCell<TItem>> cells)
+            where TItem : IHasPosition2D
         {
             for (int i = 0; i < cells.Count; i++)
             {

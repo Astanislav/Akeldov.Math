@@ -16,8 +16,8 @@ public class InfluenceSnapshotTests
             sampler,
             sources);
 
-        Assert.That(field.Sample(sources[0].Center), Is.EqualTo(0f));
-        Assert.That(field.Sample(sources[1].Center), Is.EqualTo(100f));
+        Assert.That(field.Sample(sources[0].Position), Is.EqualTo(0f));
+        Assert.That(field.Sample(sources[1].Position), Is.EqualTo(100f));
         AssertMatchesApprovedSamplerWeightsPng("nearest-sampler.png", sampler, sources, FieldSize);
     }
 
@@ -30,8 +30,8 @@ public class InfluenceSnapshotTests
             sampler,
             sources);
 
-        Assert.That(field.Sample(sources[0].Center), Is.EqualTo(0f));
-        Assert.That(field.Sample(sources[1].Center), Is.EqualTo(100f));
+        Assert.That(field.Sample(sources[0].Position), Is.EqualTo(0f));
+        Assert.That(field.Sample(sources[1].Position), Is.EqualTo(100f));
         AssertMatchesApprovedSamplerWeightsPng("inverse-distance-weighted-sampler.png", sampler, sources, FieldSize);
     }
 

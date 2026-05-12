@@ -88,9 +88,9 @@ public class VoronoiSnapshotTests
     {
         public TestItem(VectorXY center)
         {
-            Center = center;
+            Position = center;
         }
 
-        public VectorXY Center { get; }
+        public VectorXY Position { get; }
     }
 }
