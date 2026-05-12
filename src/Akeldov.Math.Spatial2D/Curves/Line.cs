@@ -300,7 +300,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                     return a;
                 case LineReferencePointMode.PointB:
                     return b;
-                case LineReferencePointMode.Middle:
+                case LineReferencePointMode.Midpoint:
                     return (a + b) * 0.5f;
                 default:
                     return VectorXY.Zero;

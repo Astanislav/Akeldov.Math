@@ -11,31 +11,31 @@ namespace Akeldov.Math.Spatial2D.Fields
     public class HalfPlaneCuller<TPointSource> : IInfluenceSourceCuller<TPointSource>
         where TPointSource : IPointInfluenceSource
     {
-        private readonly IReadOnlyList<TPointSource> _sourcePoints;
+        private readonly IReadOnlyList<TPointSource> _pointSources;
 
         /// <summary>
         /// Initializes a new half-plane influence source culler.
         /// </summary>
-        /// <param name="sourcePoints">The source points available for culling.</param>
-        public HalfPlaneCuller(IReadOnlyList<TPointSource> sourcePoints)
+        /// <param name="pointSources">The point influence sources available for culling.</param>
+        public HalfPlaneCuller(IReadOnlyList<TPointSource> pointSources)
         {
-            if (sourcePoints == null)
-                throw new ArgumentNullException(nameof(sourcePoints));
+            if (pointSources == null)
+                throw new ArgumentNullException(nameof(pointSources));
 
-            if (sourcePoints.Count == 0)
-                throw new ArgumentException("Influence source collection must not be empty.", nameof(sourcePoints));
+            if (pointSources.Count == 0)
+                throw new ArgumentException("Influence source collection must not be empty.", nameof(pointSources));
 
-            var copy = new TPointSource[sourcePoints.Count];
-            for (int i = 0; i < sourcePoints.Count; i++)
+            var copy = new TPointSource[pointSources.Count];
+            for (int i = 0; i < pointSources.Count; i++)
             {
-                var sourcePoint = sourcePoints[i];
-                if (sourcePoint is null)
-                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(sourcePoints));
+                var pointSource = pointSources[i];
+                if (pointSource is null)
+                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
-                copy[i] = sourcePoint;
+                copy[i] = pointSource;
             }
 
-            _sourcePoints = copy;
+            _pointSources = copy;
         }
 
         /// <summary>
@@ -45,18 +45,18 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>The culled source list.</returns>
         public List<TPointSource> Cull(VectorXY point)
         {
-            var orderedSourcePoints = OrderBy(_sourcePoints, x => x.Position.Distance(point));
-            var culledSourcePoints = new List<TPointSource>();
+            var orderedPointSources = OrderBy(_pointSources, x => x.Position.Distance(point));
+            var culledPointSources = new List<TPointSource>();
             var lines = new List<Line>();
-            for (int i = 0; i < orderedSourcePoints.Count; i++)
+            for (int i = 0; i < orderedPointSources.Count; i++)
             {
-                var sourcePoint = orderedSourcePoints[i];
+                var pointSource = orderedPointSources[i];
                 bool isExcluded = false;
 
                 for (int j = 0; j < lines.Count; j++)
                 {
                     var line = lines[j];
-                    if (!line.IsSameSide(point, sourcePoint.Position))
+                    if (!line.IsSameSide(point, pointSource.Position))
                     {
                         isExcluded = true;
                         break;
@@ -65,18 +65,18 @@ namespace Akeldov.Math.Spatial2D.Fields
 
                 if (!isExcluded)
                 {
-                    culledSourcePoints.Add(sourcePoint);
+                    culledPointSources.Add(pointSource);
 
-                    if (sourcePoint.Position.Distance(point) <= GeometryConstants.GeometryEpsilon)
+                    if (pointSource.Position.Distance(point) <= GeometryConstants.GeometryEpsilon)
                         continue;
 
-                    var line = new Line(point, sourcePoint.Position);
-                    var perpendicular = line.PerpendicularAt(sourcePoint.Position);
+                    var line = new Line(point, pointSource.Position);
+                    var perpendicular = line.PerpendicularAt(pointSource.Position);
                     lines.Add(perpendicular);
                 }
             }
 
-            return culledSourcePoints;
+            return culledPointSources;
         }
 
         private List<TEntity> OrderBy<TEntity, TProperty>(

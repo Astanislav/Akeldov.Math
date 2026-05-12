@@ -73,12 +73,12 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
-    public void Constructor_WhenHalfPlaneCullerSourcePointsAreEmpty_Throws()
+    public void Constructor_WhenHalfPlaneCullerPointSourcesAreEmpty_Throws()
     {
         var exception = Assert.Throws<ArgumentException>(
             () => new HalfPlaneCuller<FloatPointInfluenceSource>(Array.Empty<FloatPointInfluenceSource>()));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
     }
 
     private sealed class SourceCountSampler : IInfluenceSampler<FloatPointInfluenceSource, float>

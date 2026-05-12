@@ -23,6 +23,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Uses the midpoint of the two points passed to the line constructor.
         /// </summary>
-        Middle
+        Midpoint
     }
 }

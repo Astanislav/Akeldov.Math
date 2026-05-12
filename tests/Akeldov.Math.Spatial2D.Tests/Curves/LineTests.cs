@@ -87,9 +87,9 @@ public class LineTests
     }
 
     [Test]
-    public void Constructor_WhenReferencePointModeIsMiddle_UsesMidpoint()
+    public void Constructor_WhenReferencePointModeIsMidpoint_UsesMidpoint()
     {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.Middle);
+        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.Midpoint);
 
         AssertVector(line.Origin, 3f, 3f);
     }

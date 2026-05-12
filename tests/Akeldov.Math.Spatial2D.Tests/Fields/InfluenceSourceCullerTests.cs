@@ -32,14 +32,14 @@ public class InfluenceSourceCullerTests
     }
 
     [Test]
-    public void HalfPlaneCuller_WhenSourcePointsContainNull_Throws()
+    public void HalfPlaneCuller_WhenPointSourcesContainNull_Throws()
     {
         var sources = new FloatPointInfluenceSource[] { null! };
 
         var exception = Assert.Throws<ArgumentException>(() =>
             new HalfPlaneCuller<FloatPointInfluenceSource>(sources));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
     }
 
     [Test]
