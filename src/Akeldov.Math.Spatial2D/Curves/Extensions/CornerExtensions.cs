@@ -9,41 +9,41 @@ namespace Akeldov.Math.Spatial2D.Curves
     public static class CornerExtensions
     {
         /// <summary>
-        /// Creates an arc tangent to both rays of the angle ABC.
+        /// Creates an arc tangent to both rays of a corner.
         /// </summary>
-        /// <param name="A">A point on the first side of the angle.</param>
-        /// <param name="B">The angle vertex.</param>
-        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="firstSidePoint">A point on the first side of the corner.</param>
+        /// <param name="vertex">The corner vertex.</param>
+        /// <param name="secondSidePoint">A point on the second side of the corner.</param>
         /// <param name="radius">The radius of the tangent arc.</param>
-        /// <returns>An arc tangent to both sides of the angle.</returns>
+        /// <returns>An arc tangent to both sides of the corner.</returns>
         /// <exception cref="ArgumentException">Thrown when the angle is degenerate.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is not finite and positive.</exception>
-        public static Arc CreateArcInAngle(VectorXY A, VectorXY B, VectorXY C, float radius)
+        public static Arc CreateFilletArc(VectorXY firstSidePoint, VectorXY vertex, VectorXY secondSidePoint, float radius)
         {
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
 
-            var lineBA = new Line(B, A);
-            var lineBC = new Line(B, C);
+            var lineBA = new Line(vertex, firstSidePoint);
+            var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC))
                 throw new ArgumentException("The angle must not be degenerate.");
 
-            return CreateArcInAngle(A, B, C, radius, lineBA, lineBC);
+            return CreateFilletArc(firstSidePoint, vertex, secondSidePoint, radius, lineBA, lineBC);
         }
 
         /// <summary>
-        /// Creates an arc tangent to both rays of the angle ABC, rejecting angles whose sides are collinear within the specified tolerance.
+        /// Creates an arc tangent to both rays of a corner, rejecting angles whose sides are collinear within the specified tolerance.
         /// </summary>
-        /// <param name="A">A point on the first side of the angle.</param>
-        /// <param name="B">The angle vertex.</param>
-        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="firstSidePoint">A point on the first side of the corner.</param>
+        /// <param name="vertex">The corner vertex.</param>
+        /// <param name="secondSidePoint">A point on the second side of the corner.</param>
         /// <param name="radius">The radius of the tangent arc.</param>
         /// <param name="epsilon">The non-negative tolerance used to reject nearly degenerate angles.</param>
-        /// <returns>An arc tangent to both sides of the angle.</returns>
+        /// <returns>An arc tangent to both sides of the corner.</returns>
         /// <exception cref="ArgumentException">Thrown when the angle is degenerate within <paramref name="epsilon"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is not finite and positive, or <paramref name="epsilon"/> is negative, NaN, or infinite.</exception>
-        public static Arc CreateArcInAngle(VectorXY A, VectorXY B, VectorXY C, float radius, float epsilon)
+        public static Arc CreateFilletArc(VectorXY firstSidePoint, VectorXY vertex, VectorXY secondSidePoint, float radius, float epsilon)
         {
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
@@ -51,18 +51,24 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (epsilon < 0f || float.IsNaN(epsilon) || float.IsInfinity(epsilon))
                 throw new ArgumentOutOfRangeException(nameof(epsilon), "Epsilon must be finite and non-negative.");
 
-            var lineBA = new Line(B, A);
-            var lineBC = new Line(B, C);
+            var lineBA = new Line(vertex, firstSidePoint);
+            var lineBC = new Line(vertex, secondSidePoint);
 
-            if (lineBA.Equals(lineBC) || lineBA.Distance(C) <= epsilon)
+            if (lineBA.Equals(lineBC) || lineBA.Distance(secondSidePoint) <= epsilon)
                 throw new ArgumentException("The angle must not be degenerate.");
 
-            return CreateArcInAngle(A, B, C, radius, lineBA, lineBC);
+            return CreateFilletArc(firstSidePoint, vertex, secondSidePoint, radius, lineBA, lineBC);
         }
 
-        private static Arc CreateArcInAngle(VectorXY A, VectorXY B, VectorXY C, float radius, Line lineBA, Line lineBC)
+        private static Arc CreateFilletArc(
+            VectorXY firstSidePoint,
+            VectorXY vertex,
+            VectorXY secondSidePoint,
+            float radius,
+            Line lineBA,
+            Line lineBC)
         {
-            VectorXY center = GetIncircleCenter(A, B, C, radius);
+            VectorXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 
             VectorXY tanBA = lineBA.Project(center).Point;
             VectorXY tanBC = lineBC.Project(center).Point;
@@ -84,10 +90,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new Arc(center, radius, startAngle, endAngle);
         }
 
-        private static VectorXY GetIncircleCenter(VectorXY A, VectorXY B, VectorXY C, float radius)
+        private static VectorXY GetIncircleCenter(VectorXY firstSidePoint, VectorXY vertex, VectorXY secondSidePoint, float radius)
         {
-            VectorXY dirBA = (A - B).Normalize();
-            VectorXY dirBC = (C - B).Normalize();
+            VectorXY dirBA = (firstSidePoint - vertex).Normalize();
+            VectorXY dirBC = (secondSidePoint - vertex).Normalize();
             VectorXY bisector = (dirBA + dirBC).Normalize();
 
             float angle = VectorXY.Angle(dirBA, dirBC).NormalizeAngleRad();
@@ -95,47 +101,47 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new ArgumentException("The angle must be greater than zero.");
 
             float distanceToCenter = radius / MathF.Sin(angle / 2f);
-            return B + bisector * distanceToCenter;
+            return vertex + bisector * distanceToCenter;
         }
 
         /// <summary>
-        /// Creates a circle tangent to both rays of the angle ABC.
+        /// Creates a circle tangent to both rays of a corner.
         /// </summary>
-        /// <param name="A">A point on the first side of the angle.</param>
-        /// <param name="B">The angle vertex.</param>
-        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="firstSidePoint">A point on the first side of the corner.</param>
+        /// <param name="vertex">The corner vertex.</param>
+        /// <param name="secondSidePoint">A point on the second side of the corner.</param>
         /// <param name="radius">The circle radius.</param>
-        /// <returns>A circle tangent to both sides of the angle.</returns>
+        /// <returns>A circle tangent to both sides of the corner.</returns>
         /// <exception cref="ArgumentException">Thrown when the angle is degenerate.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is not finite and positive.</exception>
-        public static Circle CreateIncircleInAngle(VectorXY A, VectorXY B, VectorXY C, float radius)
+        public static Circle CreateCornerTangentCircle(VectorXY firstSidePoint, VectorXY vertex, VectorXY secondSidePoint, float radius)
         {
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
 
-            var lineBA = new Line(B, A);
-            var lineBC = new Line(B, C);
+            var lineBA = new Line(vertex, firstSidePoint);
+            var lineBC = new Line(vertex, secondSidePoint);
 
             if (lineBA.Equals(lineBC))
                 throw new ArgumentException("The angle must not be degenerate.");
 
-            VectorXY center = GetIncircleCenter(A, B, C, radius);
+            VectorXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 
             return new Circle(center, radius);
         }
 
         /// <summary>
-        /// Creates a circle tangent to both rays of the angle ABC, rejecting angles whose sides are collinear within the specified tolerance.
+        /// Creates a circle tangent to both rays of a corner, rejecting angles whose sides are collinear within the specified tolerance.
         /// </summary>
-        /// <param name="A">A point on the first side of the angle.</param>
-        /// <param name="B">The angle vertex.</param>
-        /// <param name="C">A point on the second side of the angle.</param>
+        /// <param name="firstSidePoint">A point on the first side of the corner.</param>
+        /// <param name="vertex">The corner vertex.</param>
+        /// <param name="secondSidePoint">A point on the second side of the corner.</param>
         /// <param name="radius">The circle radius.</param>
         /// <param name="epsilon">The non-negative tolerance used to reject nearly degenerate angles.</param>
-        /// <returns>A circle tangent to both sides of the angle.</returns>
+        /// <returns>A circle tangent to both sides of the corner.</returns>
         /// <exception cref="ArgumentException">Thrown when the angle is degenerate within <paramref name="epsilon"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is not finite and positive, or <paramref name="epsilon"/> is negative, NaN, or infinite.</exception>
-        public static Circle CreateIncircleInAngle(VectorXY A, VectorXY B, VectorXY C, float radius, float epsilon)
+        public static Circle CreateCornerTangentCircle(VectorXY firstSidePoint, VectorXY vertex, VectorXY secondSidePoint, float radius, float epsilon)
         {
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
@@ -143,13 +149,13 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (epsilon < 0f || float.IsNaN(epsilon) || float.IsInfinity(epsilon))
                 throw new ArgumentOutOfRangeException(nameof(epsilon), "Epsilon must be finite and non-negative.");
 
-            var lineBA = new Line(B, A);
-            var lineBC = new Line(B, C);
+            var lineBA = new Line(vertex, firstSidePoint);
+            var lineBC = new Line(vertex, secondSidePoint);
 
-            if (lineBA.Equals(lineBC) || lineBA.Distance(C) <= epsilon)
+            if (lineBA.Equals(lineBC) || lineBA.Distance(secondSidePoint) <= epsilon)
                 throw new ArgumentException("The angle must not be degenerate.");
 
-            VectorXY center = GetIncircleCenter(A, B, C, radius);
+            VectorXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 
             return new Circle(center, radius);
         }

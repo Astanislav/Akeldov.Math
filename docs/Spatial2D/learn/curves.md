@@ -70,4 +70,4 @@ Curve extension methods include:
 
 - `Shorten` and `Extend` for segments.
 - `PerpendicularAt` and `IsSameSide` for lines.
-- `CreateArcInAngle` and `CreateIncircleInAngle` for corner construction.
+- `CreateFilletArc` and `CreateCornerTangentCircle` for corner construction.

@@ -5,13 +5,13 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class CornerExtensionsTests
 {
     [Test]
-    public void CreateIncircleInAngle_WhenAngleIsRight_CreatesCircleTangentToSides()
+    public void CreateCornerTangentCircle_WhenAngleIsRight_CreatesCircleTangentToSides()
     {
         var a = new VectorXY(1f, 0f);
         var b = VectorXY.Zero;
         var c = new VectorXY(0f, 1f);
 
-        var circle = CornerExtensions.CreateIncircleInAngle(a, b, c, 2f);
+        var circle = CornerExtensions.CreateCornerTangentCircle(a, b, c, 2f);
 
         AssertVector(circle.Center, 2f, 2f);
         Assert.That(circle.Radius, Is.EqualTo(2f));
@@ -20,13 +20,13 @@ public class CornerExtensionsTests
     }
 
     [Test]
-    public void CreateArcInAngle_WhenAngleIsRight_CreatesArcTangentToSides()
+    public void CreateFilletArc_WhenAngleIsRight_CreatesArcTangentToSides()
     {
         var a = new VectorXY(1f, 0f);
         var b = VectorXY.Zero;
         var c = new VectorXY(0f, 1f);
 
-        var arc = CornerExtensions.CreateArcInAngle(a, b, c, 2f);
+        var arc = CornerExtensions.CreateFilletArc(a, b, c, 2f);
 
         AssertVector(arc.Center, 2f, 2f);
         Assert.That(arc.Radius, Is.EqualTo(2f));
@@ -41,8 +41,8 @@ public class CornerExtensionsTests
         var b = VectorXY.Zero;
         var c = new VectorXY(-1f, 0f);
 
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateIncircleInAngle(a, b, c, 1f));
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateArcInAngle(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, c, 1f));
     }
 
     [Test]
@@ -52,8 +52,8 @@ public class CornerExtensionsTests
         var b = VectorXY.Zero;
         var c = new VectorXY(2f, 0f);
 
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateIncircleInAngle(a, b, c, 1f));
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateArcInAngle(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, c, 1f));
     }
 
     [Test]
@@ -63,8 +63,8 @@ public class CornerExtensionsTests
         var b = VectorXY.Zero;
         var c = new VectorXY(0f, 1f);
 
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateIncircleInAngle(b, b, c, 1f));
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateArcInAngle(a, b, b, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(b, b, c, 1f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, b, 1f));
     }
 
     [Test]
@@ -74,8 +74,8 @@ public class CornerExtensionsTests
         var b = VectorXY.Zero;
         var c = new VectorXY(1f, 0.01f);
 
-        Assert.DoesNotThrow(() => CornerExtensions.CreateIncircleInAngle(a, b, c, 1f));
-        Assert.DoesNotThrow(() => CornerExtensions.CreateArcInAngle(a, b, c, 1f));
+        Assert.DoesNotThrow(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f));
+        Assert.DoesNotThrow(() => CornerExtensions.CreateFilletArc(a, b, c, 1f));
     }
 
     [Test]
@@ -85,8 +85,8 @@ public class CornerExtensionsTests
         var b = VectorXY.Zero;
         var c = new VectorXY(1f, 0.01f);
 
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateIncircleInAngle(a, b, c, 1f, epsilon: 0.02f));
-        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateArcInAngle(a, b, c, 1f, epsilon: 0.02f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f, epsilon: 0.02f));
+        Assert.Throws<ArgumentException>(() => CornerExtensions.CreateFilletArc(a, b, c, 1f, epsilon: 0.02f));
     }
 
     [TestCase(0f)]
@@ -101,9 +101,9 @@ public class CornerExtensionsTests
         var c = new VectorXY(0f, 1f);
 
         var incircleException = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            CornerExtensions.CreateIncircleInAngle(a, b, c, radius));
+            CornerExtensions.CreateCornerTangentCircle(a, b, c, radius));
         var arcException = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            CornerExtensions.CreateArcInAngle(a, b, c, radius));
+            CornerExtensions.CreateFilletArc(a, b, c, radius));
 
         Assert.That(incircleException!.ParamName, Is.EqualTo("radius"));
         Assert.That(arcException!.ParamName, Is.EqualTo("radius"));
@@ -120,9 +120,9 @@ public class CornerExtensionsTests
         var c = new VectorXY(0f, 1f);
 
         var incircleException = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            CornerExtensions.CreateIncircleInAngle(a, b, c, 1f, epsilon));
+            CornerExtensions.CreateCornerTangentCircle(a, b, c, 1f, epsilon));
         var arcException = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            CornerExtensions.CreateArcInAngle(a, b, c, 1f, epsilon));
+            CornerExtensions.CreateFilletArc(a, b, c, 1f, epsilon));
 
         Assert.That(incircleException!.ParamName, Is.EqualTo("epsilon"));
         Assert.That(arcException!.ParamName, Is.EqualTo("epsilon"));
