@@ -27,7 +27,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Initializes a new line passing through the specified points and selects the parameter origin
+        /// Initializes a new line passing through the specified points and selects the curve-coordinate origin
         /// from the specified reference point mode.
         /// </summary>
         /// <param name="a">The first point defining the line.</param>
@@ -41,11 +41,11 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <summary>
         /// Initializes a new line passing through the specified points and uses the projection of
-        /// the reference point as the parameter origin.
+        /// the reference point as the curve-coordinate origin.
         /// </summary>
         /// <param name="a">The first point defining the line.</param>
         /// <param name="b">The second point defining the line.</param>
-        /// <param name="referencePoint">The point whose projection becomes the parameter origin.</param>
+        /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
         public Line(VectorXY a, VectorXY b, VectorXY referencePoint)
         {
@@ -79,12 +79,12 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <summary>
         /// Initializes a new line from the implicit equation <c>ax + by + c = 0</c> and uses the
-        /// projection of the reference point as the parameter origin.
+        /// projection of the reference point as the curve-coordinate origin.
         /// </summary>
         /// <param name="a">The X coefficient.</param>
         /// <param name="b">The Y coefficient.</param>
         /// <param name="c">The offset coefficient.</param>
-        /// <param name="referencePoint">The point whose projection becomes the parameter origin.</param>
+        /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when both linear coefficients are zero.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when an equation coefficient is NaN or infinite.</exception>
         public Line(float a, float b, float c, VectorXY referencePoint)
@@ -142,7 +142,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         public VectorXY Direction => _direction;
 
         /// <summary>
-        /// Gets the point on this line from which projection parameters are measured.
+        /// Gets the point on this line from which curve coordinates are measured.
         /// </summary>
         public VectorXY Origin => _origin;
 
@@ -235,14 +235,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this line.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, line parameter, and distance to this line.</returns>
+        /// <returns>The projection point, signed line coordinate, and distance to this line.</returns>
         public CurvePointProjection Project(VectorXY point)
         {
             float signedDistance = GetSignedDistance(point);
             VectorXY projection = point - Normal * signedDistance;
-            float parameter = VectorXY.Dot(projection - Origin, Direction);
+            float curveCoordinate = VectorXY.Dot(projection - Origin, Direction);
 
-            return new CurvePointProjection(projection, parameter, MathF.Abs(signedDistance));
+            return new CurvePointProjection(projection, curveCoordinate, MathF.Abs(signedDistance));
         }
 
         /// <inheritdoc/>

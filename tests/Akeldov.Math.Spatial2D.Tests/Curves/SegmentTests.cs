@@ -107,8 +107,8 @@ public class SegmentTests
 
         var projection = segment.Project(VectorXY.Zero);
 
-        AssertVector(projection.Point, 2f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 2f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -153,8 +153,8 @@ public class SegmentTests
 
         var projection = segment.Project(new VectorXY(3f, 2f));
 
-        AssertVector(projection.Point, 3f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(0.5f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 3f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -165,8 +165,8 @@ public class SegmentTests
 
         var projection = segment.Project(new VectorXY(5f, 7f));
 
-        AssertVector(projection.Point, 2f, 3f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 2f, 3f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
     }
 

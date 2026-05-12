@@ -70,8 +70,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             VectorXY center = GetIncircleCenter(firstSidePoint, vertex, secondSidePoint, radius);
 
-            VectorXY tanBA = lineBA.Project(center).Point;
-            VectorXY tanBC = lineBC.Project(center).Point;
+            VectorXY tanBA = lineBA.Project(center).ProjectedPoint;
+            VectorXY tanBC = lineBC.Project(center).ProjectedPoint;
 
             float angleA = MathF.Atan2((tanBA - center).Y, (tanBA - center).X);
             float angleC = MathF.Atan2((tanBC - center).Y, (tanBC - center).X);

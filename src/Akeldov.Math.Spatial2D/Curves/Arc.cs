@@ -221,7 +221,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this arc.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, arc parameter, and distance to this arc.</returns>
+        /// <returns>The projection point, arc length coordinate, and distance to this arc.</returns>
         public CurvePointProjection Project(VectorXY point)
         {
             VectorXY toPoint = point - _center;
@@ -237,8 +237,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (ContainsAngle(angleToPoint))
             {
                 VectorXY projected = _center + toPoint.Normalize() * _radius;
-                float parameter = GetParameter(angleToPoint);
-                return new CurvePointProjection(projected, parameter, point.Distance(projected));
+                float curveCoordinate = GetCurveCoordinate(angleToPoint);
+                return new CurvePointProjection(projected, curveCoordinate, point.Distance(projected));
             }
 
             VectorXY arcStart = GetStartPoint();
@@ -250,7 +250,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (distStart <= distEnd)
                 return new CurvePointProjection(arcStart, 0f, distStart);
 
-            return new CurvePointProjection(arcEnd, 1f, distEnd);
+            return new CurvePointProjection(arcEnd, GetArcLength(), distEnd);
         }
 
         /// <summary>
@@ -269,16 +269,28 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns><see langword="true"/> if the arcs are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Arc left, Arc right) => !(left == right);
 
-        private float GetParameter(float angle)
+        private float GetCurveCoordinate(float angle)
         {
             if (IsFullCircle)
-                return PositiveAngleDelta(_startAngle, angle) / (2f * MathF.PI);
+                return PositiveAngleDelta(_startAngle, angle) * _radius;
 
             float span = PositiveAngleDelta(_startAngle, _endAngle);
             if (span <= GeometryConstants.GeometryEpsilon)
                 return 0f;
 
-            return PositiveAngleDelta(_startAngle, angle) / span;
+            return PositiveAngleDelta(_startAngle, angle) * _radius;
+        }
+
+        private float GetArcLength()
+        {
+            if (IsFullCircle)
+                return 2f * MathF.PI * _radius;
+
+            float span = PositiveAngleDelta(_startAngle, _endAngle);
+            if (span <= GeometryConstants.GeometryEpsilon)
+                return 0f;
+
+            return span * _radius;
         }
 
         private bool ContainsAngle(float angle)

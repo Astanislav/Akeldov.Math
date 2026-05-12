@@ -25,7 +25,8 @@ var segment = new Segment(
 
 var projection = segment.Project(new VectorXY(4f, 3f));
 
-VectorXY point = projection.Point;
+VectorXY point = projection.ProjectedPoint;
+float curveCoordinate = projection.CurveCoordinate;
 float distance = projection.Distance;
 ```
 

@@ -12,7 +12,8 @@ public class ArcTests
 
         var projection = arc.Project(point);
 
-        AssertVector(projection.Point, 2f, 0f);
+        AssertVector(projection.ProjectedPoint, 2f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(MathF.PI).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -112,8 +113,8 @@ public class ArcTests
 
         var projection = arc.Project(new VectorXY(0f, 1f));
 
-        AssertVector(projection.Point, 1f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 1f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(MathF.Sqrt(2f)).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -149,8 +150,8 @@ public class ArcTests
 
         var projection = arc.Project(new VectorXY(0f, 2f));
 
-        AssertVector(projection.Point, 0f, 1f);
-        Assert.That(projection.Parameter, Is.EqualTo(0.25f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 0f, 1f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(MathF.PI / 2f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -161,8 +162,8 @@ public class ArcTests
 
         var projection = arc.Project(new VectorXY(1f, 1f));
 
-        AssertVector(projection.Point, 1f, 3f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 1f, 3f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -173,7 +174,7 @@ public class ArcTests
 
         var projection = arc.Project(new VectorXY(4f, 5f));
 
-        AssertVector(projection.Point, 1f, 1f);
+        AssertVector(projection.ProjectedPoint, 1f, 1f);
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
     }
 

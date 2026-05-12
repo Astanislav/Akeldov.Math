@@ -239,7 +239,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this segment.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, segment parameter, and distance to this segment.</returns>
+        /// <returns>The projection point, segment length coordinate, and distance to this segment.</returns>
         public CurvePointProjection Project(VectorXY point)
         {
             VectorXY ab = B - A;
@@ -249,15 +249,16 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (abSquared <= GeometryConstants.GeometryEpsilonSquared)
                 return new CurvePointProjection(A, 0f, point.Distance(A));
 
-            float t = VectorXY.Dot(ap, ab) / abSquared;
+            float normalizedParameter = VectorXY.Dot(ap, ab) / abSquared;
 
-            if (t < 0f)
-                t = 0f;
-            else if (t > 1f)
-                t = 1f;
+            if (normalizedParameter < 0f)
+                normalizedParameter = 0f;
+            else if (normalizedParameter > 1f)
+                normalizedParameter = 1f;
 
-            VectorXY projection = A + t * ab;
-            return new CurvePointProjection(projection, t, point.Distance(projection));
+            VectorXY projection = A + normalizedParameter * ab;
+            float curveCoordinate = normalizedParameter * MathF.Sqrt(abSquared);
+            return new CurvePointProjection(projection, curveCoordinate, point.Distance(projection));
         }
 
         /// <summary>

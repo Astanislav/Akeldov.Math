@@ -69,7 +69,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this ray.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, ray parameter, and distance to this ray.</returns>
+        /// <returns>The projection point, ray length coordinate, and distance to this ray.</returns>
         public CurvePointProjection Project(VectorXY point)
         {
             VectorXY toPoint = point - _origin;

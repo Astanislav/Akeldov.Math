@@ -91,8 +91,8 @@ public class RayTests
 
         var projection = ray.Project(VectorXY.Zero);
 
-        AssertVector(projection.Point, 1f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 1f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 

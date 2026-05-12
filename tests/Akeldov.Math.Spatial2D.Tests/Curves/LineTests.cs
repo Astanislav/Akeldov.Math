@@ -129,27 +129,27 @@ public class LineTests
     }
 
     [Test]
-    public void Project_WhenDefaultReferencePointProjectsToGlobalOrigin_MeasuresParameterFromGlobalOrigin()
+    public void Project_WhenDefaultReferencePointProjectsToGlobalOrigin_MeasuresCurveCoordinateFromGlobalOrigin()
     {
         var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
 
         var projection = line.Project(VectorXY.Zero);
 
-        AssertVector(projection.Point, 0f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 0f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
-    public void Project_WhenReferencePointIsProvided_MeasuresParameterFromItsProjection()
+    public void Project_WhenReferencePointIsProvided_MeasuresCurveCoordinateFromItsProjection()
     {
         var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f), new VectorXY(2f, 5f));
 
         var projection = line.Project(VectorXY.Zero);
 
         AssertVector(line.Origin, 2f, 0f);
-        AssertVector(projection.Point, 0f, 0f);
-        Assert.That(projection.Parameter, Is.EqualTo(-2f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(projection.ProjectedPoint, 0f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(-2f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
     }
 

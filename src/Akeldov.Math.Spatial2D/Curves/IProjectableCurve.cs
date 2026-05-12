@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this curve.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, curve parameter, and distance to this curve.</returns>
+        /// <returns>The projection point, curve coordinate, and distance to this curve.</returns>
         CurvePointProjection Project(VectorXY point);
     }
 }

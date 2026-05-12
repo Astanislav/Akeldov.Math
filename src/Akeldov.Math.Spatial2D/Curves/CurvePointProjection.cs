@@ -10,29 +10,35 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Initializes a new projection result.
         /// </summary>
-        /// <param name="point">The projected point on the curve.</param>
-        /// <param name="parameter">The curve parameter at the projected point.</param>
+        /// <param name="projectedPoint">The projected point on the curve.</param>
+        /// <param name="curveCoordinate">The curve coordinate of the projected point, measured in length units.</param>
         /// <param name="distance">The distance from the original point to the projected point.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="distance"/> is negative, NaN, or infinite.</exception>
-        public CurvePointProjection(VectorXY point, float parameter, float distance)
+        public CurvePointProjection(VectorXY projectedPoint, float curveCoordinate, float distance)
         {
             if (distance < 0f || float.IsNaN(distance) || float.IsInfinity(distance))
                 throw new ArgumentOutOfRangeException(nameof(distance), "Projection distance must be finite and non-negative.");
 
-            Point = point;
-            Parameter = parameter;
+            ProjectedPoint = projectedPoint;
+            CurveCoordinate = curveCoordinate;
             Distance = distance;
         }
 
         /// <summary>
         /// Gets the projected point on the curve.
         /// </summary>
-        public VectorXY Point { get; }
+        public VectorXY ProjectedPoint { get; }
 
         /// <summary>
-        /// Gets the curve parameter at the projected point.
+        /// Gets the curve coordinate of the projected point, measured in length units.
         /// </summary>
-        public float Parameter { get; }
+        /// <remarks>
+        /// <para>For lines this is signed distance from <see cref="Line.Origin"/> along <see cref="Line.Direction"/>.</para>
+        /// <para>For rays this is distance from <see cref="Ray.Origin"/> along <see cref="Ray.Direction"/>.</para>
+        /// <para>For segments this is distance from <see cref="Segment.A"/> along the segment.</para>
+        /// <para>For arcs this is arc length from the start point along the arc.</para>
+        /// </remarks>
+        public float CurveCoordinate { get; }
 
         /// <summary>
         /// Gets the distance from the original point to the projected point.

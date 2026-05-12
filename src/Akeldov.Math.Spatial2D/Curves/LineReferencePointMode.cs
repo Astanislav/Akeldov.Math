@@ -1,7 +1,7 @@
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Defines how a line selects the reference point whose projection becomes the parameter origin.
+    /// Defines how a line selects the reference point whose projection becomes the curve-coordinate origin.
     /// </summary>
     public enum LineReferencePointMode
     {
