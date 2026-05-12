@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// from <see cref="Min"/> to <see cref="Max"/>. The configured sampler may compute
     /// an extrapolated value, but this field preserves the <see cref="IIntField"/> range contract.
     /// </remarks>
-    public class PointInfluenceIntField : PointInfluenceField<IntPointInfluenceSource, int>, IIntField
+    public class IntPointInfluenceField : PointInfluenceField<IntPointInfluenceSource, int>, IIntField
     {
         private readonly int _min;
         private readonly int _max;
@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="sampler">The strategy used to combine influence points.</param>
         /// <param name="influenceSources">The influence points used by the field.</param>
-        public PointInfluenceIntField(
+        public IntPointInfluenceField(
             IInfluenceSampler<IntPointInfluenceSource, int> sampler,
             IReadOnlyList<IntPointInfluenceSource> influenceSources)
             : base(sampler, influenceSources)
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sampler">The strategy used to combine influence points.</param>
         /// <param name="influenceSources">The influence points used by the field.</param>
         /// <param name="influenceSourceCuller">The culler used to select a subset of points for each sampled point.</param>
-        public PointInfluenceIntField(
+        public IntPointInfluenceField(
             IInfluenceSampler<IntPointInfluenceSource, int> sampler,
             IReadOnlyList<IntPointInfluenceSource> influenceSources,
             IInfluenceSourceCuller<IntPointInfluenceSource> influenceSourceCuller)

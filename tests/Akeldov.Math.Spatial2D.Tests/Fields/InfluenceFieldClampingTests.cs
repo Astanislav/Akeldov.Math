@@ -59,9 +59,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceIntField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
+    public void IntPointInfluenceField_WhenDistinctValuesAccessed_ReturnsReadOnlyView()
     {
-        var field = new PointInfluenceIntField(
+        var field = new IntPointInfluenceField(
             new NearestIntInfluenceSampler<IntPointInfluenceSource>(),
             new[]
             {
@@ -104,9 +104,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void PointInfluenceIntField_WhenSamplerReturnsAboveMax_ClampsToMax()
+    public void IntPointInfluenceField_WhenSamplerReturnsAboveMax_ClampsToMax()
     {
-        var field = new PointInfluenceIntField(
+        var field = new IntPointInfluenceField(
             new ConstantSampler<IntPointInfluenceSource, int>(30),
             new[]
             {
@@ -120,9 +120,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void CurveInfluenceFloatField_WhenSamplerReturnsOutsideRange_ClampsToRange()
+    public void FloatCurveInfluenceField_WhenSamplerReturnsOutsideRange_ClampsToRange()
     {
-        var field = new CurveInfluenceFloatField(
+        var field = new FloatCurveInfluenceField(
             new ConstantSampler<ICurveInfluenceSource<float>, float>(100f),
             CreateCurveSources(),
             min: -2f,
@@ -134,9 +134,9 @@ public class InfluenceFieldClampingTests
     }
 
     [Test]
-    public void CurveInfluenceFloatField_WhenSamplerReturnsNaN_Throws()
+    public void FloatCurveInfluenceField_WhenSamplerReturnsNaN_Throws()
     {
-        var field = new CurveInfluenceFloatField(
+        var field = new FloatCurveInfluenceField(
             new ConstantSampler<ICurveInfluenceSource<float>, float>(float.NaN),
             CreateCurveSources(),
             min: -2f,
@@ -148,10 +148,10 @@ public class InfluenceFieldClampingTests
     [TestCase(3f, 2f, "min")]
     [TestCase(float.NaN, 2f, "min")]
     [TestCase(1f, float.NaN, "max")]
-    public void CurveInfluenceFloatField_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
+    public void FloatCurveInfluenceField_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new CurveInfluenceFloatField(
+            new FloatCurveInfluenceField(
                 new ConstantSampler<ICurveInfluenceSource<float>, float>(0f),
                 CreateCurveSources(),
                 min,
@@ -163,12 +163,12 @@ public class InfluenceFieldClampingTests
     [TestCase(3f, 2f, "min")]
     [TestCase(float.NaN, 2f, "min")]
     [TestCase(1f, float.NaN, "max")]
-    public void CurveInfluenceFloatField_WithCuller_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
+    public void FloatCurveInfluenceField_WithCuller_WhenRangeIsInvalid_Throws(float min, float max, string paramName)
     {
         var sources = CreateCurveSources();
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new CurveInfluenceFloatField(
+            new FloatCurveInfluenceField(
                 new ConstantSampler<ICurveInfluenceSource<float>, float>(0f),
                 sources,
                 min,

@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// from <see cref="Min"/> to <see cref="Max"/>. The configured sampler may compute
     /// an extrapolated value, but this field preserves the <see cref="IFloatField"/> range contract.
     /// </remarks>
-    public class CurveInfluenceFloatField : CurveInfluenceField<ICurveInfluenceSource<float>, float>, IFloatField
+    public class FloatCurveInfluenceField : CurveInfluenceField<ICurveInfluenceSource<float>, float>, IFloatField
     {
         private readonly float _min;
         private readonly float _max;
@@ -27,7 +27,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Thrown when <paramref name="min"/> or <paramref name="max"/> is NaN, or when
         /// <paramref name="min"/> is greater than <paramref name="max"/>.
         /// </exception>
-        public CurveInfluenceFloatField(
+        public FloatCurveInfluenceField(
             IInfluenceSampler<ICurveInfluenceSource<float>, float> sampler,
             IReadOnlyList<ICurveInfluenceSource<float>> influenceSources,
             float min,
@@ -52,7 +52,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Thrown when <paramref name="min"/> or <paramref name="max"/> is NaN, or when
         /// <paramref name="min"/> is greater than <paramref name="max"/>.
         /// </exception>
-        public CurveInfluenceFloatField(
+        public FloatCurveInfluenceField(
             IInfluenceSampler<ICurveInfluenceSource<float>, float> sampler,
             IReadOnlyList<ICurveInfluenceSource<float>> influenceSources,
             float min,
