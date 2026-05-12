@@ -19,8 +19,8 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 var site = cell.Site;
                 var items = cell.Items;
                 if (items.Count == 0) { newSites[i] = site; continue; }
-                var barycenter = items.GetBarycenter();
-                newSites[i] = new Site(barycenter, site.Power);
+                var centroid = items.GetCentroid();
+                newSites[i] = new Site(centroid, site.Power);
             }
 
             return newSites;

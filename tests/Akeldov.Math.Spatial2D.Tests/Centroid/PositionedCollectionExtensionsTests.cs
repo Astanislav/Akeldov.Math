@@ -3,35 +3,35 @@ namespace Akeldov.Math.Spatial2D.Tests.Centroid;
 public class PositionedCollectionExtensionsTests
 {
     [Test]
-    public void GetBarycenter_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
+    public void GetCentroid_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
     {
         IReadOnlyList<PositionedItem> items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetBarycenter());
+        AssertItemsArgumentException(() => items.GetCentroid());
     }
 
     [Test]
-    public void GetBarycenter_WithArray_WhenItemsEmpty_ThrowsArgumentException()
+    public void GetCentroid_WithArray_WhenItemsEmpty_ThrowsArgumentException()
     {
         var items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetBarycenter());
+        AssertItemsArgumentException(() => items.GetCentroid());
     }
 
     [Test]
-    public void GetBarycentric_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
+    public void GetClosestToCentroid_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
     {
         IReadOnlyList<PositionedItem> items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetBarycentric());
+        AssertItemsArgumentException(() => items.GetClosestToCentroid());
     }
 
     [Test]
-    public void GetBarycentric_WithArray_WhenItemsEmpty_ThrowsArgumentException()
+    public void GetClosestToCentroid_WithArray_WhenItemsEmpty_ThrowsArgumentException()
     {
         var items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetBarycentric());
+        AssertItemsArgumentException(() => items.GetClosestToCentroid());
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class PositionedCollectionExtensionsTests
     }
 
     [Test]
-    public void GetBarycentric_WithReadOnlyList_WhenFirstItemIsClosestToBarycenter_ReturnsFirstItem()
+    public void GetClosestToCentroid_WithReadOnlyList_WhenFirstItemIsClosestToCentroid_ReturnsFirstItem()
     {
         IReadOnlyList<PositionedItem> items = new[]
         {
@@ -60,13 +60,13 @@ public class PositionedCollectionExtensionsTests
             new PositionedItem("left", new VectorXY(-10f, 0f))
         };
 
-        var barycentric = items.GetBarycentric();
+        var closest = items.GetClosestToCentroid();
 
-        Assert.That(barycentric.Name, Is.EqualTo("center"));
+        Assert.That(closest.Name, Is.EqualTo("center"));
     }
 
     [Test]
-    public void GetBarycentric_WithArray_WhenFirstItemIsClosestToBarycenter_ReturnsFirstItem()
+    public void GetClosestToCentroid_WithArray_WhenFirstItemIsClosestToCentroid_ReturnsFirstItem()
     {
         var items = new[]
         {
@@ -75,9 +75,9 @@ public class PositionedCollectionExtensionsTests
             new PositionedItem("left", new VectorXY(-10f, 0f))
         };
 
-        var barycentric = items.GetBarycentric();
+        var closest = items.GetClosestToCentroid();
 
-        Assert.That(barycentric.Name, Is.EqualTo("center"));
+        Assert.That(closest.Name, Is.EqualTo("center"));
     }
 
     [Test]

@@ -150,4 +150,14 @@ public class InfluenceSourcePowerValidationTests
         Assert.DoesNotThrow(() =>
             new InfluenceSample<float>(1f, VectorXY.Zero, distance, 1f));
     }
+
+    [Test]
+    public void InfluenceSample_WhenCreated_StoresSourcePoint()
+    {
+        var sourcePoint = new VectorXY(2f, 3f);
+
+        var sample = new InfluenceSample<float>(1f, sourcePoint, 4f, 5f);
+
+        Assert.That(sample.SourcePoint, Is.EqualTo(sourcePoint));
+    }
 }

@@ -59,7 +59,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                         var b = nearest[j];
                         var c = nearest[m];
 
-                        if (!TryBarycentric(a.Point, b.Point, c.Point, point, out float lA, out float lB, out float lC))
+                        if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, point, out float lA, out float lB, out float lC))
                             continue;
 
                         if (lA >= -GeometryConstants.GeometryEpsilon &&
@@ -82,9 +82,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                         var b = nearest[j];
                         var c = nearest[m];
 
-                        var pa = a.Point;
-                        var pb = b.Point;
-                        var pc = c.Point;
+                        var pa = a.SourcePoint;
+                        var pb = b.SourcePoint;
+                        var pc = c.SourcePoint;
 
                         if (!TryBarycentric(pa, pb, pc, point, out float lA, out float lB, out float lC))
                             continue;
@@ -118,7 +118,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             InfluenceSample<int> c,
             VectorXY p)
         {
-            if (!TryBarycentric(a.Point, b.Point, c.Point, p, out float lA, out float lB, out float lC))
+            if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, p, out float lA, out float lB, out float lC))
                 return LerpOnSegment(a, b, p);
 
             return a.Value * lA + b.Value * lB + c.Value * lC;
@@ -142,8 +142,8 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static float LerpOnSegment(InfluenceSample<int> a, InfluenceSample<int> b, VectorXY p)
         {
-            var pa = a.Point;
-            var pb = b.Point;
+            var pa = a.SourcePoint;
+            var pb = b.SourcePoint;
 
             var ab = pb - pa;
             var ap = p - pa;

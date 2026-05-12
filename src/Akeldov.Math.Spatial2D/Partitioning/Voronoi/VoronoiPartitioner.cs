@@ -120,7 +120,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 if (item is null)
                     throw new ArgumentException("Partition items cannot contain null elements.", nameof(items));
 
-                int siteIndex = sites.GetIndexOfClosest(item.Position);
+                int siteIndex = sites.GetNearestWeightedSiteIndex(item.Position);
                 buckets[siteIndex].Add(item);
             }
 

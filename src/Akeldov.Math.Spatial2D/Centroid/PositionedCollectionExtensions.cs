@@ -9,14 +9,14 @@ namespace Akeldov.Math.Spatial2D
     public static class PositionedCollectionExtensions
     {
         /// <summary>
-        /// Returns the arithmetic center of item positions.
+        /// Returns the centroid, computed as the arithmetic mean of item positions.
         /// </summary>
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
-        /// <returns>The arithmetic center of item positions.</returns>
+        /// <returns>The centroid of item positions.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static VectorXY GetBarycenter<TItem>(this IReadOnlyList<TItem> items)
+        public static VectorXY GetCentroid<TItem>(this IReadOnlyList<TItem> items)
             where TItem : IHasPosition2D
         {
             if (items == null)
@@ -35,14 +35,14 @@ namespace Akeldov.Math.Spatial2D
         }
 
         /// <summary>
-        /// Returns the arithmetic center of item positions.
+        /// Returns the centroid, computed as the arithmetic mean of item positions.
         /// </summary>
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
-        /// <returns>The arithmetic center of item positions.</returns>
+        /// <returns>The centroid of item positions.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static VectorXY GetBarycenter<TItem>(this TItem[] items)
+        public static VectorXY GetCentroid<TItem>(this TItem[] items)
             where TItem : IHasPosition2D
         {
             if (items == null)
@@ -61,24 +61,24 @@ namespace Akeldov.Math.Spatial2D
         }
 
         /// <summary>
-        /// Returns the item closest to the arithmetic center of item positions.
+        /// Returns the item closest to the centroid of item positions.
         /// </summary>
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
-        /// <returns>The item closest to the arithmetic center.</returns>
+        /// <returns>The item closest to the centroid.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static TItem GetBarycentric<TItem>(this IReadOnlyList<TItem> items)
+        public static TItem GetClosestToCentroid<TItem>(this IReadOnlyList<TItem> items)
             where TItem : IHasPosition2D
         {
-            var barycenter = items.GetBarycenter();
+            var centroid = items.GetCentroid();
 
             var closestItem = items[0];
-            var minDist = closestItem.Position.Distance(barycenter);
+            var minDist = closestItem.Position.Distance(centroid);
             for (int k = 1; k < items.Count; k++)
             {
                 var item = items[k];
-                var distance = item.Position.Distance(barycenter);
+                var distance = item.Position.Distance(centroid);
 
                 if (distance < minDist)
                 {
@@ -90,24 +90,24 @@ namespace Akeldov.Math.Spatial2D
         }
 
         /// <summary>
-        /// Returns the item closest to the arithmetic center of item positions.
+        /// Returns the item closest to the centroid of item positions.
         /// </summary>
         /// <typeparam name="TItem">The positioned item type.</typeparam>
         /// <param name="items">The positioned items.</param>
-        /// <returns>The item closest to the arithmetic center.</returns>
+        /// <returns>The item closest to the centroid.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static TItem GetBarycentric<TItem>(this TItem[] items)
+        public static TItem GetClosestToCentroid<TItem>(this TItem[] items)
             where TItem : IHasPosition2D
         {
-            var barycenter = items.GetBarycenter();
+            var centroid = items.GetCentroid();
 
             var closestItem = items[0];
-            var minDist = closestItem.Position.Distance(barycenter);
+            var minDist = closestItem.Position.Distance(centroid);
             for (int k = 1; k < items.Length; k++)
             {
                 var item = items[k];
-                var distance = item.Position.Distance(barycenter);
+                var distance = item.Position.Distance(centroid);
 
                 if (distance < minDist)
                 {
