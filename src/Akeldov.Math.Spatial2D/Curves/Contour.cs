@@ -105,7 +105,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static bool IsTangentToCircle(Ray ray, VectorXY center, float radius)
         {
             VectorXY originToCenter = center - ray.Origin;
-            float signedDistance = VectorXY.Cross(ray.Dir, originToCenter);
+            float signedDistance = VectorXY.Cross(ray.Direction, originToCenter);
             return MathF.Abs(MathF.Abs(signedDistance) - radius) <= GeometryConstants.GeometryEpsilon;
         }
     }

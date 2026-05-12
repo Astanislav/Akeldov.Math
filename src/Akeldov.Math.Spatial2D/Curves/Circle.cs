@@ -57,7 +57,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             List<VectorXY> intersections = new List<VectorXY>();
 
-            VectorXY d = ray.Dir;
+            VectorXY d = ray.Direction;
             VectorXY f = ray.Origin - _center;
 
             float a = 1f;

@@ -86,9 +86,9 @@ public class VoronoiSnapshotTests
 
     public sealed class TestItem : IHasPosition2D
     {
-        public TestItem(VectorXY center)
+        public TestItem(VectorXY position)
         {
-            Position = center;
+            Position = position;
         }
 
         public VectorXY Position { get; }

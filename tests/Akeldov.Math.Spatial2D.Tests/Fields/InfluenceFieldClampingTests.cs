@@ -20,14 +20,14 @@ public class InfluenceFieldClampingTests
         sources.Clear();
         sources.Add(new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
 
-        Assert.That(field.InfluencePoints, Has.Count.EqualTo(2));
+        Assert.That(field.InfluenceSources, Has.Count.EqualTo(2));
         Assert.That(field.Min, Is.EqualTo(0f));
         Assert.That(field.Max, Is.EqualTo(10f));
         Assert.That(field.Sample(new VectorXY(10f, 0f)), Is.EqualTo(10f));
     }
 
     [Test]
-    public void PointInfluenceFloatField_WhenInfluencePointsAccessed_ReturnsReadOnlyView()
+    public void PointInfluenceFloatField_WhenInfluenceSourcesAccessed_ReturnsReadOnlyView()
     {
         var field = new PointInfluenceFloatField(
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
@@ -37,9 +37,9 @@ public class InfluenceFieldClampingTests
                 new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
             });
 
-        Assert.That(field.InfluencePoints, Is.Not.InstanceOf<FloatPointInfluenceSource[]>());
+        Assert.That(field.InfluenceSources, Is.Not.InstanceOf<FloatPointInfluenceSource[]>());
         Assert.Throws<NotSupportedException>(() =>
-            ((IList<FloatPointInfluenceSource>)field.InfluencePoints)[0] =
+            ((IList<FloatPointInfluenceSource>)field.InfluenceSources)[0] =
                 new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
     }
 

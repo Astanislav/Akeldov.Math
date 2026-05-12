@@ -17,31 +17,31 @@ namespace Akeldov.Math.Spatial2D.Curves
         private readonly bool _isFullCircle;
 
         /// <summary>
-        /// Creates a closed arc from <paramref name="startAngleRad"/> to <paramref name="stopAngleRad"/>.
+        /// Creates a closed arc from <paramref name="startAngle"/> to <paramref name="endAngle"/>.
         /// Equal input angles represent a zero-length arc. A stop angle one full turn after the start angle
         /// represents a full circle even though both angles normalize to the same value.
         /// </summary>
         /// <param name="center">The center of the source circle.</param>
         /// <param name="radius">The radius of the source circle.</param>
-        /// <param name="startAngleRad">The start angle in radians.</param>
-        /// <param name="stopAngleRad">The stop angle in radians.</param>
+        /// <param name="startAngle">The start angle in radians.</param>
+        /// <param name="endAngle">The stop angle in radians.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite, or when an angle is NaN or infinite.</exception>
-        public Arc(VectorXY center, float radius, float startAngleRad, float stopAngleRad)
+        public Arc(VectorXY center, float radius, float startAngle, float endAngle)
         {
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Arc radius must be finite and non-negative.");
 
-            if (float.IsNaN(startAngleRad) || float.IsInfinity(startAngleRad))
-                throw new ArgumentOutOfRangeException(nameof(startAngleRad), "Arc start angle must be finite.");
+            if (float.IsNaN(startAngle) || float.IsInfinity(startAngle))
+                throw new ArgumentOutOfRangeException(nameof(startAngle), "Arc start angle must be finite.");
 
-            if (float.IsNaN(stopAngleRad) || float.IsInfinity(stopAngleRad))
-                throw new ArgumentOutOfRangeException(nameof(stopAngleRad), "Arc stop angle must be finite.");
+            if (float.IsNaN(endAngle) || float.IsInfinity(endAngle))
+                throw new ArgumentOutOfRangeException(nameof(endAngle), "Arc stop angle must be finite.");
 
             _center = center;
             _radius = radius;
-            _startAngle = startAngleRad.NormalizeAngleRad();
-            _endAngle = stopAngleRad.NormalizeAngleRad();
-            _isFullCircle = IsFullTurn(startAngleRad, stopAngleRad);
+            _startAngle = startAngle.NormalizeAngleRad();
+            _endAngle = endAngle.NormalizeAngleRad();
+            _isFullCircle = IsFullTurn(startAngle, endAngle);
         }
 
         /// <summary>
@@ -155,8 +155,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (_radius <= GeometryConstants.GeometryEpsilon)
             {
                 VectorXY toCenter = _center - ray.Origin;
-                if (VectorXY.Dot(toCenter, ray.Dir) >= -GeometryConstants.GeometryEpsilon &&
-                    VectorXY.Cross(toCenter, ray.Dir).IsAlmostZero())
+                if (VectorXY.Dot(toCenter, ray.Direction) >= -GeometryConstants.GeometryEpsilon &&
+                    VectorXY.Cross(toCenter, ray.Direction).IsAlmostZero())
                 {
                     intersections.AddDistinct(_center);
                 }
@@ -165,7 +165,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             }
 
             var circleIntersections = new List<VectorXY>();
-            VectorXY dir = ray.Dir;
+            VectorXY dir = ray.Direction;
             var circle = new Circle(Center, Radius);
             VectorXY f = ray.Origin - circle.Center;
 

@@ -74,7 +74,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             List<VectorXY> intersections = new List<VectorXY>();
 
-            VectorXY rayDir = ray.Dir;
+            VectorXY rayDir = ray.Direction;
             VectorXY segDir = B - A;
             VectorXY delta = A - ray.Origin;
 
@@ -117,7 +117,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             VectorXY segDir = B - A;
             VectorXY originToA = A - ray.Origin;
 
-            if (!VectorXY.Cross(originToA, ray.Dir).IsAlmostZero())
+            if (!VectorXY.Cross(originToA, ray.Direction).IsAlmostZero())
                 return;
 
             if (segDir.SQRLength <= GeometryConstants.GeometryEpsilonSquared)
@@ -128,8 +128,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return;
             }
 
-            float tA = VectorXY.Dot(A - ray.Origin, ray.Dir);
-            float tB = VectorXY.Dot(B - ray.Origin, ray.Dir);
+            float tA = VectorXY.Dot(A - ray.Origin, ray.Direction);
+            float tB = VectorXY.Dot(B - ray.Origin, ray.Direction);
 
             VectorXY startPoint;
             bool startIncluded;
@@ -197,12 +197,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static bool IsPointOnRay(VectorXY point, Ray ray, out float t)
         {
             VectorXY toPoint = point - ray.Origin;
-            t = VectorXY.Dot(toPoint, ray.Dir);
+            t = VectorXY.Dot(toPoint, ray.Direction);
 
             if (t < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            return VectorXY.Cross(toPoint, ray.Dir).IsAlmostZero();
+            return VectorXY.Cross(toPoint, ray.Direction).IsAlmostZero();
         }
 
         /// <inheritdoc/>

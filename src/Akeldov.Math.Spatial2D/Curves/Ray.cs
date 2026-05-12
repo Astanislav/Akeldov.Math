@@ -48,7 +48,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized ray direction.
         /// </summary>
-        public VectorXY Dir => _direction;
+        public VectorXY Direction => _direction;
 
         /// <summary>
         /// Gets the ray direction angle in radians.
@@ -73,12 +73,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         public CurveProjection Project(VectorXY point)
         {
             VectorXY toPoint = point - _origin;
-            float t = VectorXY.Dot(toPoint, Dir);
+            float t = VectorXY.Dot(toPoint, Direction);
 
             if (t < 0f)
                 t = 0f;
 
-            VectorXY projected = _origin + Dir * t;
+            VectorXY projected = _origin + Direction * t;
             return new CurveProjection(projected, t, point.Distance(projected));
         }
 
@@ -93,9 +93,9 @@ namespace Akeldov.Math.Spatial2D.Curves
             List<VectorXY> intersections = new List<VectorXY>();
 
             VectorXY p = _origin;
-            VectorXY r = Dir;
+            VectorXY r = Direction;
             VectorXY q = other._origin;
-            VectorXY s = other.Dir;
+            VectorXY s = other.Direction;
 
             float cross = VectorXY.Cross(r, s);
 
@@ -123,7 +123,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             VectorXY originDelta = other._origin - _origin;
 
-            if (!VectorXY.Cross(originDelta, Dir).IsAlmostZero())
+            if (!VectorXY.Cross(originDelta, Direction).IsAlmostZero())
                 return;
 
             if (IsPointOnRay(_origin, other))
@@ -140,10 +140,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             VectorXY toPoint = point - ray._origin;
 
-            if (VectorXY.Dot(toPoint, ray.Dir) < -GeometryConstants.GeometryEpsilon)
+            if (VectorXY.Dot(toPoint, ray.Direction) < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            return VectorXY.Cross(toPoint, ray.Dir).IsAlmostZero();
+            return VectorXY.Cross(toPoint, ray.Direction).IsAlmostZero();
         }
     }
 }

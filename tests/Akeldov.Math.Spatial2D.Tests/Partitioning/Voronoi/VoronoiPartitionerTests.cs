@@ -304,10 +304,10 @@ public class VoronoiPartitionerTests
 
     private sealed class TestItem : IHasPosition2D
     {
-        public TestItem(string id, VectorXY center)
+        public TestItem(string id, VectorXY position)
         {
             Id = id;
-            Position = center;
+            Position = position;
         }
 
         public string Id { get; }

@@ -188,7 +188,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             List<VectorXY> intersections = new List<VectorXY>();
 
             VectorXY p = ray.Origin;
-            VectorXY r = ray.Dir;
+            VectorXY r = ray.Direction;
             VectorXY q = Origin;
             VectorXY s = Direction;
 
@@ -225,10 +225,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             VectorXY toPoint = point - ray.Origin;
 
-            if (VectorXY.Dot(toPoint, ray.Dir) < -GeometryConstants.GeometryEpsilon)
+            if (VectorXY.Dot(toPoint, ray.Direction) < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            return VectorXY.Cross(toPoint, ray.Dir).IsAlmostZero();
+            return VectorXY.Cross(toPoint, ray.Direction).IsAlmostZero();
         }
 
         /// <summary>

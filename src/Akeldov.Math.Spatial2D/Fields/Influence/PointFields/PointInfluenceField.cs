@@ -35,10 +35,5 @@ namespace Akeldov.Math.Spatial2D.Fields
             : base(sampler, influenceSources, influenceSourceCuller)
         {
         }
-
-        /// <summary>
-        /// Gets all point influence sources configured for this field.
-        /// </summary>
-        public IReadOnlyList<TPointSource> InfluencePoints => InfluenceSources;
     }
 }

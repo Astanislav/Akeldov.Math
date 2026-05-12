@@ -119,10 +119,10 @@ public class PositionedCollectionExtensionsTests
 
     private sealed class PositionedItem : IHasPosition2D
     {
-        public PositionedItem(string name, VectorXY center)
+        public PositionedItem(string name, VectorXY position)
         {
             Name = name;
-            Position = center;
+            Position = position;
         }
 
         public string Name { get; }
