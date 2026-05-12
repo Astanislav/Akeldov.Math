@@ -15,7 +15,7 @@ VectorXY difference = a - b;
 VectorXY scaled = a * 2f;
 
 float length = a.Length;
-float squaredLength = a.SQRLength;
+float squaredLength = a.SquaredLength;
 VectorXY direction = a.Normalize();
 ```
 

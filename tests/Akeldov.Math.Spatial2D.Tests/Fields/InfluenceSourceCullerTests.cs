@@ -75,7 +75,7 @@ public class InfluenceSourceCullerTests
         var exception = Assert.Throws<ArgumentException>(() =>
             new DelaunayCuller<FloatPointInfluenceSource>(sources));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
     }
 
     [Test]
@@ -185,7 +185,7 @@ public class InfluenceSourceCullerTests
         var exception = Assert.Throws<ArgumentException>(
             () => new DelaunayCuller<FloatPointInfluenceSource>(sources));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("sourcePoints"));
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
     }
 
     private static void AssertSameSources(

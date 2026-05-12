@@ -37,13 +37,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             {
                 var source = sources[i];
                 var influence = source.GetInfluence(point);
-                if (influence.Power <= 0f || float.IsNaN(influence.Power) || float.IsInfinity(influence.Power))
-                    throw new InvalidOperationException("Inverse-distance weighted sampler requires finite positive source power.");
+                if (influence.Weight <= 0f || float.IsNaN(influence.Weight) || float.IsInfinity(influence.Weight))
+                    throw new InvalidOperationException("Inverse-distance weighted sampler requires finite positive source weight.");
 
                 if (influence.Distance <= GeometryConstants.GeometryEpsilon)
                     return influence.Value;
 
-                float weight = influence.Power / influence.Distance;
+                float weight = influence.Weight / influence.Distance;
                 totalWeight += weight;
                 weightedSum += influence.Value * weight;
             }

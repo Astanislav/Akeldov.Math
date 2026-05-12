@@ -18,7 +18,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="point">The point being sampled.</param>
         /// <returns>
-        /// The value, closest/source point, distance, and power used by influence samplers.
+        /// The value, closest/source point, distance, and weight used by influence samplers.
         /// </returns>
         InfluenceSample<TValue> GetInfluence(VectorXY point);
     }

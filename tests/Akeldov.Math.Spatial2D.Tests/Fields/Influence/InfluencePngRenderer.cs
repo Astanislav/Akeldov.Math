@@ -223,9 +223,9 @@ internal static class InfluencePngRenderer
     {
         return new[]
         {
-            new FloatPointInfluenceSource(sources[0].Power, sources[0].Position, activeIndex == 0 ? 1f : 0f),
-            new FloatPointInfluenceSource(sources[1].Power, sources[1].Position, activeIndex == 1 ? 1f : 0f),
-            new FloatPointInfluenceSource(sources[2].Power, sources[2].Position, activeIndex == 2 ? 1f : 0f)
+            new FloatPointInfluenceSource(sources[0].Weight, sources[0].Position, activeIndex == 0 ? 1f : 0f),
+            new FloatPointInfluenceSource(sources[1].Weight, sources[1].Position, activeIndex == 1 ? 1f : 0f),
+            new FloatPointInfluenceSource(sources[2].Weight, sources[2].Position, activeIndex == 2 ? 1f : 0f)
         };
     }
 

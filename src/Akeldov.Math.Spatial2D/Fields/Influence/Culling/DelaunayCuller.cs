@@ -27,30 +27,30 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Initializes a new Delaunay influence source culler.
         /// </summary>
-        /// <param name="sourcePoints">The point influence sources used to build the triangulation.</param>
-        public DelaunayCuller(IReadOnlyList<TPointSource> sourcePoints)
+        /// <param name="pointSources">The point influence sources used to build the triangulation.</param>
+        public DelaunayCuller(IReadOnlyList<TPointSource> pointSources)
         {
-            if (sourcePoints == null)
-                throw new ArgumentNullException(nameof(sourcePoints));
+            if (pointSources == null)
+                throw new ArgumentNullException(nameof(pointSources));
 
-            int n = sourcePoints.Count;
+            int n = pointSources.Count;
             if (n < 3)
-                throw new ArgumentException("At least three influence points are required.", nameof(sourcePoints));
+                throw new ArgumentException("At least three influence points are required.", nameof(pointSources));
 
             _sources = new TPointSource[n];
             _points = new VectorXY[n];
 
             for (int i = 0; i < n; i++)
             {
-                var sourcePoint = sourcePoints[i];
-                if (sourcePoint is null)
-                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(sourcePoints));
+                var pointSource = pointSources[i];
+                if (pointSource is null)
+                    throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
-                _sources[i] = sourcePoint;
-                _points[i] = sourcePoint.Position;
+                _sources[i] = pointSource;
+                _points[i] = pointSource.Position;
             }
 
-            ThrowIfAnyDuplicatePoint(_points, nameof(sourcePoints));
+            ThrowIfAnyDuplicatePoint(_points, nameof(pointSources));
 
             _fallbackCuller = new HalfPlaneCuller<TPointSource>(_sources);
 

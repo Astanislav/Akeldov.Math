@@ -31,7 +31,7 @@ float value = field.Sample(new VectorXY(40f, 30f));
 
 ## Inverse-Distance Weighted Sampling
 
-Inverse-distance weighted sampling blends all selected sources, weighted by distance and source power.
+Inverse-distance weighted sampling blends all selected sources, weighted by distance and source weight.
 
 ```csharp
 var sampler = new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>();

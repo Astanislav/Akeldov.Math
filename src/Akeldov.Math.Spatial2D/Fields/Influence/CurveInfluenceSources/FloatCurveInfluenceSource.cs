@@ -8,75 +8,75 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// Represents a floating-point influence source backed by a projectable curve.
     /// </summary>
     /// <remarks>
-    /// Values and powers are evaluated at the curve coordinate of the sampled point. Constant
+    /// Values and weights are evaluated at the curve coordinate of the sampled point. Constant
     /// constructor overloads are convenience wrappers around coordinate-based providers.
     /// </remarks>
     public class FloatCurveInfluenceSource : ICurveInfluenceSource<float>
     {
         private readonly IProjectableCurve _curve;
-        private readonly Func<float, float> _powerProvider;
+        private readonly Func<float, float> _weightProvider;
         private readonly Func<float, float> _valueProvider;
 
         /// <summary>
-        /// Initializes a new curve influence source with constant power and value.
+        /// Initializes a new curve influence source with constant weight and value.
         /// </summary>
-        /// <param name="power">The constant source power.</param>
+        /// <param name="weight">The constant source weight.</param>
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="value">The constant source value.</param>
-        public FloatCurveInfluenceSource(float power, IProjectableCurve curve, float value)
+        public FloatCurveInfluenceSource(float weight, IProjectableCurve curve, float value)
         {
-            if (power < 0f || float.IsNaN(power))
-                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+            if (weight < 0f || float.IsNaN(weight))
+                throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
 
             if (float.IsNaN(value))
                 throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
 
-            _powerProvider = _ => power;
+            _weightProvider = _ => weight;
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
             _valueProvider = _ => value;
         }
 
         /// <summary>
-        /// Initializes a new curve influence source with constant power and coordinate-based values.
+        /// Initializes a new curve influence source with constant weight and coordinate-based values.
         /// </summary>
-        /// <param name="power">The constant source power.</param>
+        /// <param name="weight">The constant source weight.</param>
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="valueProvider">The value provider evaluated with the curve coordinate.</param>
-        public FloatCurveInfluenceSource(float power, IProjectableCurve curve, Func<float, float> valueProvider)
+        public FloatCurveInfluenceSource(float weight, IProjectableCurve curve, Func<float, float> valueProvider)
         {
-            if (power < 0f || float.IsNaN(power))
-                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+            if (weight < 0f || float.IsNaN(weight))
+                throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
 
-            _powerProvider = _ => power;
+            _weightProvider = _ => weight;
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
             _valueProvider = valueProvider ?? throw new ArgumentNullException(nameof(valueProvider));
         }
 
         /// <summary>
-        /// Initializes a new curve influence source with coordinate-based power and constant value.
+        /// Initializes a new curve influence source with coordinate-based weight and constant value.
         /// </summary>
-        /// <param name="powerProvider">The power provider evaluated with the curve coordinate.</param>
+        /// <param name="weightProvider">The weight provider evaluated with the curve coordinate.</param>
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="value">The constant source value.</param>
-        public FloatCurveInfluenceSource(Func<float, float> powerProvider, IProjectableCurve curve, float value)
+        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IProjectableCurve curve, float value)
         {
             if (float.IsNaN(value))
                 throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
 
-            _powerProvider = powerProvider ?? throw new ArgumentNullException(nameof(powerProvider));
+            _weightProvider = weightProvider ?? throw new ArgumentNullException(nameof(weightProvider));
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
             _valueProvider = _ => value;
         }
 
         /// <summary>
-        /// Initializes a new curve influence source with coordinate-based power and value.
+        /// Initializes a new curve influence source with coordinate-based weight and value.
         /// </summary>
-        /// <param name="powerProvider">The power provider evaluated with the curve coordinate.</param>
+        /// <param name="weightProvider">The weight provider evaluated with the curve coordinate.</param>
         /// <param name="curve">The underlying projectable curve.</param>
         /// <param name="valueProvider">The value provider evaluated with the curve coordinate.</param>
-        public FloatCurveInfluenceSource(Func<float, float> powerProvider, IProjectableCurve curve, Func<float, float> valueProvider)
+        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IProjectableCurve curve, Func<float, float> valueProvider)
         {
-            _powerProvider = powerProvider ?? throw new ArgumentNullException(nameof(powerProvider));
+            _weightProvider = weightProvider ?? throw new ArgumentNullException(nameof(weightProvider));
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
             _valueProvider = valueProvider ?? throw new ArgumentNullException(nameof(valueProvider));
         }
@@ -103,9 +103,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         public InfluenceSample<float> GetInfluence(VectorXY point)
         {
             var projection = Project(point);
-            float power = _powerProvider(projection.CurveCoordinate);
-            if (power < 0f || float.IsNaN(power))
-                throw new InvalidOperationException("Power provider returned an invalid influence source power. Power must be non-negative and not NaN.");
+            float weight = _weightProvider(projection.CurveCoordinate);
+            if (weight < 0f || float.IsNaN(weight))
+                throw new InvalidOperationException("Weight provider returned an invalid influence source weight. Weight must be non-negative and not NaN.");
 
             float value = _valueProvider(projection.CurveCoordinate);
             if (float.IsNaN(value))
@@ -115,7 +115,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 value,
                 projection.ProjectedPoint,
                 projection.Distance,
-                power);
+                weight);
         }
     }
 }

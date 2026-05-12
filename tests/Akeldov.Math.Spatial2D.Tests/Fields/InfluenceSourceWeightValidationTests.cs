@@ -3,23 +3,23 @@ using Akeldov.Math.Spatial2D.Fields;
 
 namespace Akeldov.Math.Spatial2D.Tests.Fields;
 
-public class InfluenceSourcePowerValidationTests
+public class InfluenceSourceWeightValidationTests
 {
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void FloatPointInfluenceSource_WhenPowerIsInvalid_Throws(float power)
+    public void FloatPointInfluenceSource_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new FloatPointInfluenceSource(power, VectorXY.Zero, 1f));
+            new FloatPointInfluenceSource(weight, VectorXY.Zero, 1f));
     }
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void FloatPointInfluenceSource_WhenPowerIsAllowed_DoesNotThrow(float power)
+    public void FloatPointInfluenceSource_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new FloatPointInfluenceSource(power, VectorXY.Zero, 1f));
+            new FloatPointInfluenceSource(weight, VectorXY.Zero, 1f));
     }
 
     [Test]
@@ -34,39 +34,39 @@ public class InfluenceSourcePowerValidationTests
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void IntPointInfluenceSource_WhenPowerIsInvalid_Throws(float power)
+    public void IntPointInfluenceSource_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new IntPointInfluenceSource(power, VectorXY.Zero, 1));
+            new IntPointInfluenceSource(weight, VectorXY.Zero, 1));
     }
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void IntPointInfluenceSource_WhenPowerIsAllowed_DoesNotThrow(float power)
+    public void IntPointInfluenceSource_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new IntPointInfluenceSource(power, VectorXY.Zero, 1));
+            new IntPointInfluenceSource(weight, VectorXY.Zero, 1));
     }
 
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void FloatCurveInfluenceSource_WhenConstantPowerIsInvalid_Throws(float power)
+    public void FloatCurveInfluenceSource_WhenConstantWeightIsInvalid_Throws(float weight)
     {
         var curve = new Segment(VectorXY.Zero, VectorXY.One);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new FloatCurveInfluenceSource(power, curve, 1f));
+            new FloatCurveInfluenceSource(weight, curve, 1f));
     }
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void FloatCurveInfluenceSource_WhenConstantPowerIsAllowed_DoesNotThrow(float power)
+    public void FloatCurveInfluenceSource_WhenConstantWeightIsAllowed_DoesNotThrow(float weight)
     {
         var curve = new Segment(VectorXY.Zero, VectorXY.One);
 
         Assert.DoesNotThrow(() =>
-            new FloatCurveInfluenceSource(power, curve, 1f));
+            new FloatCurveInfluenceSource(weight, curve, 1f));
     }
 
     [Test]
@@ -93,10 +93,10 @@ public class InfluenceSourcePowerValidationTests
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void FloatCurveInfluenceSource_WhenPowerProviderReturnsInvalidPower_Throws(float power)
+    public void FloatCurveInfluenceSource_WhenWeightProviderReturnsInvalidWeight_Throws(float weight)
     {
         var curve = new Segment(VectorXY.Zero, VectorXY.One);
-        var source = new FloatCurveInfluenceSource(_ => power, curve, 1f);
+        var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
         Assert.Throws<InvalidOperationException>(() =>
             source.GetInfluence(VectorXY.Zero));
@@ -104,31 +104,31 @@ public class InfluenceSourcePowerValidationTests
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void FloatCurveInfluenceSource_WhenPowerProviderReturnsAllowedPower_ReturnsPower(float power)
+    public void FloatCurveInfluenceSource_WhenWeightProviderReturnsAllowedWeight_ReturnsWeight(float weight)
     {
         var curve = new Segment(VectorXY.Zero, VectorXY.One);
-        var source = new FloatCurveInfluenceSource(_ => power, curve, 1f);
+        var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
         var influence = source.GetInfluence(VectorXY.Zero);
 
-        Assert.That(influence.Power, Is.EqualTo(power));
+        Assert.That(influence.Weight, Is.EqualTo(weight));
     }
 
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.NegativeInfinity)]
-    public void InfluenceSample_WhenPowerIsInvalid_Throws(float power)
+    public void InfluenceSample_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, power));
+            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, weight));
     }
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void InfluenceSample_WhenPowerIsAllowed_DoesNotThrow(float power)
+    public void InfluenceSample_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, power));
+            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, weight));
     }
 
     [TestCase(-1f)]

@@ -16,7 +16,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         where TSource : IInfluenceSource<int>
     {
         private const float Eps = GeometryConstants.GeometryEpsilon;
-        private const float PowerEps = GeometryConstants.GeometryEpsilon;
+        private const float WeightEpsilon = GeometryConstants.GeometryEpsilon;
 
         /// <summary>
         /// Initializes a new barycentric integer influence sampler.
@@ -158,8 +158,8 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static float EffectiveDistance(InfluenceSample<int> sample)
         {
-            float power = MathF.Max(sample.Power, PowerEps);
-            return sample.Distance / power;
+            float weight = MathF.Max(sample.Weight, WeightEpsilon);
+            return sample.Distance / weight;
         }
 
         private static InfluenceSample<int>[] GetNearestSamples(InfluenceSample<int>[] samples)

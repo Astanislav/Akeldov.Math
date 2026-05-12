@@ -86,11 +86,11 @@ public class InfluenceSamplerTests
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
-    public void InverseDistanceWeightedFloatSampler_WhenPowerIsUnsupported_Throws(float power)
+    public void InverseDistanceWeightedFloatSampler_WhenWeightIsUnsupported_Throws(float weight)
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 2f, power: power),
+            FixedSource(0f, new VectorXY(0f, 0f), distance: 2f, weight: weight),
             FixedSource(10f, new VectorXY(10f, 0f), distance: 8f)
         };
 
@@ -218,10 +218,10 @@ public class InfluenceSamplerTests
         TValue value,
         VectorXY sourcePoint,
         float distance,
-        float power = 1f)
+        float weight = 1f)
     {
         return new FixedInfluenceSource<TValue>(
-            new InfluenceSample<TValue>(value, sourcePoint, distance, power));
+            new InfluenceSample<TValue>(value, sourcePoint, distance, weight));
     }
 
     private sealed class FixedInfluenceSource<TValue> : IInfluenceSource<TValue>

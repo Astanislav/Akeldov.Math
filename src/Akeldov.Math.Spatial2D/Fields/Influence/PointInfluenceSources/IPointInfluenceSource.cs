@@ -6,9 +6,9 @@ namespace Akeldov.Math.Spatial2D.Fields
     public interface IPointInfluenceSource : IInfluenceSource, IHasPosition2D
     {
         /// <summary>
-        /// Gets the source power used by influence samplers.
+        /// Gets the source weight used by influence samplers.
         /// </summary>
-        float Power { get; }
+        float Weight { get; }
     }
 
     /// <summary>

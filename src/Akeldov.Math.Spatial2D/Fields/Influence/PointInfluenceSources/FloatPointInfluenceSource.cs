@@ -10,26 +10,26 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Initializes a new floating-point influence source.
         /// </summary>
-        /// <param name="power">The source power used by influence samplers.</param>
+        /// <param name="weight">The source weight used by influence samplers.</param>
         /// <param name="position">The source position.</param>
         /// <param name="value">The value contributed by this source.</param>
-        public FloatPointInfluenceSource(float power, VectorXY position, float value)
+        public FloatPointInfluenceSource(float weight, VectorXY position, float value)
         {
-            if (power < 0f || float.IsNaN(power))
-                throw new ArgumentOutOfRangeException(nameof(power), "Influence source power must be non-negative and not NaN.");
+            if (weight < 0f || float.IsNaN(weight))
+                throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
 
             if (float.IsNaN(value))
                 throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
 
-            Power = power;
+            Weight = weight;
             Position = position;
             Value = value;
         }
 
         /// <summary>
-        /// Gets the source power used by influence samplers.
+        /// Gets the source weight used by influence samplers.
         /// </summary>
-        public float Power { get; }
+        public float Weight { get; }
 
         /// <summary>
         /// Gets the source position.
@@ -55,10 +55,10 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Gets the influence contribution of this source for the specified point.
         /// </summary>
         /// <param name="point">The point being sampled.</param>
-        /// <returns>The value, source point, distance, and power used by influence samplers.</returns>
+        /// <returns>The value, source point, distance, and weight used by influence samplers.</returns>
         public InfluenceSample<float> GetInfluence(VectorXY point)
         {
-            return new InfluenceSample<float>(Value, Position, Distance(point), Power);
+            return new InfluenceSample<float>(Value, Position, Distance(point), Weight);
         }
     }
 }
