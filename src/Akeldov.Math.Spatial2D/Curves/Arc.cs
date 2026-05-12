@@ -104,11 +104,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Determines whether the specified point's angular position lies within this arc's angular span.
+        /// Determines whether the direction from this arc's center to the specified point lies within this arc's angular region.
         /// </summary>
         /// <param name="point">The point to test.</param>
-        /// <returns><see langword="true"/> if the point's angular position lies within this arc; otherwise, <see langword="false"/>.</returns>
-        public bool ContainsAngularPosition(VectorXY point)
+        /// <returns><see langword="true"/> if the point lies within this arc's angular region; otherwise, <see langword="false"/>.</returns>
+        public bool IsWithinAngularRegion(VectorXY point)
         {
             VectorXY toPoint = (point - Center).Normalize();
             float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
@@ -188,7 +188,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 VectorXY point1 = ray.Origin + dir * t1;
                 circleIntersections.AddDistinct(point1);
 
-                if (ContainsAngularPosition(point1))
+                if (IsWithinAngularRegion(point1))
                     intersections.AddDistinct(point1);
             }
 
@@ -197,7 +197,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 VectorXY point2 = ray.Origin + dir * t2;
                 circleIntersections.AddDistinct(point2);
 
-                if (ContainsAngularPosition(point2))
+                if (IsWithinAngularRegion(point2))
                     intersections.AddDistinct(point2);
             }
 

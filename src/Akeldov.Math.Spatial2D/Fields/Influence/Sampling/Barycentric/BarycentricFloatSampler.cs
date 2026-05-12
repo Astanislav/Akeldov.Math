@@ -40,7 +40,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     public class BarycentricFloatSampler<TSource> : IInfluenceSampler<TSource, float>
         where TSource : IInfluenceSource<float>
     {
-        private const float Eps = GeometryConstants.GeometryEpsilon;
+        private const float Epsilon = GeometryConstants.GeometryEpsilon;
         private const float WeightEpsilon = GeometryConstants.GeometryEpsilon;
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             out float lA, out float lB, out float lC)
         {
             float denom = Cross(b - a, c - a);
-            if (denom.IsAlmostZero(Eps))
+            if (denom.IsAlmostZero(Epsilon))
             {
                 lA = lB = lC = 0f;
                 return false;

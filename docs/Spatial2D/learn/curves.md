@@ -51,7 +51,7 @@ var arc = new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: MathF.PI)
 
 float circleDistance = circle.Distance(new VectorXY(3f, 0f));
 var arcProjection = arc.Project(new VectorXY(0f, 8f));
-bool isWithinArcSpan = arc.ContainsAngularPosition(new VectorXY(1f, 1f));
+bool isWithinAngularRegion = arc.IsWithinAngularRegion(new VectorXY(1f, 1f));
 ```
 
 ## Contours
