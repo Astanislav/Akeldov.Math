@@ -18,13 +18,13 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         /// <summary>
         /// Creates a closed arc from <paramref name="startAngle"/> to <paramref name="endAngle"/>.
-        /// Equal input angles represent a zero-length arc. A stop angle one full turn after the start angle
+        /// Equal input angles represent a zero-length arc. An end angle one full turn after the start angle
         /// represents a full circle even though both angles normalize to the same value.
         /// </summary>
         /// <param name="center">The center of the source circle.</param>
         /// <param name="radius">The radius of the source circle.</param>
         /// <param name="startAngle">The start angle in radians.</param>
-        /// <param name="endAngle">The stop angle in radians.</param>
+        /// <param name="endAngle">The end angle in radians.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite, or when an angle is NaN or infinite.</exception>
         public Arc(VectorXY center, float radius, float startAngle, float endAngle)
         {
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new ArgumentOutOfRangeException(nameof(startAngle), "Arc start angle must be finite.");
 
             if (float.IsNaN(endAngle) || float.IsInfinity(endAngle))
-                throw new ArgumentOutOfRangeException(nameof(endAngle), "Arc stop angle must be finite.");
+                throw new ArgumentOutOfRangeException(nameof(endAngle), "Arc end angle must be finite.");
 
             _center = center;
             _radius = radius;
@@ -141,7 +141,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns a string representation of this arc with angles in degrees.
         /// </summary>
         /// <returns>A string representation of this arc with degree angles.</returns>
-        public string ToStringDeg() => $"Arc(center: {Center}, radius: {Radius}, deg: {StartAngleDeg} - {EndAngleDeg}, fullCircle: {IsFullCircle})";
+        public string ToDegreesString() => $"Arc(center: {Center}, radius: {Radius}, deg: {StartAngleDeg} - {EndAngleDeg}, fullCircle: {IsFullCircle})";
 
         /// <summary>
         /// Returns point intersections between this arc and the specified ray.
@@ -171,7 +171,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float a = 1f;
             float b = 2f * VectorXY.Dot(f, dir);
-            float c = f.SQRLength - circle.Radius * circle.Radius;
+            float c = f.SquaredLength - circle.Radius * circle.Radius;
 
             float discriminant = b * b - 4f * a * c;
 
@@ -222,14 +222,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, arc parameter, and distance to this arc.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurvePointProjection Project(VectorXY point)
         {
             VectorXY toPoint = point - _center;
 
-            if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SQRLength <= GeometryConstants.GeometryEpsilonSquared)
+            if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
                 VectorXY start = GetStartPoint();
-                return new CurveProjection(start, 0f, point.Distance(start));
+                return new CurvePointProjection(start, 0f, point.Distance(start));
             }
 
             float angleToPoint = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
@@ -238,7 +238,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             {
                 VectorXY projected = _center + toPoint.Normalize() * _radius;
                 float parameter = GetParameter(angleToPoint);
-                return new CurveProjection(projected, parameter, point.Distance(projected));
+                return new CurvePointProjection(projected, parameter, point.Distance(projected));
             }
 
             VectorXY arcStart = GetStartPoint();
@@ -248,9 +248,9 @@ namespace Akeldov.Math.Spatial2D.Curves
             float distEnd = point.Distance(arcEnd);
 
             if (distStart <= distEnd)
-                return new CurveProjection(arcStart, 0f, distStart);
+                return new CurvePointProjection(arcStart, 0f, distStart);
 
-            return new CurveProjection(arcEnd, 1f, distEnd);
+            return new CurvePointProjection(arcEnd, 1f, distEnd);
         }
 
         /// <summary>
@@ -295,9 +295,9 @@ namespace Akeldov.Math.Spatial2D.Curves
             return delta;
         }
 
-        private static bool IsFullTurn(float startAngle, float stopAngle)
+        private static bool IsFullTurn(float startAngle, float endAngle)
         {
-            float delta = stopAngle - startAngle;
+            float delta = endAngle - startAngle;
             if (MathF.Abs(delta) <= GeometryConstants.GeometryEpsilon)
                 return false;
 

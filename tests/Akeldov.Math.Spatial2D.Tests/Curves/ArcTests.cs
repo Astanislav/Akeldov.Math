@@ -27,9 +27,9 @@ public class ArcTests
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
-    [TestCase(float.NaN, "startAngleRad")]
-    [TestCase(float.PositiveInfinity, "startAngleRad")]
-    [TestCase(float.NegativeInfinity, "startAngleRad")]
+    [TestCase(float.NaN, "startAngle")]
+    [TestCase(float.PositiveInfinity, "startAngle")]
+    [TestCase(float.NegativeInfinity, "startAngle")]
     public void Constructor_WhenStartAngleIsInvalid_Throws(float startAngle, string paramName)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -38,13 +38,13 @@ public class ArcTests
         Assert.That(exception!.ParamName, Is.EqualTo(paramName));
     }
 
-    [TestCase(float.NaN, "stopAngleRad")]
-    [TestCase(float.PositiveInfinity, "stopAngleRad")]
-    [TestCase(float.NegativeInfinity, "stopAngleRad")]
-    public void Constructor_WhenStopAngleIsInvalid_Throws(float stopAngle, string paramName)
+    [TestCase(float.NaN, "endAngle")]
+    [TestCase(float.PositiveInfinity, "endAngle")]
+    [TestCase(float.NegativeInfinity, "endAngle")]
+    public void Constructor_WhenEndAngleIsInvalid_Throws(float endAngle, string paramName)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new Arc(VectorXY.Zero, 1f, 0f, stopAngle));
+            new Arc(VectorXY.Zero, 1f, 0f, endAngle));
 
         Assert.That(exception!.ParamName, Is.EqualTo(paramName));
     }

@@ -14,22 +14,6 @@ The library provides:
 - Influence fields for sampling values from point or curve sources.
 - Source culling and interpolation strategies for local field behavior.
 
-## Quick Example
-
-```csharp
-using Akeldov.Math.Spatial2D;
-using Akeldov.Math.Spatial2D.Curves;
-
-var segment = new Segment(
-    new VectorXY(0f, 0f),
-    new VectorXY(10f, 0f));
-
-var projection = segment.Project(new VectorXY(4f, 3f));
-
-VectorXY closestPoint = projection.Point;
-float distance = projection.Distance;
-```
-
 ## Documentation
 
 Documentation is available at:

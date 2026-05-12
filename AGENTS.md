@@ -1,5 +1,11 @@
 # Agent Notes
 
+## Spatial2D Angle Units
+
+In `Akeldov.Math.Spatial2D`, angles are expressed in radians by default.
+Angle parameters and properties must state their units in XML comments.
+Non-radian members must use an explicit suffix, such as `Deg`, and document their unit.
+
 ## Tests
 
 For the Spatial2D NUnit tests, build the test project first, then run the test assembly directly:

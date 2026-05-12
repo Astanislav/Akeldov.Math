@@ -315,7 +315,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         private static float DistanceToSegmentSquared(VectorXY a, VectorXY b, VectorXY point, out float parameter)
         {
             VectorXY ab = b - a;
-            float ab2 = ab.SQRLength;
+            float ab2 = ab.SquaredLength;
             if (ab2 <= GeometryConstants.GeometryEpsilonSquared)
             {
                 parameter = 0f;

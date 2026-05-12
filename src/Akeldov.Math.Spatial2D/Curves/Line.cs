@@ -196,7 +196,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (cross.IsAlmostZero())
             {
-                if (s.SQRLength <= GeometryConstants.GeometryEpsilonSquared)
+                if (s.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
                 {
                     if (IsPointOnRay(q, ray))
                         intersections.AddDistinct(q);
@@ -232,27 +232,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <summary>
-        /// Projects the specified point onto this line and returns only the projected point.
-        /// </summary>
-        /// <param name="point">The point to project.</param>
-        /// <returns>The closest point on this line.</returns>
-        public VectorXY ProjectPoint(VectorXY point)
-        {
-            return Project(point).Point;
-        }
-
-        /// <summary>
         /// Projects the specified point onto this line.
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, line parameter, and distance to this line.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurvePointProjection Project(VectorXY point)
         {
             float signedDistance = GetSignedDistance(point);
             VectorXY projection = point - Normal * signedDistance;
             float parameter = VectorXY.Dot(projection - Origin, Direction);
 
-            return new CurveProjection(projection, parameter, MathF.Abs(signedDistance));
+            return new CurvePointProjection(projection, parameter, MathF.Abs(signedDistance));
         }
 
         /// <inheritdoc/>

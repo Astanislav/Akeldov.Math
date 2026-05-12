@@ -62,7 +62,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float a = 1f;
             float b = 2 * VectorXY.Dot(f, d);
-            float c = f.SQRLength - _radius * _radius;
+            float c = f.SquaredLength - _radius * _radius;
 
             float discriminant = b * b - 4 * a * c;
 

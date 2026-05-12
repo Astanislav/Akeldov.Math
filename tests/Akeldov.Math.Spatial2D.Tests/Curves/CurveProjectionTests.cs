@@ -11,7 +11,7 @@ public class CurveProjectionTests
     public void Constructor_WhenDistanceIsInvalid_Throws(float distance)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new CurveProjection(VectorXY.Zero, 0f, distance));
+            new CurvePointProjection(VectorXY.Zero, 0f, distance));
 
         Assert.That(exception!.ParamName, Is.EqualTo("distance"));
     }

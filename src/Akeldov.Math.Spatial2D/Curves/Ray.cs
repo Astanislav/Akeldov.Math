@@ -70,7 +70,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, ray parameter, and distance to this ray.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurvePointProjection Project(VectorXY point)
         {
             VectorXY toPoint = point - _origin;
             float t = VectorXY.Dot(toPoint, Direction);
@@ -79,7 +79,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 t = 0f;
 
             VectorXY projected = _origin + Direction * t;
-            return new CurveProjection(projected, t, point.Distance(projected));
+            return new CurvePointProjection(projected, t, point.Distance(projected));
         }
 
         /// <summary>

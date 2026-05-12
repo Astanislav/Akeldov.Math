@@ -11,6 +11,8 @@ The curves package contains basic 2D primitives:
 
 These types support distance, projection, and intersection-style workflows.
 
+Angles are expressed in radians by default. Non-radian members use an explicit suffix, such as `Deg`, and document their unit.
+
 ## Segment Projection
 
 ```csharp
@@ -44,7 +46,7 @@ var rayProjection = ray.Project(new VectorXY(4f, 3f));
 
 ```csharp
 var circle = new Circle(VectorXY.Zero, radius: 5f);
-var arc = new Arc(VectorXY.Zero, radius: 5f, startAngleRad: 0f, stopAngleRad: MathF.PI);
+var arc = new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: MathF.PI);
 
 float circleDistance = circle.Distance(new VectorXY(3f, 0f));
 var arcProjection = arc.Project(new VectorXY(0f, 8f));

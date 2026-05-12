@@ -36,7 +36,7 @@ namespace Akeldov.Math.Spatial2D
         /// <summary>
         /// Gets the squared Euclidean length of this vector.
         /// </summary>
-        public float SQRLength => X * X + Y * Y;
+        public float SquaredLength => X * X + Y * Y;
 
         /// <summary>
         /// Gets the vector with both components equal to zero.

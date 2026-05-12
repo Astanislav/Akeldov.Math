@@ -120,7 +120,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (!VectorXY.Cross(originToA, ray.Direction).IsAlmostZero())
                 return;
 
-            if (segDir.SQRLength <= GeometryConstants.GeometryEpsilonSquared)
+            if (segDir.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
                 if ((IncludesA || IncludesB) && IsPointOnRay(A, ray, out _))
                     intersections.AddDistinct(A);
@@ -182,7 +182,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (dot < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            if (dot > ab.SQRLength + GeometryConstants.GeometryEpsilon)
+            if (dot > ab.SquaredLength + GeometryConstants.GeometryEpsilon)
                 return false;
 
             if (point.AlmostEquals(A) && !IncludesA)
@@ -240,14 +240,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, segment parameter, and distance to this segment.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurvePointProjection Project(VectorXY point)
         {
             VectorXY ab = B - A;
             VectorXY ap = point - A;
 
-            float abSquared = ab.SQRLength;
+            float abSquared = ab.SquaredLength;
             if (abSquared <= GeometryConstants.GeometryEpsilonSquared)
-                return new CurveProjection(A, 0f, point.Distance(A));
+                return new CurvePointProjection(A, 0f, point.Distance(A));
 
             float t = VectorXY.Dot(ap, ab) / abSquared;
 
@@ -257,7 +257,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 t = 1f;
 
             VectorXY projection = A + t * ab;
-            return new CurveProjection(projection, t, point.Distance(projection));
+            return new CurvePointProjection(projection, t, point.Distance(projection));
         }
 
         /// <summary>

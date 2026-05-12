@@ -94,7 +94,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
-        public CurveProjection Project(VectorXY point)
+        public CurvePointProjection Project(VectorXY point)
         {
             return _curve.Project(point);
         }

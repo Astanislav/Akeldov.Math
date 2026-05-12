@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Normalizes an angle in radians to the range [0, 2 * pi).
         /// </summary>
-        /// <param name="angle">The angle to normalize.</param>
+        /// <param name="angle">The angle to normalize, in radians.</param>
         /// <returns>The normalized angle in radians.</returns>
         public static float NormalizeAngleRad(this float angle)
         {
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Determines whether an angle lies inside the closed arc from the start angle to the end angle.
         /// </summary>
-        /// <param name="angle">The normalized angle to test.</param>
+        /// <param name="angle">The normalized angle to test, in radians.</param>
         /// <param name="startAngle">The normalized arc start angle in radians.</param>
         /// <param name="endAngle">The normalized arc end angle in radians.</param>
         /// <returns><see langword="true"/> if the angle is inside the arc; otherwise, <see langword="false"/>.</returns>
