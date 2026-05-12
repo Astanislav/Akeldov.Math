@@ -57,7 +57,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                     continue;
                 }
 
-                var newIntersections = curve.RayIntersections(ray);
+                var newIntersections = curve.GetRayIntersections(ray);
 
                 if (newIntersections == null)
                     continue;

@@ -82,9 +82,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
-        public List<VectorXY> RayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(Ray ray)
         {
-            return _curve.RayIntersections(ray);
+            return _curve.GetRayIntersections(ray);
         }
 
         /// <inheritdoc/>

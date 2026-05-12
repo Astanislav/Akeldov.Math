@@ -70,7 +70,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="ray">The ray to intersect with this segment.</param>
         /// <returns>The intersection points in the forward direction of the ray.</returns>
-        public List<VectorXY> RayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(Ray ray)
         {
             List<VectorXY> intersections = new List<VectorXY>();
 

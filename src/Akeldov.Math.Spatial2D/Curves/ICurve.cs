@@ -13,7 +13,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
         /// <returns>The intersection points in the forward direction of the ray.</returns>
-        List<VectorXY> RayIntersections(Ray ray);
+        List<VectorXY> GetRayIntersections(Ray ray);
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this curve.

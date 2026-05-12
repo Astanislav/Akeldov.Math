@@ -100,7 +100,7 @@ public class LineTests
         var line = new Line(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
         var ray = new Ray(new VectorXY(2f, 0f));
 
-        var intersections = line.RayIntersections(ray);
+        var intersections = line.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -112,7 +112,7 @@ public class LineTests
         var line = new Line(new VectorXY(-5f, 1f), new VectorXY(5f, 1f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = line.RayIntersections(ray);
+        var intersections = line.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -123,7 +123,7 @@ public class LineTests
         var line = new Line(new VectorXY(-1f, -1f), new VectorXY(-1f, 1f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = line.RayIntersections(ray);
+        var intersections = line.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }

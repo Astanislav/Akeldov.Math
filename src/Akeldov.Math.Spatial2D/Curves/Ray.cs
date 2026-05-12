@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     {
         private readonly VectorXY _origin;
         private readonly float _angleRad;
-        private readonly VectorXY _dir;
+        private readonly VectorXY _direction;
 
         /// <summary>
         /// Initializes a new ray that starts at the specified origin and points along the positive X axis.
@@ -21,7 +21,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         {
             _origin = origin;
             _angleRad = 0;
-            _dir = new VectorXY(1, 0);
+            _direction = new VectorXY(1, 0);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             _origin = origin;
             _angleRad = angleRad;
-            _dir = new VectorXY(MathF.Cos(angleRad), MathF.Sin(angleRad));
+            _direction = new VectorXY(MathF.Cos(angleRad), MathF.Sin(angleRad));
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized ray direction.
         /// </summary>
-        public VectorXY Dir => _dir;
+        public VectorXY Dir => _direction;
 
         /// <summary>
         /// Gets the ray direction angle in radians.
@@ -88,7 +88,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="other">The other ray to intersect with this ray.</param>
         /// <returns>The intersection points in the forward direction of this ray.</returns>
-        public List<VectorXY> RayIntersections(Ray other)
+        public List<VectorXY> GetRayIntersections(Ray other)
         {
             List<VectorXY> intersections = new List<VectorXY>();
 

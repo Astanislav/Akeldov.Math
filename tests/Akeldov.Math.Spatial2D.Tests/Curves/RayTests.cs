@@ -20,7 +20,7 @@ public class RayTests
         var ray = new Ray(new VectorXY(2f, 0f));
         var other = new Ray(VectorXY.Zero);
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -32,7 +32,7 @@ public class RayTests
         var ray = new Ray(VectorXY.Zero);
         var other = new Ray(new VectorXY(2f, 0f));
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -44,7 +44,7 @@ public class RayTests
         var ray = new Ray(VectorXY.Zero);
         var other = new Ray(new VectorXY(2f, 0f), MathF.PI);
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 0f, 0f);
@@ -56,7 +56,7 @@ public class RayTests
         var ray = new Ray(VectorXY.Zero);
         var other = new Ray(new VectorXY(0f, 1f));
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -67,7 +67,7 @@ public class RayTests
         var ray = new Ray(VectorXY.Zero);
         var other = new Ray(new VectorXY(2f, -1f), MathF.PI / 2f);
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -79,7 +79,7 @@ public class RayTests
         var ray = new Ray(VectorXY.Zero);
         var other = new Ray(new VectorXY(-2f, -1f), MathF.PI / 2f);
 
-        var intersections = ray.RayIntersections(other);
+        var intersections = ray.GetRayIntersections(other);
 
         Assert.That(intersections, Is.Empty);
     }

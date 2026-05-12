@@ -55,7 +55,7 @@ public class ArcTests
         var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);
         var ray = new Ray(new VectorXY(-1f, 0f));
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
@@ -67,7 +67,7 @@ public class ArcTests
         var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);
         var ray = new Ray(new VectorXY(-2f, -1f));
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -123,7 +123,7 @@ public class ArcTests
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 0f);
         var ray = new Ray(new VectorXY(-2f, 0f));
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
@@ -135,7 +135,7 @@ public class ArcTests
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 0f);
         var ray = new Ray(new VectorXY(0f, -2f), MathF.PI / 2f);
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -183,7 +183,7 @@ public class ArcTests
         var arc = new Arc(new VectorXY(1f, 1f), 0f, MathF.PI / 2f, MathF.PI);
         var ray = new Ray(new VectorXY(1f, -1f), MathF.PI / 2f);
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 1f);
@@ -195,7 +195,7 @@ public class ArcTests
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI);
         var ray = new Ray(new VectorXY(-2f, 0f));
 
-        var intersections = arc.RayIntersections(ray);
+        var intersections = arc.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(2));
         AssertVector(intersections[0], -1f, 0f);

@@ -36,7 +36,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
@@ -48,7 +48,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: false, includesB: true);
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -59,7 +59,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesA: true, includesB: true);
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 1f, 0f);
@@ -71,7 +71,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f));
         var ray = new Ray(new VectorXY(4f, 0f));
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 4f, 0f);
@@ -83,7 +83,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(4f, 0f), new VectorXY(10f, 0f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 4f, 0f);
@@ -95,7 +95,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesA: false, includesB: true);
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -118,7 +118,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(-4f, 0f), new VectorXY(-2f, 0f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
@@ -129,7 +129,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f));
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -141,7 +141,7 @@ public class SegmentTests
         var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesA: false, includesB: false);
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = segment.RayIntersections(ray);
+        var intersections = segment.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }

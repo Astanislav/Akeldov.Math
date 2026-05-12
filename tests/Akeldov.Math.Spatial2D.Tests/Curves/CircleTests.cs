@@ -31,7 +31,7 @@ public class CircleTests
         var circle = new Circle(VectorXY.Zero, 2f);
         var ray = new Ray(VectorXY.Zero);
 
-        var intersections = circle.RayIntersections(ray);
+        var intersections = circle.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 2f, 0f);
@@ -43,7 +43,7 @@ public class CircleTests
         var circle = new Circle(VectorXY.Zero, 1f);
         var ray = new Ray(new VectorXY(-2f, 1f));
 
-        var intersections = circle.RayIntersections(ray);
+        var intersections = circle.GetRayIntersections(ray);
 
         Assert.That(intersections, Has.Count.EqualTo(1));
         AssertVector(intersections[0], 0f, 1f);
@@ -55,7 +55,7 @@ public class CircleTests
         var circle = new Circle(VectorXY.Zero, 1f);
         var ray = new Ray(new VectorXY(2f, 0f));
 
-        var intersections = circle.RayIntersections(ray);
+        var intersections = circle.GetRayIntersections(ray);
 
         Assert.That(intersections, Is.Empty);
     }
