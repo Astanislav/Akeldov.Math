@@ -23,6 +23,29 @@ public class PoissonDiskValidationTests
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
     [TestCase(float.NegativeInfinity)]
+    public void PointSampleConstructor_WhenMinimalDistanceIsInvalid_Throws(float minimalDistance)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => new PoissonDiskPointSample(VectorXY.Zero, minimalDistance));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("minimalDistance"));
+    }
+
+    [Test]
+    public void PointSampleConstructor_WhenMinimalDistanceIsValid_StoresSample()
+    {
+        var point = new VectorXY(1f, 2f);
+        var sample = new PoissonDiskPointSample(point, 3f);
+
+        Assert.That(sample.Point, Is.EqualTo(point));
+        Assert.That(sample.MinimalDistance, Is.EqualTo(3f));
+    }
+
+    [TestCase(0f)]
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
     public void Sample_WhenMinimalDistanceIsInvalid_Throws(float minimalDistance)
     {
         var sampler = new PoissonDiskPointSampler(new Random(1), maxAttempts: 30);

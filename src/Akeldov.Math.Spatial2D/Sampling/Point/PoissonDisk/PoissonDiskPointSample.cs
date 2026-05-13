@@ -1,3 +1,5 @@
+using System;
+
 namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 {
     /// <summary>
@@ -9,9 +11,13 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// Initializes a new Poisson disk point sample.
         /// </summary>
         /// <param name="point">The sampled point.</param>
-        /// <param name="minimalDistance">The minimal distance associated with the sampled point.</param>
+        /// <param name="minimalDistance">The finite positive minimal distance associated with the sampled point.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="minimalDistance"/> is not finite and positive.</exception>
         public PoissonDiskPointSample(VectorXY point, float minimalDistance)
         {
+            if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
+                throw new ArgumentOutOfRangeException(nameof(minimalDistance), "Minimal distance must be finite and positive.");
+
             Point = point;
             MinimalDistance = minimalDistance;
         }
