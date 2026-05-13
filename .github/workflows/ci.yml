@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
+  TEST_PROJECT_PATH: tests/Akeldov.Math.Spatial2D.Tests/Akeldov.Math.Spatial2D.Tests.csproj
+  TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Spatial2D.Tests/bin/Debug/net6.0/Akeldov.Math.Spatial2D.Tests.dll
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spatial2d-tests:
+    name: Spatial2D tests
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            9.0.x
+
+      - name: Show .NET info
+        shell: pwsh
+        run: dotnet --info
+
+      - name: Restore
+        shell: pwsh
+        run: |
+          dotnet restore $env:PROJECT_PATH
+          dotnet restore $env:TEST_PROJECT_PATH
+
+      - name: Build tests
+        shell: pwsh
+        run: >
+          dotnet build $env:TEST_PROJECT_PATH
+          --framework net6.0
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+
+      - name: Run tests
+        shell: pwsh
+        run: >
+          dotnet vstest $env:TEST_ASSEMBLY_PATH
+          "--logger:console;verbosity=detailed"
