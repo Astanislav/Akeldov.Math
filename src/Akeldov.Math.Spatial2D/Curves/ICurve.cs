@@ -12,7 +12,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this curve and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
-        /// <returns>The intersection points in the forward direction of the ray.</returns>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         List<VectorXY> GetRayIntersections(Ray ray);
 
         /// <summary>

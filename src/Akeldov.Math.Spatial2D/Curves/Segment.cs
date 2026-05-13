@@ -69,7 +69,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// If the overlap starts at an excluded endpoint, no first point exists and the result is empty.
         /// </summary>
         /// <param name="ray">The ray to intersect with this segment.</param>
-        /// <returns>The intersection points in the forward direction of the ray.</returns>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<VectorXY> GetRayIntersections(Ray ray)
         {
             List<VectorXY> intersections = new List<VectorXY>();

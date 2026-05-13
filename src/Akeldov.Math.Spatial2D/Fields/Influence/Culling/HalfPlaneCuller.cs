@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Returns influence sources that are visible from the specified point.
         /// </summary>
         /// <param name="point">The point being sampled.</param>
-        /// <returns>The culled source list.</returns>
+        /// <returns>A new mutable list of visible influence sources owned by the caller.</returns>
         public List<TPointSource> Cull(VectorXY point)
         {
             var orderedPointSources = OrderBy(_pointSources, x => x.Position.Distance(point));

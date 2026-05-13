@@ -147,7 +147,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this arc and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this arc.</param>
-        /// <returns>The intersection points in the forward direction of the ray.</returns>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<VectorXY> GetRayIntersections(Ray ray)
         {
             var intersections = new List<VectorXY>();

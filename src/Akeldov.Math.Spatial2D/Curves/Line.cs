@@ -124,7 +124,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// returns the ray origin as the first point encountered by the ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this line.</param>
-        /// <returns>The intersection points in the forward direction of the ray.</returns>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<VectorXY> GetRayIntersections(Ray ray)
         {
             List<VectorXY> intersections = new List<VectorXY>();

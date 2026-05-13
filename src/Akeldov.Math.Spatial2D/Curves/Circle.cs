@@ -70,7 +70,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this circle and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with the circle.</param>
-        /// <returns>The intersection points in the forward direction of the ray.</returns>
+        /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
         public List<VectorXY> GetRayIntersections(Ray ray)
         {
             List<VectorXY> intersections = new List<VectorXY>();

@@ -31,7 +31,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// </summary>
         /// <param name="fieldSize">The finite positive field size.</param>
         /// <param name="minimalDistance">The finite positive minimal distance between samples.</param>
-        /// <returns>The generated point samples.</returns>
+        /// <returns>A new mutable list of generated point samples owned by the caller.</returns>
         public List<PoissonDiskPointSample> Sample(VectorXY fieldSize, float minimalDistance)
         {
             if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// </summary>
         /// <param name="fieldSize">The finite positive field size.</param>
         /// <param name="minimalDistanceField">The finite positive minimal distance field.</param>
-        /// <returns>The generated point samples.</returns>
+        /// <returns>A new mutable list of generated point samples owned by the caller.</returns>
         public List<PoissonDiskPointSample> Sample(VectorXY fieldSize, IFloatField minimalDistanceField)
         {
             if (fieldSize.X <= 0f || float.IsNaN(fieldSize.X) || float.IsInfinity(fieldSize.X) ||

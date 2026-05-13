@@ -71,7 +71,8 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="point">The point being sampled.</param>
         /// <returns>
-        /// The containing triangle sources, nearest hull feature sources, or fallback sources.
+        /// A new mutable list owned by the caller containing the selected triangle sources,
+        /// nearest hull feature sources, or fallback sources.
         /// </returns>
         public List<TPointSource> Cull(VectorXY point)
         {
