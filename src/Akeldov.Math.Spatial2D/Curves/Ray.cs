@@ -7,11 +7,16 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a half-line that starts at an origin and extends in one direction.
     /// </summary>
+    /// <remarks>
+    /// The default value starts at <see cref="VectorXY.Zero"/> and points along the positive X axis.
+    /// </remarks>
     public readonly struct Ray : IParameterizedProjectableCurve
     {
         private readonly VectorXY _origin;
         private readonly float _angle;
-        private readonly VectorXY _direction;
+        // Store X shifted so default(Ray) points along positive X instead of having a zero direction.
+        private readonly float _directionXMinusOne;
+        private readonly float _directionY;
 
         /// <summary>
         /// Initializes a new ray that starts at the specified origin and points along the positive X axis.
@@ -20,8 +25,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         public Ray(VectorXY origin)
         {
             _origin = origin;
-            _angle = 0;
-            _direction = new VectorXY(1, 0);
+            _angle = 0f;
+            _directionXMinusOne = 0f;
+            _directionY = 0f;
         }
 
         /// <summary>
@@ -37,7 +43,8 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             _origin = origin;
             _angle = angle;
-            _direction = new VectorXY(MathF.Cos(angle), MathF.Sin(angle));
+            _directionXMinusOne = MathF.Cos(angle) - 1f;
+            _directionY = MathF.Sin(angle);
         }
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized ray direction.
         /// </summary>
-        public VectorXY Direction => _direction;
+        public VectorXY Direction => new VectorXY(_directionXMinusOne + 1f, _directionY);
 
         /// <summary>
         /// Gets the ray direction angle in radians.
@@ -84,12 +91,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
             VectorXY toPoint = point - _origin;
-            float t = VectorXY.Dot(toPoint, Direction);
+            VectorXY direction = Direction;
+            float t = VectorXY.Dot(toPoint, direction);
 
             if (t < 0f)
                 t = 0f;
 
-            VectorXY projected = _origin + Direction * t;
+            VectorXY projected = _origin + direction * t;
             return new ParameterizedCurveProjection(projected, t, point.Distance(projected));
         }
 
@@ -133,8 +141,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         private void AddFirstCollinearIntersection(Ray other, List<VectorXY> intersections)
         {
             VectorXY originDelta = other._origin - _origin;
+            VectorXY direction = Direction;
 
-            if (!VectorXY.Cross(originDelta, Direction).IsAlmostZero())
+            if (!VectorXY.Cross(originDelta, direction).IsAlmostZero())
                 return;
 
             if (IsPointOnRay(_origin, other))
@@ -150,11 +159,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         private static bool IsPointOnRay(VectorXY point, Ray ray)
         {
             VectorXY toPoint = point - ray._origin;
+            VectorXY direction = ray.Direction;
 
-            if (VectorXY.Dot(toPoint, ray.Direction) < -GeometryConstants.GeometryEpsilon)
+            if (VectorXY.Dot(toPoint, direction) < -GeometryConstants.GeometryEpsilon)
                 return false;
 
-            return VectorXY.Cross(toPoint, ray.Direction).IsAlmostZero();
+            return VectorXY.Cross(toPoint, direction).IsAlmostZero();
         }
     }
 }

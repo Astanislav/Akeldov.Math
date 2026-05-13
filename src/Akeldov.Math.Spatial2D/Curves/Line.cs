@@ -7,12 +7,15 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an infinite two-dimensional line.
     /// </summary>
+    /// <remarks>
+    /// The default value represents the horizontal line <c>y = 0</c>.
+    /// </remarks>
     public readonly struct Line : IProjectableCurve, IEquatable<Line>
     {
         private readonly float _equationA;
-        private readonly float _equationB;
+        // Store B shifted so default(Line) represents y = 0 instead of an invalid zero-coefficient equation.
+        private readonly float _equationBMinusOne;
         private readonly float _equationC;
-        private readonly VectorXY _direction;
 
         /// <summary>
         /// Initializes a new line passing through the specified points.
@@ -31,9 +34,8 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             Initialize(equationA, equationB, equationC,
                 out _equationA,
-                out _equationB,
-                out _equationC,
-                out _direction);
+                out _equationBMinusOne,
+                out _equationC);
         }
 
         /// <summary>
@@ -57,9 +59,8 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             Initialize(a, b, c,
                 out _equationA,
-                out _equationB,
-                out _equationC,
-                out _direction);
+                out _equationBMinusOne,
+                out _equationC);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized Y coefficient of the implicit equation <c>ax + by + c = 0</c>.
         /// </summary>
-        public float EquationB => _equationB;
+        public float EquationB => _equationBMinusOne + 1f;
 
         /// <summary>
         /// Gets the normalized offset coefficient of the implicit equation <c>ax + by + c = 0</c>.
@@ -80,12 +81,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized vector perpendicular to this line.
         /// </summary>
-        public VectorXY Normal => new VectorXY(_equationA, _equationB);
+        public VectorXY Normal => new VectorXY(EquationA, EquationB);
 
         /// <summary>
         /// Gets the normalized canonical direction vector of this line.
         /// </summary>
-        public VectorXY Direction => _direction;
+        public VectorXY Direction => new VectorXY(EquationB, -EquationA);
 
         /// <summary>
         /// Gets the closest point on this line to the global coordinate origin.
@@ -206,7 +207,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private float GetSignedDistance(VectorXY point)
         {
-            return _equationA * point.X + _equationB * point.Y + _equationC;
+            return EquationA * point.X + EquationB * point.Y + EquationC;
         }
 
         private static void Initialize(
@@ -214,16 +215,15 @@ namespace Akeldov.Math.Spatial2D.Curves
             float equationB,
             float equationC,
             out float normalizedA,
-            out float normalizedB,
-            out float normalizedC,
-            out VectorXY direction)
+            out float normalizedBMinusOne,
+            out float normalizedC)
         {
             float scale = MathF.Sqrt(equationA * equationA + equationB * equationB);
             if (scale == 0f)
                 throw new ArgumentException("Line equation must have at least one non-zero linear coefficient.");
 
             normalizedA = equationA / scale;
-            normalizedB = equationB / scale;
+            float normalizedB = equationB / scale;
             normalizedC = equationC / scale;
 
             if (normalizedA < 0f || (normalizedA == 0f && normalizedB < 0f))
@@ -233,7 +233,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 normalizedC = -normalizedC;
             }
 
-            direction = new VectorXY(normalizedB, -normalizedA);
+            normalizedBMinusOne = normalizedB - 1f;
         }
     }
 }

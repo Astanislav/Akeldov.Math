@@ -4,6 +4,21 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class RayTests
 {
+    [Test]
+    public void DefaultRay_StartsAtOriginAndPointsAlongPositiveXAxis()
+    {
+        var ray = default(Ray);
+
+        AssertVector(ray.Origin, 0f, 0f);
+        Assert.That(ray.Angle, Is.EqualTo(0f));
+        AssertVector(ray.Direction, 1f, 0f);
+
+        var projection = ray.ProjectWithParameter(new VectorXY(3f, 4f));
+        AssertVector(projection.ProjectedPoint, 3f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(3f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
     [TestCase(float.NegativeInfinity)]

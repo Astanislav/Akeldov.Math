@@ -29,6 +29,24 @@ public class ParametricLineTests
     }
 
     [Test]
+    public void DefaultParametricLine_RepresentsHorizontalXAxis()
+    {
+        var line = default(ParametricLine);
+        var sameLine = new ParametricLine(default(Line));
+
+        Assert.That(line, Is.EqualTo(sameLine));
+        Assert.That(line.Line, Is.EqualTo(default(Line)));
+        AssertVector(line.Origin, 0f, 0f);
+        AssertVector(line.Direction, 1f, 0f);
+        AssertVector(line.Normal, 0f, 1f);
+
+        var projection = line.ProjectWithParameter(new VectorXY(3f, 4f));
+        AssertVector(projection.ProjectedPoint, 3f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(3f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void Constructor_WhenReferencePointModeIsGlobalZero_UsesClosestPointToGlobalOrigin()
     {
         var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.GlobalZero);

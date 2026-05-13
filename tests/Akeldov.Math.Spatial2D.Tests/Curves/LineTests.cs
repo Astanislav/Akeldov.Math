@@ -53,6 +53,26 @@ public class LineTests
     }
 
     [Test]
+    public void DefaultLine_RepresentsHorizontalXAxis()
+    {
+        var line = default(Line);
+        var sameLine = new Line(VectorXY.Zero, new VectorXY(1f, 0f));
+
+        Assert.That(line, Is.EqualTo(sameLine));
+        Assert.That(line.EquationA, Is.EqualTo(0f));
+        Assert.That(line.EquationB, Is.EqualTo(1f));
+        Assert.That(line.EquationC, Is.EqualTo(0f));
+        AssertVector(line.Normal, 0f, 1f);
+        AssertVector(line.Direction, 1f, 0f);
+        AssertVector(line.ClosestPointToOrigin, 0f, 0f);
+        Assert.That(line.Distance(new VectorXY(3f, 4f)), Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
+
+        var projection = line.Project(new VectorXY(3f, 4f));
+        AssertVector(projection.ProjectedPoint, 3f, 0f);
+        Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void Equals_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsTrue()
     {
         var line = new Line(new VectorXY(0f, 3f), new VectorXY(2f, 3f));

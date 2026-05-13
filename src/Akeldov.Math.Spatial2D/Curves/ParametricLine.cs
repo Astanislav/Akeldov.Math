@@ -7,11 +7,15 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an infinite two-dimensional line with an explicit curve-coordinate origin and direction.
     /// </summary>
+    /// <remarks>
+    /// The default value represents the horizontal line <c>y = 0</c>, with origin at <see cref="VectorXY.Zero"/>
+    /// and direction along the positive X axis.
+    /// </remarks>
     public readonly struct ParametricLine : IParameterizedProjectableCurve, IEquatable<ParametricLine>
     {
         private readonly Line _line;
         private readonly VectorXY _origin;
-        private readonly VectorXY _direction;
+        private readonly bool _isDirectionReversed;
 
         /// <summary>
         /// Initializes a new parametric line from a line using its canonical origin and direction.
@@ -49,9 +53,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             _line = line;
             _origin = line.Project(referencePoint).ProjectedPoint;
-            _direction = VectorXY.Dot(normalizedDirection, line.Direction) < 0f
-                ? line.Direction * -1f
-                : line.Direction;
+            _isDirectionReversed = VectorXY.Dot(normalizedDirection, line.Direction) < 0f;
         }
 
         /// <summary>
@@ -67,9 +69,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             _line = line;
             _origin = origin;
-            _direction = VectorXY.Dot(normalizedDirection, line.Direction) < 0f
-                ? line.Direction * -1f
-                : line.Direction;
+            _isDirectionReversed = VectorXY.Dot(normalizedDirection, line.Direction) < 0f;
         }
 
         /// <summary>
@@ -139,7 +139,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the normalized parametric direction vector.
         /// </summary>
-        public VectorXY Direction => _direction;
+        public VectorXY Direction => _isDirectionReversed
+            ? _line.Direction * -1f
+            : _line.Direction;
 
         /// <summary>
         /// Gets the point on this line from which curve coordinates are measured.
@@ -186,10 +188,10 @@ namespace Akeldov.Math.Spatial2D.Curves
         public bool Equals(ParametricLine other) =>
             _line.Equals(other._line) &&
             _origin.Equals(other._origin) &&
-            _direction.Equals(other._direction);
+            _isDirectionReversed == other._isDirectionReversed;
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(_line, _origin, _direction);
+        public override int GetHashCode() => HashCode.Combine(_line, _origin, _isDirectionReversed);
 
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray lies on this line,
@@ -220,7 +222,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
             CurveProjection projection = Project(point);
-            float curveCoordinate = VectorXY.Dot(projection.ProjectedPoint - _origin, _direction);
+            float curveCoordinate = VectorXY.Dot(projection.ProjectedPoint - _origin, Direction);
 
             return new ParameterizedCurveProjection(projection.ProjectedPoint, curveCoordinate, projection.Distance);
         }
