@@ -50,6 +50,7 @@ public class LineTests
         AssertVector(line.Normal, 0f, 1f);
         AssertVector(line.Direction, 1f, 0f);
         AssertVector(line.ClosestPointToOrigin, 0f, 3f);
+        AssertVector(line.Origin, 0f, 3f);
     }
 
     [Test]
@@ -63,35 +64,18 @@ public class LineTests
     }
 
     [Test]
-    public void Constructor_WhenReferencePointModeIsGlobalZero_UsesClosestPointToGlobalOrigin()
+    public void Project_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsSameCurveCoordinate()
     {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.GlobalZero);
+        var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+        var sameLine = new Line(new VectorXY(8f, 0f), new VectorXY(12f, 0f));
 
-        AssertVector(line.Origin, 0f, 3f);
-    }
+        var projection = line.Project(new VectorXY(3f, 2f));
+        var sameLineProjection = sameLine.Project(new VectorXY(3f, 2f));
 
-    [Test]
-    public void Constructor_WhenReferencePointModeIsPointA_UsesPointA()
-    {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.PointA);
-
-        AssertVector(line.Origin, 2f, 3f);
-    }
-
-    [Test]
-    public void Constructor_WhenReferencePointModeIsPointB_UsesPointB()
-    {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.PointB);
-
-        AssertVector(line.Origin, 4f, 3f);
-    }
-
-    [Test]
-    public void Constructor_WhenReferencePointModeIsMidpoint_UsesMidpoint()
-    {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.Midpoint);
-
-        AssertVector(line.Origin, 3f, 3f);
+        Assert.That(line, Is.EqualTo(sameLine));
+        AssertVector(projection.ProjectedPoint, 3f, 0f);
+        AssertVector(sameLineProjection.ProjectedPoint, 3f, 0f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(sameLineProjection.CurveCoordinate).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
@@ -129,28 +113,16 @@ public class LineTests
     }
 
     [Test]
-    public void Project_WhenDefaultReferencePointProjectsToGlobalOrigin_MeasuresCurveCoordinateFromGlobalOrigin()
+    public void Project_WhenLineDoesNotPassThroughGlobalOrigin_MeasuresCurveCoordinateFromClosestPointToGlobalOrigin()
     {
-        var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f));
 
-        var projection = line.Project(VectorXY.Zero);
+        var projection = line.Project(new VectorXY(2f, 5f));
 
-        AssertVector(projection.ProjectedPoint, 0f, 0f);
-        Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
-        Assert.That(projection.Distance, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
-    }
-
-    [Test]
-    public void Project_WhenReferencePointIsProvided_MeasuresCurveCoordinateFromItsProjection()
-    {
-        var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f), new VectorXY(2f, 5f));
-
-        var projection = line.Project(VectorXY.Zero);
-
-        AssertVector(line.Origin, 2f, 0f);
-        AssertVector(projection.ProjectedPoint, 0f, 0f);
-        Assert.That(projection.CurveCoordinate, Is.EqualTo(-2f).Within(GeometryConstants.GeometryEpsilon));
-        Assert.That(projection.Distance, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
+        AssertVector(line.Origin, 0f, 3f);
+        AssertVector(projection.ProjectedPoint, 2f, 3f);
+        Assert.That(projection.CurveCoordinate, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)

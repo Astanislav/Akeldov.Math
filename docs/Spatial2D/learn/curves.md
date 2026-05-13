@@ -3,6 +3,7 @@
 The curves package contains basic 2D primitives:
 
 - `Line`
+- `ParametricLine`
 - `Ray`
 - `Segment`
 - `Circle`
@@ -37,9 +38,14 @@ var line = new Line(
     new VectorXY(0f, 0f),
     new VectorXY(10f, 0f));
 
+var parametricLine = new ParametricLine(
+    line,
+    referencePoint: new VectorXY(2f, 0f));
+
 var ray = new Ray(VectorXY.Zero, angle: 0f);
 
 var lineProjection = line.Project(new VectorXY(4f, 3f));
+var parametricLineProjection = parametricLine.Project(new VectorXY(4f, 3f));
 var rayProjection = ray.Project(new VectorXY(4f, 3f));
 ```
 
