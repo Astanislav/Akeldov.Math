@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a half-line that starts at an origin and extends in one direction.
     /// </summary>
-    public readonly struct Ray : IProjectableCurve
+    public readonly struct Ray : IParameterizedProjectableCurve
     {
         private readonly VectorXY _origin;
         private readonly float _angle;
@@ -69,8 +69,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this ray.
         /// </summary>
         /// <param name="point">The point to project.</param>
+        /// <returns>The projection point and distance to this ray.</returns>
+        public CurveProjection Project(VectorXY point)
+        {
+            var projection = ProjectWithParameter(point);
+            return new CurveProjection(projection.ProjectedPoint, projection.Distance);
+        }
+
+        /// <summary>
+        /// Projects the specified point onto this ray and reports the ray length coordinate.
+        /// </summary>
+        /// <param name="point">The point to project.</param>
         /// <returns>The projection point, ray length coordinate, and distance to this ray.</returns>
-        public CurvePointProjection Project(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
             VectorXY toPoint = point - _origin;
             float t = VectorXY.Dot(toPoint, Direction);
@@ -79,7 +90,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 t = 0f;
 
             VectorXY projected = _origin + Direction * t;
-            return new CurvePointProjection(projected, t, point.Distance(projected));
+            return new ParameterizedCurveProjection(projected, t, point.Distance(projected));
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a finite line segment in two-dimensional space.
     /// </summary>
-    public readonly struct Segment : IProjectableCurve, IEquatable<Segment>
+    public readonly struct Segment : IParameterizedProjectableCurve, IEquatable<Segment>
     {
         private readonly VectorXY _startPoint;
         private readonly VectorXY _endPoint;
@@ -239,15 +239,26 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this segment.
         /// </summary>
         /// <param name="point">The point to project.</param>
+        /// <returns>The projection point and distance to this segment.</returns>
+        public CurveProjection Project(VectorXY point)
+        {
+            var projection = ProjectWithParameter(point);
+            return new CurveProjection(projection.ProjectedPoint, projection.Distance);
+        }
+
+        /// <summary>
+        /// Projects the specified point onto this segment and reports the segment length coordinate.
+        /// </summary>
+        /// <param name="point">The point to project.</param>
         /// <returns>The projection point, segment length coordinate, and distance to this segment.</returns>
-        public CurvePointProjection Project(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
             VectorXY segmentVector = EndPoint - StartPoint;
             VectorXY startToPoint = point - StartPoint;
 
             float segmentLengthSquared = segmentVector.SquaredLength;
             if (segmentLengthSquared <= GeometryConstants.GeometryEpsilonSquared)
-                return new CurvePointProjection(StartPoint, 0f, point.Distance(StartPoint));
+                return new ParameterizedCurveProjection(StartPoint, 0f, point.Distance(StartPoint));
 
             float normalizedParameter = VectorXY.Dot(startToPoint, segmentVector) / segmentLengthSquared;
 
@@ -258,7 +269,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             VectorXY projection = StartPoint + normalizedParameter * segmentVector;
             float curveCoordinate = normalizedParameter * MathF.Sqrt(segmentLengthSquared);
-            return new CurvePointProjection(projection, curveCoordinate, point.Distance(projection));
+            return new ParameterizedCurveProjection(projection, curveCoordinate, point.Distance(projection));
         }
 
         /// <summary>

@@ -50,7 +50,6 @@ public class LineTests
         AssertVector(line.Normal, 0f, 1f);
         AssertVector(line.Direction, 1f, 0f);
         AssertVector(line.ClosestPointToOrigin, 0f, 3f);
-        AssertVector(line.Origin, 0f, 3f);
     }
 
     [Test]
@@ -64,7 +63,7 @@ public class LineTests
     }
 
     [Test]
-    public void Project_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsSameCurveCoordinate()
+    public void Project_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsSameProjection()
     {
         var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
         var sameLine = new Line(new VectorXY(8f, 0f), new VectorXY(12f, 0f));
@@ -75,7 +74,7 @@ public class LineTests
         Assert.That(line, Is.EqualTo(sameLine));
         AssertVector(projection.ProjectedPoint, 3f, 0f);
         AssertVector(sameLineProjection.ProjectedPoint, 3f, 0f);
-        Assert.That(projection.CurveCoordinate, Is.EqualTo(sameLineProjection.CurveCoordinate).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(projection.Distance, Is.EqualTo(sameLineProjection.Distance).Within(GeometryConstants.GeometryEpsilon));
     }
 
     [Test]
@@ -113,15 +112,13 @@ public class LineTests
     }
 
     [Test]
-    public void Project_WhenLineDoesNotPassThroughGlobalOrigin_MeasuresCurveCoordinateFromClosestPointToGlobalOrigin()
+    public void Project_WhenLineDoesNotPassThroughGlobalOrigin_ReturnsClosestPoint()
     {
         var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f));
 
         var projection = line.Project(new VectorXY(2f, 5f));
 
-        AssertVector(line.Origin, 0f, 3f);
         AssertVector(projection.ProjectedPoint, 2f, 3f);
-        Assert.That(projection.CurveCoordinate, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
     }
 

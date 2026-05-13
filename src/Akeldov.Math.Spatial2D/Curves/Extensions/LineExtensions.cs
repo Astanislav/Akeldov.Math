@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private static float Side(Line line, VectorXY p)
         {
-            var originToPoint = p - line.Origin;
+            var originToPoint = p - line.ClosestPointToOrigin;
             return VectorXY.Cross(line.Direction, originToPoint);
         }
     }

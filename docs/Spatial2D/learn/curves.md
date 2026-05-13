@@ -11,6 +11,8 @@ The curves package contains basic 2D primitives:
 - `Contour`
 
 These types support distance, projection, and intersection-style workflows.
+`Project` returns the projected point and distance. Curves with a length-based parameterization also expose
+`ProjectWithParameter`, which additionally returns the curve coordinate.
 
 Angles are expressed in radians by default. Non-radian members use an explicit suffix, such as `Deg`, and document their unit.
 
@@ -24,7 +26,7 @@ var segment = new Segment(
     new VectorXY(0f, 0f),
     new VectorXY(10f, 0f));
 
-var projection = segment.Project(new VectorXY(4f, 3f));
+var projection = segment.ProjectWithParameter(new VectorXY(4f, 3f));
 
 VectorXY point = projection.ProjectedPoint;
 float curveCoordinate = projection.CurveCoordinate;
@@ -45,8 +47,8 @@ var parametricLine = new ParametricLine(
 var ray = new Ray(VectorXY.Zero, angle: 0f);
 
 var lineProjection = line.Project(new VectorXY(4f, 3f));
-var parametricLineProjection = parametricLine.Project(new VectorXY(4f, 3f));
-var rayProjection = ray.Project(new VectorXY(4f, 3f));
+var parametricLineProjection = parametricLine.ProjectWithParameter(new VectorXY(4f, 3f));
+var rayProjection = ray.ProjectWithParameter(new VectorXY(4f, 3f));
 ```
 
 ## Circles and Arcs
@@ -56,7 +58,7 @@ var circle = new Circle(VectorXY.Zero, radius: 5f);
 var arc = new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: MathF.PI);
 
 float circleDistance = circle.Distance(new VectorXY(3f, 0f));
-var arcProjection = arc.Project(new VectorXY(0f, 8f));
+var arcProjection = arc.ProjectWithParameter(new VectorXY(0f, 8f));
 bool isWithinAngularRegion = arc.IsWithinAngularRegion(new VectorXY(1f, 1f));
 ```
 

@@ -3,18 +3,18 @@ namespace Akeldov.Math.Spatial2D.Curves
     using System;
 
     /// <summary>
-    /// Represents the result of projecting a point onto a curve.
+    /// Represents the result of projecting a point onto a parameterized curve.
     /// </summary>
-    public readonly struct CurvePointProjection
+    public readonly struct ParameterizedCurveProjection
     {
         /// <summary>
-        /// Initializes a new projection result.
+        /// Initializes a new parameterized projection result.
         /// </summary>
         /// <param name="projectedPoint">The projected point on the curve.</param>
         /// <param name="curveCoordinate">The curve coordinate of the projected point, measured in length units.</param>
         /// <param name="distance">The distance from the original point to the projected point.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="distance"/> is negative, NaN, or infinite.</exception>
-        public CurvePointProjection(VectorXY projectedPoint, float curveCoordinate, float distance)
+        public ParameterizedCurveProjection(VectorXY projectedPoint, float curveCoordinate, float distance)
         {
             if (distance < 0f || float.IsNaN(distance) || float.IsInfinity(distance))
                 throw new ArgumentOutOfRangeException(nameof(distance), "Projection distance must be finite and non-negative.");
@@ -33,7 +33,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the curve coordinate of the projected point, measured in length units.
         /// </summary>
         /// <remarks>
-        /// <para>For lines this is signed distance from <see cref="Line.Origin"/> along <see cref="Line.Direction"/>.</para>
         /// <para>For parametric lines this is signed distance from <see cref="ParametricLine.Origin"/> along <see cref="ParametricLine.Direction"/>.</para>
         /// <para>For rays this is distance from <see cref="Ray.Origin"/> along <see cref="Ray.Direction"/>.</para>
         /// <para>For segments this is distance from <see cref="Segment.StartPoint"/> along the segment.</para>

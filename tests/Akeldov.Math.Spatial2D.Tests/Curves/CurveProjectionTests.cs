@@ -8,10 +8,22 @@ public class CurveProjectionTests
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
     [TestCase(float.NegativeInfinity)]
-    public void Constructor_WhenDistanceIsInvalid_Throws(float distance)
+    public void CurveProjectionConstructor_WhenDistanceIsInvalid_Throws(float distance)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new CurvePointProjection(VectorXY.Zero, 0f, distance));
+            new CurveProjection(VectorXY.Zero, distance));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("distance"));
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ParameterizedCurveProjectionConstructor_WhenDistanceIsInvalid_Throws(float distance)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedCurveProjection(VectorXY.Zero, 0f, distance));
 
         Assert.That(exception!.ParamName, Is.EqualTo("distance"));
     }

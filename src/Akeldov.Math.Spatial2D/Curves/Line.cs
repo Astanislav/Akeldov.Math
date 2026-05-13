@@ -93,11 +93,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         public VectorXY ClosestPointToOrigin => -_equationC * Normal;
 
         /// <summary>
-        /// Gets the canonical origin used by this line's projection coordinates.
-        /// </summary>
-        public VectorXY Origin => ClosestPointToOrigin;
-
-        /// <summary>
         /// Returns the shortest distance from the specified point to this line.
         /// </summary>
         /// <param name="point">The point to measure from.</param>
@@ -135,7 +130,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             VectorXY p = ray.Origin;
             VectorXY r = ray.Direction;
-            VectorXY q = Origin;
+            VectorXY q = ClosestPointToOrigin;
             VectorXY s = Direction;
 
             float cross = VectorXY.Cross(r, s);
@@ -181,18 +176,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this line.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, signed canonical line coordinate, and distance to this line.</returns>
-        public CurvePointProjection Project(VectorXY point)
+        /// <returns>The projection point and distance to this line.</returns>
+        public CurveProjection Project(VectorXY point)
         {
             float signedDistance = GetSignedDistance(point);
             VectorXY projection = point - Normal * signedDistance;
-            float curveCoordinate = VectorXY.Dot(projection - Origin, Direction);
 
-            return new CurvePointProjection(projection, curveCoordinate, MathF.Abs(signedDistance));
+            return new CurveProjection(projection, MathF.Abs(signedDistance));
         }
 
         /// <inheritdoc/>
-        public override string ToString() => $"({Origin} + t*{Direction})";
+        public override string ToString() => $"({ClosestPointToOrigin} + t*{Direction})";
 
         /// <summary>
         /// Indicates whether two lines are equal.

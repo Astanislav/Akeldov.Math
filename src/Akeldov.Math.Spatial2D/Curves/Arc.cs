@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a closed circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct Arc : IProjectableCurve, IEquatable<Arc>
+    public readonly struct Arc : IParameterizedProjectableCurve, IEquatable<Arc>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
@@ -221,15 +221,26 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this arc.
         /// </summary>
         /// <param name="point">The point to project.</param>
+        /// <returns>The projection point and distance to this arc.</returns>
+        public CurveProjection Project(VectorXY point)
+        {
+            var projection = ProjectWithParameter(point);
+            return new CurveProjection(projection.ProjectedPoint, projection.Distance);
+        }
+
+        /// <summary>
+        /// Projects the specified point onto this arc and reports the arc length coordinate.
+        /// </summary>
+        /// <param name="point">The point to project.</param>
         /// <returns>The projection point, arc length coordinate, and distance to this arc.</returns>
-        public CurvePointProjection Project(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
             VectorXY toPoint = point - _center;
 
             if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
                 VectorXY start = GetStartPoint();
-                return new CurvePointProjection(start, 0f, point.Distance(start));
+                return new ParameterizedCurveProjection(start, 0f, point.Distance(start));
             }
 
             float angleToPoint = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
@@ -238,7 +249,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             {
                 VectorXY projected = _center + toPoint.Normalize() * _radius;
                 float curveCoordinate = GetCurveCoordinate(angleToPoint);
-                return new CurvePointProjection(projected, curveCoordinate, point.Distance(projected));
+                return new ParameterizedCurveProjection(projected, curveCoordinate, point.Distance(projected));
             }
 
             VectorXY arcStart = GetStartPoint();
@@ -248,9 +259,9 @@ namespace Akeldov.Math.Spatial2D.Curves
             float distEnd = point.Distance(arcEnd);
 
             if (distStart <= distEnd)
-                return new CurvePointProjection(arcStart, 0f, distStart);
+                return new ParameterizedCurveProjection(arcStart, 0f, distStart);
 
-            return new CurvePointProjection(arcEnd, GetArcLength(), distEnd);
+            return new ParameterizedCurveProjection(arcEnd, GetArcLength(), distEnd);
         }
 
         /// <summary>

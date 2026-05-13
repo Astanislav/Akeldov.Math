@@ -26,6 +26,28 @@ public class CircleTests
     }
 
     [Test]
+    public void Project_WhenPointIsOutsideCircle_ReturnsNearestPointOnCircumference()
+    {
+        var circle = new Circle(VectorXY.Zero, 2f);
+
+        var projection = circle.Project(new VectorXY(3f, 0f));
+
+        AssertVector(projection.ProjectedPoint, 2f, 0f);
+        Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Project_WhenPointIsAtCenter_ReturnsPointOnPositiveXAxis()
+    {
+        var circle = new Circle(new VectorXY(1f, 1f), 2f);
+
+        var projection = circle.Project(new VectorXY(1f, 1f));
+
+        AssertVector(projection.ProjectedPoint, 3f, 1f);
+        Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void RayIntersections_WhenRayStartsInsideCircle_ReturnsForwardExitPoint()
     {
         var circle = new Circle(VectorXY.Zero, 2f);

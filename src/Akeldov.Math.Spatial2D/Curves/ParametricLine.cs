@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents an infinite two-dimensional line with an explicit curve-coordinate origin and direction.
     /// </summary>
-    public readonly struct ParametricLine : IProjectableCurve, IEquatable<ParametricLine>
+    public readonly struct ParametricLine : IParameterizedProjectableCurve, IEquatable<ParametricLine>
     {
         private readonly Line _line;
         private readonly VectorXY _origin;
@@ -206,13 +206,23 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Projects the specified point onto this parametric line.
         /// </summary>
         /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, signed parametric line coordinate, and distance to this line.</returns>
-        public CurvePointProjection Project(VectorXY point)
+        /// <returns>The projection point and distance to this line.</returns>
+        public CurveProjection Project(VectorXY point)
         {
-            CurvePointProjection projection = _line.Project(point);
+            return _line.Project(point);
+        }
+
+        /// <summary>
+        /// Projects the specified point onto this parametric line and reports its signed parametric coordinate.
+        /// </summary>
+        /// <param name="point">The point to project.</param>
+        /// <returns>The projection point, signed parametric line coordinate, and distance to this line.</returns>
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        {
+            CurveProjection projection = Project(point);
             float curveCoordinate = VectorXY.Dot(projection.ProjectedPoint - _origin, _direction);
 
-            return new CurvePointProjection(projection.ProjectedPoint, curveCoordinate, projection.Distance);
+            return new ParameterizedCurveProjection(projection.ProjectedPoint, curveCoordinate, projection.Distance);
         }
 
         /// <inheritdoc/>

@@ -85,11 +85,11 @@ public class RayTests
     }
 
     [Test]
-    public void Project_WhenPointIsBehindRay_ClampsToOrigin()
+    public void ProjectWithParameter_WhenPointIsBehindRay_ClampsToOrigin()
     {
         var ray = new Ray(new VectorXY(1f, 0f));
 
-        var projection = ray.Project(VectorXY.Zero);
+        var projection = ray.ProjectWithParameter(VectorXY.Zero);
 
         AssertVector(projection.ProjectedPoint, 1f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));

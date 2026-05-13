@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a circle in two-dimensional space.
     /// </summary>
-    public readonly struct Circle : ICurve, IEquatable<Circle>
+    public readonly struct Circle : IProjectableCurve, IEquatable<Circle>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
@@ -44,8 +44,26 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The absolute distance to the circle circumference.</returns>
         public float Distance(VectorXY point)
         {
-            float distToCenter = (point - _center).Length;
-            return MathF.Abs(distToCenter - _radius);
+            return Project(point).Distance;
+        }
+
+        /// <summary>
+        /// Projects the specified point onto this circle.
+        /// </summary>
+        /// <param name="point">The point to project.</param>
+        /// <returns>The projection point and distance to this circle.</returns>
+        public CurveProjection Project(VectorXY point)
+        {
+            VectorXY toPoint = point - _center;
+
+            if (_radius <= GeometryConstants.GeometryEpsilon)
+                return new CurveProjection(_center, point.Distance(_center));
+
+            VectorXY projected = toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared
+                ? _center + new VectorXY(_radius, 0f)
+                : _center + toPoint.Normalize() * _radius;
+
+            return new CurveProjection(projected, point.Distance(projected));
         }
 
         /// <summary>

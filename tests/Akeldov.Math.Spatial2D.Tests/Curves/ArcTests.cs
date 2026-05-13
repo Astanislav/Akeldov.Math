@@ -5,12 +5,12 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class ArcTests
 {
     [Test]
-    public void Project_WhenPointAngleIsWithinWrappedArc_ProjectsToCircle()
+    public void ProjectWithParameter_WhenPointAngleIsWithinWrappedArc_ProjectsToCircle()
     {
         var arc = new Arc(VectorXY.Zero, 2f, 3f * MathF.PI / 2f, MathF.PI / 2f);
         var point = new VectorXY(3f, 0f);
 
-        var projection = arc.Project(point);
+        var projection = arc.ProjectWithParameter(point);
 
         AssertVector(projection.ProjectedPoint, 2f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(MathF.PI).Within(GeometryConstants.GeometryEpsilon));
@@ -105,13 +105,13 @@ public class ArcTests
     }
 
     [Test]
-    public void Project_WhenStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
+    public void ProjectWithParameter_WhenStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 0f);
 
         Assert.That(arc.IsFullCircle, Is.False);
 
-        var projection = arc.Project(new VectorXY(0f, 1f));
+        var projection = arc.ProjectWithParameter(new VectorXY(0f, 1f));
 
         AssertVector(projection.ProjectedPoint, 1f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
@@ -142,13 +142,13 @@ public class ArcTests
     }
 
     [Test]
-    public void Project_WhenStopAngleIsOneFullTurnAfterStart_TreatsArcAsFullCircle()
+    public void ProjectWithParameter_WhenStopAngleIsOneFullTurnAfterStart_TreatsArcAsFullCircle()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI);
 
         Assert.That(arc.IsFullCircle, Is.True);
 
-        var projection = arc.Project(new VectorXY(0f, 2f));
+        var projection = arc.ProjectWithParameter(new VectorXY(0f, 2f));
 
         AssertVector(projection.ProjectedPoint, 0f, 1f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(MathF.PI / 2f).Within(GeometryConstants.GeometryEpsilon));
@@ -156,11 +156,11 @@ public class ArcTests
     }
 
     [Test]
-    public void Project_WhenPointIsAtArcCenter_ReturnsStartPoint()
+    public void ProjectWithParameter_WhenPointIsAtArcCenter_ReturnsStartPoint()
     {
         var arc = new Arc(new VectorXY(1f, 1f), 2f, MathF.PI / 2f, MathF.PI);
 
-        var projection = arc.Project(new VectorXY(1f, 1f));
+        var projection = arc.ProjectWithParameter(new VectorXY(1f, 1f));
 
         AssertVector(projection.ProjectedPoint, 1f, 3f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));

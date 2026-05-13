@@ -61,11 +61,11 @@ public class ParametricLineTests
     }
 
     [Test]
-    public void Project_WhenReferencePointIsProvided_MeasuresCurveCoordinateFromItsProjection()
+    public void ProjectWithParameter_WhenReferencePointIsProvided_MeasuresCurveCoordinateFromItsProjection()
     {
         var line = new ParametricLine(new VectorXY(2f, 0f), new VectorXY(4f, 0f), new VectorXY(2f, 5f));
 
-        var projection = line.Project(VectorXY.Zero);
+        var projection = line.ProjectWithParameter(VectorXY.Zero);
 
         AssertVector(line.Origin, 2f, 0f);
         AssertVector(projection.ProjectedPoint, 0f, 0f);
@@ -74,12 +74,12 @@ public class ParametricLineTests
     }
 
     [Test]
-    public void Project_WhenDirectionIsReversed_MeasuresCurveCoordinateInReversedDirection()
+    public void ProjectWithParameter_WhenDirectionIsReversed_MeasuresCurveCoordinateInReversedDirection()
     {
         var geometricLine = new Line(new VectorXY(0f, 0f), new VectorXY(4f, 0f));
         var line = new ParametricLine(geometricLine, VectorXY.Zero, new VectorXY(-1f, 0f));
 
-        var projection = line.Project(new VectorXY(2f, 1f));
+        var projection = line.ProjectWithParameter(new VectorXY(2f, 1f));
 
         AssertVector(line.Direction, -1f, 0f);
         AssertVector(projection.ProjectedPoint, 2f, 0f);

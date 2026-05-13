@@ -135,11 +135,11 @@ public class SegmentTests
     }
 
     [Test]
-    public void Project_WhenPointProjectsOutsideSegment_ClampsToNearestEndpoint()
+    public void ProjectWithParameter_WhenPointProjectsOutsideSegment_ClampsToNearestEndpoint()
     {
         var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
 
-        var projection = segment.Project(VectorXY.Zero);
+        var projection = segment.ProjectWithParameter(VectorXY.Zero);
 
         AssertVector(projection.ProjectedPoint, 2f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
@@ -181,11 +181,11 @@ public class SegmentTests
     }
 
     [Test]
-    public void Project_WhenPointProjectsInsideSegment_ReturnsInteriorProjection()
+    public void ProjectWithParameter_WhenPointProjectsInsideSegment_ReturnsInteriorProjection()
     {
         var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
 
-        var projection = segment.Project(new VectorXY(3f, 2f));
+        var projection = segment.ProjectWithParameter(new VectorXY(3f, 2f));
 
         AssertVector(projection.ProjectedPoint, 3f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
@@ -193,11 +193,11 @@ public class SegmentTests
     }
 
     [Test]
-    public void Project_WhenSegmentIsDegenerate_ReturnsEndpoint()
+    public void ProjectWithParameter_WhenSegmentIsDegenerate_ReturnsEndpoint()
     {
         var segment = new Segment(new VectorXY(2f, 3f), new VectorXY(2f, 3f));
 
-        var projection = segment.Project(new VectorXY(5f, 7f));
+        var projection = segment.ProjectWithParameter(new VectorXY(5f, 7f));
 
         AssertVector(projection.ProjectedPoint, 2f, 3f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
