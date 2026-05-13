@@ -6,11 +6,11 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Partitioning;
 
 [MemoryDiagnoser]
 [ShortRunJob]
-public class VoronoiPartitionerBenchmarks
+public class VoronoiItemPartitionerBenchmarks
 {
     private Site[] _sites = null!;
     private PointItem[] _items = null!;
-    private VoronoiPartitioner<PointItem> _partitioner = null!;
+    private VoronoiItemPartitioner<PointItem> _partitioner = null!;
 
     [Params(16, 64)]
     public int SiteCount { get; set; }
@@ -28,20 +28,20 @@ public class VoronoiPartitionerBenchmarks
         {
             _sites[i] = new Site(
                 NextPoint(random, 1000f),
-                power: 0.5f + random.NextSingle() * 2f);
+                weight: 0.5f + random.NextSingle() * 2f);
         }
 
         _items = new PointItem[ItemCount];
         for (int i = 0; i < _items.Length; i++)
             _items[i] = new PointItem(NextPoint(random, 1000f));
 
-        _partitioner = new VoronoiPartitioner<PointItem>(
+        _partitioner = new VoronoiItemPartitioner<PointItem>(
             _sites,
             EmptyCellPolicy.LeaveAsIs);
     }
 
     [Benchmark]
-    public IReadOnlyList<VoronoiCell<PointItem>> Partition()
+    public IReadOnlyList<VoronoiItemPartition<PointItem>> Partition()
     {
         return _partitioner.Partition(_items);
     }
