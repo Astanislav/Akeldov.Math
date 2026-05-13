@@ -9,13 +9,13 @@ namespace Akeldov.Math.Spatial2D
         /// Rotates an integer vector around the origin by the specified angle.
         /// </summary>
         /// <param name="point">The vector to rotate.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated vector.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Rotate(this VectorXYInt point, float angleRad)
+        public static VectorXY Rotate(this VectorXYInt point, float angle)
         {
-            float cos = MathF.Cos(angleRad);
-            float sin = MathF.Sin(angleRad);
+            float cos = MathF.Cos(angle);
+            float sin = MathF.Sin(angle);
 
             float x = point.X * cos - point.Y * sin;
             float y = point.X * sin + point.Y * cos;

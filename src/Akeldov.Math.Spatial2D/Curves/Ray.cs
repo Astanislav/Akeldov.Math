@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     public readonly struct Ray : IProjectableCurve
     {
         private readonly VectorXY _origin;
-        private readonly float _angleRad;
+        private readonly float _angle;
         private readonly VectorXY _direction;
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         public Ray(VectorXY origin)
         {
             _origin = origin;
-            _angleRad = 0;
+            _angle = 0;
             _direction = new VectorXY(1, 0);
         }
 
@@ -28,16 +28,16 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Initializes a new ray that starts at the specified origin and points in the specified angle.
         /// </summary>
         /// <param name="origin">The ray origin.</param>
-        /// <param name="angleRad">The ray direction angle in radians.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angleRad"/> is NaN or infinite.</exception>
-        public Ray(VectorXY origin, float angleRad)
+        /// <param name="angle">The ray direction angle in radians.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
+        public Ray(VectorXY origin, float angle)
         {
-            if (float.IsNaN(angleRad) || float.IsInfinity(angleRad))
-                throw new ArgumentOutOfRangeException(nameof(angleRad), "Ray angle must be finite.");
+            if (float.IsNaN(angle) || float.IsInfinity(angle))
+                throw new ArgumentOutOfRangeException(nameof(angle), "Ray angle must be finite.");
 
             _origin = origin;
-            _angleRad = angleRad;
-            _direction = new VectorXY(MathF.Cos(angleRad), MathF.Sin(angleRad));
+            _angle = angle;
+            _direction = new VectorXY(MathF.Cos(angle), MathF.Sin(angle));
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the ray direction angle in radians.
         /// </summary>
-        public float AngleRad => _angleRad;
+        public float Angle => _angle;
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this ray.

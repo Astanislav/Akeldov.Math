@@ -19,6 +19,30 @@ public class PositionedCollectionExtensionsTests
     }
 
     [Test]
+    public void GetCentroid_WithReadOnlyList_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        IReadOnlyList<PositionedItem> items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
+
+        AssertItemsArgumentException(() => items.GetCentroid());
+    }
+
+    [Test]
+    public void GetCentroid_WithArray_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        var items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
+
+        AssertItemsArgumentException(() => items.GetCentroid());
+    }
+
+    [Test]
     public void GetClosestToCentroid_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
     {
         IReadOnlyList<PositionedItem> items = Array.Empty<PositionedItem>();
@@ -35,6 +59,30 @@ public class PositionedCollectionExtensionsTests
     }
 
     [Test]
+    public void GetClosestToCentroid_WithReadOnlyList_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        IReadOnlyList<PositionedItem> items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
+
+        AssertItemsArgumentException(() => items.GetClosestToCentroid());
+    }
+
+    [Test]
+    public void GetClosestToCentroid_WithArray_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        var items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
+
+        AssertItemsArgumentException(() => items.GetClosestToCentroid());
+    }
+
+    [Test]
     public void GetClosestTo_WithReadOnlyList_WhenItemsEmpty_ThrowsArgumentException()
     {
         IReadOnlyList<PositionedItem> items = Array.Empty<PositionedItem>();
@@ -46,6 +94,30 @@ public class PositionedCollectionExtensionsTests
     public void GetClosestTo_WithArray_WhenItemsEmpty_ThrowsArgumentException()
     {
         var items = Array.Empty<PositionedItem>();
+
+        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+    }
+
+    [Test]
+    public void GetClosestTo_WithReadOnlyList_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        IReadOnlyList<PositionedItem> items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
+
+        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+    }
+
+    [Test]
+    public void GetClosestTo_WithArray_WhenItemsContainNull_ThrowsArgumentException()
+    {
+        var items = new PositionedItem[]
+        {
+            new PositionedItem("center", VectorXY.Zero),
+            null!
+        };
 
         AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
     }

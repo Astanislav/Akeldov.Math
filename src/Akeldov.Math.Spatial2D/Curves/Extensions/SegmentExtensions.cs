@@ -31,7 +31,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             var startPoint = segment.StartPoint + direction * amount;
             var endPoint = segment.EndPoint - direction * amount;
 
-            return new Segment(startPoint, endPoint);
+            return new Segment(startPoint, endPoint, segment.IncludesStartPoint, segment.IncludesEndPoint);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             var startPoint = segment.StartPoint - direction * amount;
             var endPoint = segment.EndPoint + direction * amount;
 
-            return new Segment(startPoint, endPoint);
+            return new Segment(startPoint, endPoint, segment.IncludesStartPoint, segment.IncludesEndPoint);
         }
     }
 }

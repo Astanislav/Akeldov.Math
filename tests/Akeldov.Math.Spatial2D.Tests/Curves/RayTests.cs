@@ -11,7 +11,7 @@ public class RayTests
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Ray(VectorXY.Zero, angle));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("angleRad"));
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
     }
 
     [Test]

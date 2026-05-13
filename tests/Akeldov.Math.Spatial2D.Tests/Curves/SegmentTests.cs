@@ -31,6 +31,40 @@ public class SegmentTests
     }
 
     [Test]
+    public void Shorten_WhenSegmentHasEndpointInclusion_PreservesEndpointInclusion()
+    {
+        var segment = new Segment(
+            new VectorXY(0f, 0f),
+            new VectorXY(10f, 0f),
+            includesStartPoint: false,
+            includesEndPoint: true);
+
+        var shortened = segment.Shorten(1f);
+
+        AssertVector(shortened.StartPoint, 1f, 0f);
+        AssertVector(shortened.EndPoint, 9f, 0f);
+        Assert.That(shortened.IncludesStartPoint, Is.False);
+        Assert.That(shortened.IncludesEndPoint, Is.True);
+    }
+
+    [Test]
+    public void Extend_WhenSegmentHasEndpointInclusion_PreservesEndpointInclusion()
+    {
+        var segment = new Segment(
+            new VectorXY(0f, 0f),
+            new VectorXY(10f, 0f),
+            includesStartPoint: true,
+            includesEndPoint: false);
+
+        var extended = segment.Extend(1f);
+
+        AssertVector(extended.StartPoint, -1f, 0f);
+        AssertVector(extended.EndPoint, 11f, 0f);
+        Assert.That(extended.IncludesStartPoint, Is.True);
+        Assert.That(extended.IncludesEndPoint, Is.False);
+    }
+
+    [Test]
     public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
     {
         var segment = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));

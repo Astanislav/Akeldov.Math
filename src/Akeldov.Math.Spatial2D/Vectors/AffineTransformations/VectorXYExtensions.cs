@@ -12,13 +12,13 @@ namespace Akeldov.Math.Spatial2D
         /// Rotates a point around the origin and then applies an offset.
         /// </summary>
         /// <param name="point">The point to transform.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Transform(this VectorXY point, float angleRad, VectorXY offset)
+        public static VectorXY Transform(this VectorXY point, float angle, VectorXY offset)
         {
-            var rotated = point.Rotate(angleRad);
+            var rotated = point.Rotate(angle);
             return rotated + offset;
         }
 
@@ -26,13 +26,13 @@ namespace Akeldov.Math.Spatial2D
         /// Rotates a point around the origin and then applies an integer offset.
         /// </summary>
         /// <param name="point">The point to transform.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Transform(this VectorXY point, float angleRad, VectorXYInt offset)
+        public static VectorXY Transform(this VectorXY point, float angle, VectorXYInt offset)
         {
-            var rotated = point.Rotate(angleRad);
+            var rotated = point.Rotate(angle);
             return rotated + offset;
         }
 
@@ -41,14 +41,14 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="point">The point to transform.</param>
         /// <param name="scaleFactor">The uniform scale factor.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Transform(this VectorXY point, float scaleFactor, float angleRad, VectorXY offset)
+        public static VectorXY Transform(this VectorXY point, float scaleFactor, float angle, VectorXY offset)
         {
             var scaled = point * scaleFactor;
-            var rotated = scaled.Rotate(angleRad);
+            var rotated = scaled.Rotate(angle);
             return rotated + offset;
         }
 
@@ -57,14 +57,14 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="point">The point to transform.</param>
         /// <param name="scaleFactor">The uniform scale factor.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Transform(this VectorXY point, float scaleFactor, float angleRad, VectorXYInt offset)
+        public static VectorXY Transform(this VectorXY point, float scaleFactor, float angle, VectorXYInt offset)
         {
             var scaled = point * scaleFactor;
-            var rotated = scaled.Rotate(angleRad);
+            var rotated = scaled.Rotate(angle);
             return rotated + offset;
         }
 
@@ -73,13 +73,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="point">The point to rotate.</param>
         /// <param name="pivot">The pivot point.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Rotate(this VectorXY point, VectorXY pivot, float angleRad)
+        public static VectorXY Rotate(this VectorXY point, VectorXY pivot, float angle)
         {
-            float cos = MathF.Cos(angleRad);
-            float sin = MathF.Sin(angleRad);
+            float cos = MathF.Cos(angle);
+            float sin = MathF.Sin(angle);
 
             VectorXY offset = point - pivot;
 
@@ -94,13 +94,13 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="point">The point to rotate.</param>
         /// <param name="pivot">The pivot point.</param>
-        /// <param name="angleRad">The rotation angle in radians.</param>
+        /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated point.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static VectorXY Rotate(this VectorXY point, VectorXYInt pivot, float angleRad)
+        public static VectorXY Rotate(this VectorXY point, VectorXYInt pivot, float angle)
         {
-            float cos = MathF.Cos(angleRad);
-            float sin = MathF.Sin(angleRad);
+            float cos = MathF.Cos(angle);
+            float sin = MathF.Sin(angle);
 
             VectorXY offset = point - pivot;
 
