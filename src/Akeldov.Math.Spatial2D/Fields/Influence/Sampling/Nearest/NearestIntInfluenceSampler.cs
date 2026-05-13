@@ -30,11 +30,19 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (sources.Count == 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            var nearestInfluence = sources[0].GetInfluence(point);
+            var nearestSource = sources[0];
+            if (nearestSource is null)
+                throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+            var nearestInfluence = nearestSource.GetInfluence(point);
 
             for (var i = 1; i < sources.Count; i++)
             {
-                var candidateInfluence = sources[i].GetInfluence(point);
+                var candidateSource = sources[i];
+                if (candidateSource is null)
+                    throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+                var candidateInfluence = candidateSource.GetInfluence(point);
 
                 if (candidateInfluence.Distance < nearestInfluence.Distance)
                     nearestInfluence = candidateInfluence;

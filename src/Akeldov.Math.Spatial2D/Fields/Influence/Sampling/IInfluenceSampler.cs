@@ -12,8 +12,8 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// their public <c>Min</c>/<c>Max</c> contracts.
     /// <para>
     /// The source collection passed to <see cref="Sample"/> must be non-null, non-empty, and contain
-    /// no null elements. Implementations may rely on this contract to avoid per-sample element validation
-    /// in hot paths.
+    /// no null elements. Built-in implementations validate source elements as they are accessed so
+    /// invalid source collections fail with a clear argument exception.
     /// </para>
     /// </remarks>
     /// <typeparam name="TSource">The influence source type.</typeparam>

@@ -69,7 +69,13 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             var samples = new InfluenceSample<int>[n];
             for (var i = 0; i < n; i++)
-                samples[i] = sources[i].GetInfluence(point);
+            {
+                var source = sources[i];
+                if (source is null)
+                    throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+                samples[i] = source.GetInfluence(point);
+            }
 
             if (n == 1) return samples[0].Value;
             if (n == 2) return (int)MathF.Round(LerpOnSegment(samples[0], samples[1], point));

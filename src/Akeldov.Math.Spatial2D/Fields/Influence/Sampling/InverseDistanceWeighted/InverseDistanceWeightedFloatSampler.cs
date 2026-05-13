@@ -36,6 +36,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             for (int i = 0; i < sources.Count; i++)
             {
                 var source = sources[i];
+                if (source is null)
+                    throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
                 var influence = source.GetInfluence(point);
                 if (influence.Weight <= 0f || float.IsNaN(influence.Weight) || float.IsInfinity(influence.Weight))
                     throw new InvalidOperationException("Inverse-distance weighted sampler requires finite positive source weight.");

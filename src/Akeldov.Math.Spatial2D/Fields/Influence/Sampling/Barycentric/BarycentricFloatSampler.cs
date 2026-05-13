@@ -92,13 +92,25 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n <= 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            var sampleA = sources[0].GetInfluence(point);
+            var sourceA = sources[0];
+            if (sourceA is null)
+                throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+            var sampleA = sourceA.GetInfluence(point);
             if (n == 1) return sampleA.Value;
 
-            var sampleB = sources[1].GetInfluence(point);
+            var sourceB = sources[1];
+            if (sourceB is null)
+                throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+            var sampleB = sourceB.GetInfluence(point);
             if (n == 2) return LerpOnSegment(sampleA, sampleB, point);
 
-            var sampleC = sources[2].GetInfluence(point);
+            var sourceC = sources[2];
+            if (sourceC is null)
+                throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+            var sampleC = sourceC.GetInfluence(point);
             if (n == 3)
                 return InterpolateTriangle(sampleA, sampleB, sampleC, point);
 
@@ -254,7 +266,11 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 3; i < sources.Count; i++)
             {
-                var sample = sources[i].GetInfluence(point);
+                var source = sources[i];
+                if (source is null)
+                    throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));
+
+                var sample = source.GetInfluence(point);
                 float effectiveDistance = EffectiveDistance(sample);
 
                 if (i < count || effectiveDistance < effectiveDistances[count - 1])

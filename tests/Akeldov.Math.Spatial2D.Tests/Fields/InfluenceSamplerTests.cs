@@ -53,6 +53,48 @@ public class InfluenceSamplerTests
     }
 
     [Test]
+    public void NearestInfluenceSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<string>[]
+        {
+            FixedSource("valid", new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new NearestInfluenceSampler<FixedInfluenceSource<string>, string>();
+
+        AssertThrowsForNullSource(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    [Test]
+    public void NearestFloatInfluenceSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<float>[]
+        {
+            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new NearestFloatInfluenceSampler<FixedInfluenceSource<float>>();
+
+        AssertThrowsForNullSource(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    [Test]
+    public void NearestIntInfluenceSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<int>[]
+        {
+            FixedSource(1, new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new NearestIntInfluenceSampler<FixedInfluenceSource<int>>();
+
+        AssertThrowsForNullSource(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    [Test]
     public void InverseDistanceWeightedFloatSampler_UsesInverseDistanceWeights()
     {
         var sources = new[]
@@ -97,6 +139,20 @@ public class InfluenceSamplerTests
         var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
 
         Assert.Throws<InvalidOperationException>(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    [Test]
+    public void InverseDistanceWeightedFloatSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<float>[]
+        {
+            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
+
+        AssertThrowsForNullSource(() =>
             sampler.Sample(sources, VectorXY.Zero));
     }
 
@@ -223,6 +279,20 @@ public class InfluenceSamplerTests
     }
 
     [Test]
+    public void BarycentricFloatSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<float>[]
+        {
+            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
+
+        AssertThrowsForNullSource(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    [Test]
     public void BarycentricIntSampler_RoundsInterpolatedValue()
     {
         var sources = new[]
@@ -260,6 +330,27 @@ public class InfluenceSamplerTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new BarycentricIntSampler<FixedInfluenceSource<int>>(2));
+    }
+
+    [Test]
+    public void BarycentricIntSampler_WhenSourcesContainNull_ThrowsArgumentException()
+    {
+        var sources = new FixedInfluenceSource<int>[]
+        {
+            FixedSource(1, new VectorXY(0f, 0f), distance: 1f),
+            null!
+        };
+        var sampler = new BarycentricIntSampler<FixedInfluenceSource<int>>();
+
+        AssertThrowsForNullSource(() =>
+            sampler.Sample(sources, VectorXY.Zero));
+    }
+
+    private static void AssertThrowsForNullSource(TestDelegate action)
+    {
+        var exception = Assert.Throws<ArgumentException>(action);
+
+        Assert.That(exception!.ParamName, Is.EqualTo("sources"));
     }
 
     private static FixedInfluenceSource<TValue> FixedSource<TValue>(
