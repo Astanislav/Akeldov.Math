@@ -1,6 +1,6 @@
 # Voronoi Partitioning
 
-`VoronoiPartitioner<TItem>` assigns positioned items to the closest configured site.
+`VoronoiItemPartitioner<TItem>` assigns positioned items to the closest configured site.
 
 Items must implement `IHasPosition2D`.
 
@@ -34,11 +34,11 @@ var sites = new[]
     new Site(new VectorXY(95f, 30f), weight: 1f)
 };
 
-var partitioner = new VoronoiPartitioner<MapCell>(
+var partitioner = new VoronoiItemPartitioner<MapCell>(
     sites,
     EmptyCellPolicy.LeaveAsIs);
 
-IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
+IReadOnlyList<VoronoiItemPartition<MapCell>> partitions = partitioner.Partition(items);
 ```
 
 ![Voronoi partition with equal site weights](../../assets/spatial2d/voronoi/equal-site-weights.svg)
@@ -57,11 +57,11 @@ var sites = new[]
     new Site(new VectorXY(95f, 30f), weight: 2f)
 };
 
-var partitioner = new VoronoiPartitioner<MapCell>(
+var partitioner = new VoronoiItemPartitioner<MapCell>(
     sites,
     EmptyCellPolicy.LeaveAsIs);
 
-IReadOnlyList<VoronoiCell<MapCell>> cells = partitioner.Partition(items);
+IReadOnlyList<VoronoiItemPartition<MapCell>> partitions = partitioner.Partition(items);
 ```
 
 ![Voronoi partition with weighted sites](../../assets/spatial2d/voronoi/weighted-sites.svg)

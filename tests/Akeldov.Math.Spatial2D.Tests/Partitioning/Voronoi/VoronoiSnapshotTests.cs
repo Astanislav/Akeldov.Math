@@ -15,7 +15,7 @@ public class VoronoiSnapshotTests
             new Site(new VectorXY(95f, 30f), 1f)
         };
         var texels = CreateGridTexels(FieldSize, 5f);
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -33,7 +33,7 @@ public class VoronoiSnapshotTests
             new Site(new VectorXY(95f, 30f), 2f)
         };
         var texels = CreateGridTexels(FieldSize, 5f);
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -59,7 +59,7 @@ public class VoronoiSnapshotTests
 
     private static void AssertMatchesApprovedSvg(
         string approvedFileName,
-        IReadOnlyList<VoronoiCell<TestItem>> result,
+        IReadOnlyList<VoronoiItemPartition<TestItem>> result,
         VectorXY fieldSize)
     {
         string actual = VoronoiSvgRenderer.Render(result, fieldSize);

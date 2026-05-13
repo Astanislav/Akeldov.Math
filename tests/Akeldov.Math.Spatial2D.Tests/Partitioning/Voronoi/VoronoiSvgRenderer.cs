@@ -18,7 +18,7 @@ internal static class VoronoiSvgRenderer
         "#f472b6"
     };
 
-    public static string Render(IReadOnlyList<VoronoiCell<VoronoiSnapshotTests.TestItem>> cells, VectorXY fieldSize)
+    public static string Render(IReadOnlyList<VoronoiItemPartition<VoronoiSnapshotTests.TestItem>> cells, VectorXY fieldSize)
     {
         var builder = new StringBuilder();
         builder.AppendLine($"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"600\" height=\"300\" viewBox=\"0 0 {Format(fieldSize.X)} {Format(fieldSize.Y)}\" overflow=\"hidden\">");

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
     /// <summary>
-    /// Partitions positioned items into weighted Voronoi cells.
+    /// Assigns positioned items to weighted Voronoi sites.
     /// </summary>
     /// <typeparam name="TItem">The positioned item type to partition.</typeparam>
-    public class VoronoiPartitioner<TItem> : IPartitioner<VoronoiCell<TItem>, TItem>
+    public class VoronoiItemPartitioner<TItem> : IPartitioner<VoronoiItemPartition<TItem>, TItem>
         where TItem : IHasPosition2D
     {
         private readonly Site[] _sites;
@@ -15,31 +15,31 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         private readonly EmptyCellPolicy _emptyCellPolicy;
 
         /// <summary>
-        /// Initializes a new Voronoi partitioner with the specified sites.
+        /// Initializes a new Voronoi item partitioner with the specified sites.
         /// </summary>
-        /// <param name="sites">The Voronoi sites used as cell centers.</param>
-        public VoronoiPartitioner(IReadOnlyList<Site> sites)
+        /// <param name="sites">The Voronoi sites used for item assignment.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites)
             : this(sites, 0, EmptyCellPolicy.ThrowException)
         {
         }
 
         /// <summary>
-        /// Initializes a new Voronoi partitioner with an empty-cell policy.
+        /// Initializes a new Voronoi item partitioner with empty-partition handling.
         /// </summary>
-        /// <param name="sites">The Voronoi sites used as cell centers.</param>
-        /// <param name="emptyCellPolicy">The policy used for cells that receive no items.</param>
-        public VoronoiPartitioner(IReadOnlyList<Site> sites, EmptyCellPolicy emptyCellPolicy)
+        /// <param name="sites">The Voronoi sites used for item assignment.</param>
+        /// <param name="emptyCellPolicy">The policy used for partitions that receive no items.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites, EmptyCellPolicy emptyCellPolicy)
             : this(sites, 0, emptyCellPolicy)
         {
         }
 
         /// <summary>
-        /// Initializes a new Voronoi partitioner with relaxation and empty-cell handling.
+        /// Initializes a new Voronoi item partitioner with relaxation and empty-partition handling.
         /// </summary>
-        /// <param name="sites">The initial Voronoi sites used as cell centers.</param>
+        /// <param name="sites">The initial Voronoi sites used for item assignment.</param>
         /// <param name="relaxationIterations">The number of centroid relaxation iterations to apply.</param>
-        /// <param name="emptyCellPolicy">The policy used for cells that receive no items.</param>
-        public VoronoiPartitioner(IReadOnlyList<Site> sites, int relaxationIterations, EmptyCellPolicy emptyCellPolicy)
+        /// <param name="emptyCellPolicy">The policy used for partitions that receive no items.</param>
+        public VoronoiItemPartitioner(IReadOnlyList<Site> sites, int relaxationIterations, EmptyCellPolicy emptyCellPolicy)
         {
             if (sites == null)
                 throw new ArgumentNullException(nameof(sites));
@@ -72,13 +72,13 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         }
 
         /// <summary>
-        /// Partitions the specified items into Voronoi cells.
+        /// Assigns the specified items to Voronoi site partitions.
         /// </summary>
         /// <param name="items">The positioned items to partition.</param>
-        /// <returns>The generated Voronoi cells.</returns>
-        public IReadOnlyList<VoronoiCell<TItem>> Partition(IReadOnlyList<TItem> items)
+        /// <returns>The generated Voronoi item partitions.</returns>
+        public IReadOnlyList<VoronoiItemPartition<TItem>> Partition(IReadOnlyList<TItem> items)
         {
-            IReadOnlyList<VoronoiCell<TItem>> cells = PartitionInternal(_sites, items);
+            IReadOnlyList<VoronoiItemPartition<TItem>> cells = PartitionInternal(_sites, items);
 
             for (int i = 0; i < _relaxationIterations; i++)
             {
@@ -97,7 +97,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             }
         }
 
-        private static List<VoronoiCell<TItem>> PartitionInternal(Site[] sites, IReadOnlyList<TItem> items)
+        private static List<VoronoiItemPartition<TItem>> PartitionInternal(Site[] sites, IReadOnlyList<TItem> items)
         {
             if (sites == null)
                 throw new ArgumentNullException(nameof(sites));
@@ -124,12 +124,12 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 buckets[siteIndex].Add(item);
             }
 
-            var cells = new List<VoronoiCell<TItem>>(sites.Length);
+            var cells = new List<VoronoiItemPartition<TItem>>(sites.Length);
             for (int i = 0; i < sites.Length; i++)
             {
                 var site = sites[i];
                 var siteItems = buckets[i];
-                var cell = new VoronoiCell<TItem>(site, siteItems);
+                var cell = new VoronoiItemPartition<TItem>(site, siteItems);
                 cells.Add(cell);
             }
 

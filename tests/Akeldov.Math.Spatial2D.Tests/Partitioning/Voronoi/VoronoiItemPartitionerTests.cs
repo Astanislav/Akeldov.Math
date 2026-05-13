@@ -2,18 +2,18 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 namespace Akeldov.Math.Spatial2D.Tests.Partitioning.Voronoi;
 
-public class VoronoiPartitionerTests
+public class VoronoiItemPartitionerTests
 {
     [Test]
     public void Constructor_WhenSitesIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new VoronoiPartitioner<TestItem>(null!));
+        Assert.Throws<ArgumentNullException>(() => new VoronoiItemPartitioner<TestItem>(null!));
     }
 
     [Test]
     public void Constructor_WhenSitesIsEmpty_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new VoronoiPartitioner<TestItem>(Array.Empty<Site>()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new VoronoiItemPartitioner<TestItem>(Array.Empty<Site>()));
     }
 
     [Test]
@@ -22,7 +22,7 @@ public class VoronoiPartitionerTests
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
 
         Assert.Throws<ArgumentOutOfRangeException>(
-            () => new VoronoiPartitioner<TestItem>(sites, relaxationIterations: -1, EmptyCellPolicy.ThrowException));
+            () => new VoronoiItemPartitioner<TestItem>(sites, relaxationIterations: -1, EmptyCellPolicy.ThrowException));
     }
 
     [TestCase(-1f)]
@@ -49,7 +49,7 @@ public class VoronoiPartitionerTests
         };
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs));
+            new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs));
 
         Assert.That(exception!.ParamName, Is.EqualTo("sites"));
     }
@@ -73,7 +73,7 @@ public class VoronoiPartitionerTests
             new TestItem("left", new VectorXY(1f, 0f)),
             new TestItem("right", new VectorXY(9f, 0f))
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         var cells = partitioner.Partition(texels);
 
@@ -87,7 +87,7 @@ public class VoronoiPartitionerTests
     {
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
         var texels = new TestItem[] { null! };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var exception = Assert.Throws<ArgumentException>(() => partitioner.Partition(texels));
 
@@ -99,7 +99,7 @@ public class VoronoiPartitionerTests
     {
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
         var texels = new[] { new TestItem("item", VectorXY.Zero) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -109,10 +109,10 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void VoronoiCell_WhenItemListChangesAfterConstruction_UsesOriginalItems()
+    public void VoronoiItemPartition_WhenItemListChangesAfterConstruction_UsesOriginalItems()
     {
         var items = new List<TestItem> { new TestItem("original", VectorXY.Zero) };
-        var cell = new VoronoiCell<TestItem>(new Site(VectorXY.Zero, 1f), items);
+        var cell = new VoronoiItemPartition<TestItem>(new Site(VectorXY.Zero, 1f), items);
 
         items.Clear();
 
@@ -121,12 +121,12 @@ public class VoronoiPartitionerTests
     }
 
     [Test]
-    public void VoronoiCell_WhenItemsContainNull_Throws()
+    public void VoronoiItemPartition_WhenItemsContainNull_Throws()
     {
         var items = new TestItem[] { null! };
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            new VoronoiCell<TestItem>(new Site(VectorXY.Zero, 1f), items));
+            new VoronoiItemPartition<TestItem>(new Site(VectorXY.Zero, 1f), items));
 
         Assert.That(exception!.ParamName, Is.EqualTo("items"));
     }
@@ -143,7 +143,7 @@ public class VoronoiPartitionerTests
         {
             new TestItem("weighted-right", new VectorXY(3f, 0f))
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -164,7 +164,7 @@ public class VoronoiPartitionerTests
             new TestItem("exact-zero", VectorXY.Zero),
             new TestItem("near-zero", new VectorXY(1f, 0f))
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -185,7 +185,7 @@ public class VoronoiPartitionerTests
             new TestItem("far-from-infinite", new VectorXY(-100f, 0f)),
             new TestItem("near-infinite", new VectorXY(9f, 0f))
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -205,7 +205,7 @@ public class VoronoiPartitionerTests
         {
             new TestItem("exact-finite", VectorXY.Zero)
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -226,7 +226,7 @@ public class VoronoiPartitionerTests
         {
             new TestItem("nearest-infinite", new VectorXY(9f, 0f))
         };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
@@ -239,7 +239,7 @@ public class VoronoiPartitionerTests
     public void Partition_WhenTexelsIsNull_Throws()
     {
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<ArgumentNullException>(() => partitioner.Partition(null!));
     }
@@ -248,7 +248,7 @@ public class VoronoiPartitionerTests
     public void Partition_WhenTexelsIsEmpty_Throws()
     {
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => partitioner.Partition(Array.Empty<TestItem>()));
     }
@@ -262,7 +262,7 @@ public class VoronoiPartitionerTests
             new Site(new VectorXY(100f, 0f), 1f)
         };
         var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<InvalidOperationException>(() => partitioner.Partition(texels));
     }
@@ -276,7 +276,7 @@ public class VoronoiPartitionerTests
             new Site(new VectorXY(100f, 0f), 1f)
         };
         var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.Exclude);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.Exclude);
 
         var cells = partitioner.Partition(texels);
 
@@ -293,7 +293,7 @@ public class VoronoiPartitionerTests
             new Site(new VectorXY(100f, 0f), 1f)
         };
         var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
-        var partitioner = new VoronoiPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
