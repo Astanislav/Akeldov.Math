@@ -182,7 +182,7 @@ public class InfluenceSamplerTests
     }
 
     [Test]
-    public void BarycentricFloatSampler_WithMoreThanTenSources_IgnoresSamplesOutsideNearestTen()
+    public void BarycentricFloatSampler_WithDefaultCandidateLimit_IgnoresSamplesOutsideNearestTen()
     {
         var sources = new FixedInfluenceSource<float>[11];
 
@@ -199,6 +199,30 @@ public class InfluenceSamplerTests
     }
 
     [Test]
+    public void BarycentricFloatSampler_WithCustomCandidateLimit_ConsidersAdditionalSamples()
+    {
+        var sources = new FixedInfluenceSource<float>[11];
+
+        for (int i = 0; i < 10; i++)
+            sources[i] = FixedSource(i * 10f, new VectorXY(i * 10f, 0f), distance: i + 1f);
+
+        sources[10] = FixedSource(1000f, new VectorXY(0f, 10f), distance: 11f);
+
+        var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>(11);
+
+        float value = sampler.Sample(sources, new VectorXY(5f, 5f));
+
+        Assert.That(value, Is.EqualTo(505f).Within(0.0001f));
+    }
+
+    [Test]
+    public void BarycentricFloatSampler_WhenCandidateLimitIsLessThanThree_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new BarycentricFloatSampler<FixedInfluenceSource<float>>(2));
+    }
+
+    [Test]
     public void BarycentricIntSampler_RoundsInterpolatedValue()
     {
         var sources = new[]
@@ -212,6 +236,30 @@ public class InfluenceSamplerTests
         int value = sampler.Sample(sources, new VectorXY(2.6f, 0f));
 
         Assert.That(value, Is.EqualTo(3));
+    }
+
+    [Test]
+    public void BarycentricIntSampler_WithCustomCandidateLimit_ConsidersAdditionalSamples()
+    {
+        var sources = new FixedInfluenceSource<int>[11];
+
+        for (int i = 0; i < 10; i++)
+            sources[i] = FixedSource(i * 10, new VectorXY(i * 10f, 0f), distance: i + 1f);
+
+        sources[10] = FixedSource(1000, new VectorXY(0f, 10f), distance: 11f);
+
+        var sampler = new BarycentricIntSampler<FixedInfluenceSource<int>>(11);
+
+        int value = sampler.Sample(sources, new VectorXY(5f, 5f));
+
+        Assert.That(value, Is.EqualTo(505));
+    }
+
+    [Test]
+    public void BarycentricIntSampler_WhenCandidateLimitIsLessThanThree_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new BarycentricIntSampler<FixedInfluenceSource<int>>(2));
     }
 
     private static FixedInfluenceSource<TValue> FixedSource<TValue>(

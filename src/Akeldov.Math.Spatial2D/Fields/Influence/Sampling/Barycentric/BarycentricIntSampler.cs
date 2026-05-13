@@ -15,14 +15,43 @@ namespace Akeldov.Math.Spatial2D.Fields
     public class BarycentricIntSampler<TSource> : IInfluenceSampler<TSource, int>
         where TSource : IInfluenceSource<int>
     {
+        /// <summary>
+        /// The default maximum number of nearest effective samples considered when choosing an interpolation triangle.
+        /// </summary>
+        /// <remarks>
+        /// The sampler checks combinations of three candidate samples, so triangle search cost grows cubically with this value.
+        /// </remarks>
+        public const int DefaultMaxCandidateSamples = BarycentricSamplerDefaults.DefaultMaxCandidateSamples;
+
         private const float Epsilon = GeometryConstants.GeometryEpsilon;
         private const float WeightEpsilon = GeometryConstants.GeometryEpsilon;
 
         /// <summary>
-        /// Initializes a new barycentric integer influence sampler.
+        /// Gets the maximum number of nearest effective samples considered when choosing an interpolation triangle.
+        /// </summary>
+        public int MaxCandidateSamples { get; }
+
+        /// <summary>
+        /// Initializes a new barycentric integer influence sampler using <see cref="DefaultMaxCandidateSamples"/>.
         /// </summary>
         public BarycentricIntSampler()
+            : this(DefaultMaxCandidateSamples)
         { }
+
+        /// <summary>
+        /// Initializes a new barycentric integer influence sampler.
+        /// </summary>
+        /// <param name="maxCandidateSamples">The maximum number of nearest effective samples considered when choosing an interpolation triangle.</param>
+        public BarycentricIntSampler(int maxCandidateSamples)
+        {
+            if (maxCandidateSamples < BarycentricSamplerDefaults.MinCandidateSamples)
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxCandidateSamples),
+                    maxCandidateSamples,
+                    "Candidate sample count must be at least three.");
+
+            MaxCandidateSamples = maxCandidateSamples;
+        }
 
         /// <summary>
         /// Samples an integer value at the specified point.
@@ -48,8 +77,8 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n == 3)
                 return (int)MathF.Round(InterpolateTriangle(samples[0], samples[1], samples[2], point));
 
-            int k = System.Math.Min(10, n);
-            var nearest = GetNearestSamples(samples);
+            int k = System.Math.Min(MaxCandidateSamples, n);
+            var nearest = GetNearestSamples(samples, k);
 
             for (int i = 0; i < k; i++)
                 for (int j = i + 1; j < k; j++)
@@ -162,19 +191,41 @@ namespace Akeldov.Math.Spatial2D.Fields
             return sample.Distance / weight;
         }
 
-        private static InfluenceSample<int>[] GetNearestSamples(InfluenceSample<int>[] samples)
+        private static InfluenceSample<int>[] GetNearestSamples(InfluenceSample<int>[] samples, int count)
         {
-            var nearest = new InfluenceSample<int>[samples.Length];
-            Array.Copy(samples, nearest, samples.Length);
-            Array.Sort(nearest, CompareByEffectiveDistance);
+            var nearest = new InfluenceSample<int>[count];
+            var effectiveDistances = new float[count];
+
+            for (int i = 0; i < samples.Length; i++)
+            {
+                var sample = samples[i];
+                float effectiveDistance = EffectiveDistance(sample);
+
+                if (i < count || effectiveDistance < effectiveDistances[count - 1])
+                    InsertNearest(nearest, effectiveDistances, System.Math.Min(i, count), sample, effectiveDistance);
+            }
+
             return nearest;
         }
 
-        private static int CompareByEffectiveDistance(
-            InfluenceSample<int> left,
-            InfluenceSample<int> right)
+        private static void InsertNearest(
+            InfluenceSample<int>[] nearest,
+            float[] effectiveDistances,
+            int existingCount,
+            InfluenceSample<int> sample,
+            float effectiveDistance)
         {
-            return EffectiveDistance(left).CompareTo(EffectiveDistance(right));
+            int index = System.Math.Min(existingCount, nearest.Length - 1);
+
+            while (index > 0 && effectiveDistance < effectiveDistances[index - 1])
+            {
+                nearest[index] = nearest[index - 1];
+                effectiveDistances[index] = effectiveDistances[index - 1];
+                index--;
+            }
+
+            nearest[index] = sample;
+            effectiveDistances[index] = effectiveDistance;
         }
 
         private static float Cross(VectorXY u, VectorXY v) => u.X * v.Y - u.Y * v.X;

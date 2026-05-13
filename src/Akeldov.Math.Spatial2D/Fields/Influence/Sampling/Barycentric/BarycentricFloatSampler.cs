@@ -28,7 +28,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// </item>
     /// <item>
     /// <description>
-    /// More than three sources: considers the nearest ten effective samples, returns the first
+    /// More than three sources: considers up to <see cref="MaxCandidateSamples"/> nearest effective samples, returns the first
     /// triangle containing the sampled point, otherwise uses the triangle with the smallest
     /// outside-triangle penalty. If no non-degenerate triangle exists, falls back to segment
     /// interpolation using the two nearest samples.
@@ -40,14 +40,43 @@ namespace Akeldov.Math.Spatial2D.Fields
     public class BarycentricFloatSampler<TSource> : IInfluenceSampler<TSource, float>
         where TSource : IInfluenceSource<float>
     {
+        /// <summary>
+        /// The default maximum number of nearest effective samples considered when choosing an interpolation triangle.
+        /// </summary>
+        /// <remarks>
+        /// The sampler checks combinations of three candidate samples, so triangle search cost grows cubically with this value.
+        /// </remarks>
+        public const int DefaultMaxCandidateSamples = BarycentricSamplerDefaults.DefaultMaxCandidateSamples;
+
         private const float Epsilon = GeometryConstants.GeometryEpsilon;
         private const float WeightEpsilon = GeometryConstants.GeometryEpsilon;
 
         /// <summary>
-        /// Initializes a new barycentric floating-point influence sampler.
+        /// Gets the maximum number of nearest effective samples considered when choosing an interpolation triangle.
+        /// </summary>
+        public int MaxCandidateSamples { get; }
+
+        /// <summary>
+        /// Initializes a new barycentric floating-point influence sampler using <see cref="DefaultMaxCandidateSamples"/>.
         /// </summary>
         public BarycentricFloatSampler()
+            : this(DefaultMaxCandidateSamples)
         { }
+
+        /// <summary>
+        /// Initializes a new barycentric floating-point influence sampler.
+        /// </summary>
+        /// <param name="maxCandidateSamples">The maximum number of nearest effective samples considered when choosing an interpolation triangle.</param>
+        public BarycentricFloatSampler(int maxCandidateSamples)
+        {
+            if (maxCandidateSamples < BarycentricSamplerDefaults.MinCandidateSamples)
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxCandidateSamples),
+                    maxCandidateSamples,
+                    "Candidate sample count must be at least three.");
+
+            MaxCandidateSamples = maxCandidateSamples;
+        }
 
         /// <summary>
         /// Samples a floating-point value at the specified point.
@@ -73,7 +102,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n == 3)
                 return InterpolateTriangle(sampleA, sampleB, sampleC, point);
 
-            int k = System.Math.Min(10, n);
+            int k = System.Math.Min(MaxCandidateSamples, n);
             var nearest = GetNearestSamples(sources, point, k, sampleA, sampleB, sampleC);
 
             for (int i = 0; i < k; i++)
