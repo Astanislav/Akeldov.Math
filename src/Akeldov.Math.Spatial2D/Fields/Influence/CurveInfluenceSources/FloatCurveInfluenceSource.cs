@@ -90,18 +90,27 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <inheritdoc/>
         public float Distance(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             return _curve.Distance(point);
         }
 
         /// <inheritdoc/>
         public CurveProjection Project(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             return _curve.Project(point);
         }
 
         /// <inheritdoc/>
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             return _curve.ProjectWithParameter(point);
         }
 

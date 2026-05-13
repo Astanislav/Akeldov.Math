@@ -43,6 +43,32 @@ public class InfluenceSourceCullerTests
     }
 
     [Test]
+    public void HalfPlaneCuller_WhenSourcePositionCoordinateIsInvalid_Throws()
+    {
+        var sources = new[]
+        {
+            new TestPointSource(new VectorXY(float.NaN, 0f))
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new HalfPlaneCuller<TestPointSource>(sources));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
+    }
+
+    [Test]
+    public void HalfPlaneCuller_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var source = new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f);
+        var culler = new HalfPlaneCuller<FloatPointInfluenceSource>(new[] { source });
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            culler.Cull(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
     public void DelaunayCuller_WithTriangleContainingPoint_ReturnsTriangleSources()
     {
         var sources = new[]
@@ -76,6 +102,39 @@ public class InfluenceSourceCullerTests
             new DelaunayCuller<FloatPointInfluenceSource>(sources));
 
         Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
+    }
+
+    [Test]
+    public void DelaunayCuller_WhenSourcePositionCoordinateIsInvalid_Throws()
+    {
+        var sources = new[]
+        {
+            new TestPointSource(new VectorXY(0f, 0f)),
+            new TestPointSource(new VectorXY(float.NaN, 0f)),
+            new TestPointSource(new VectorXY(0f, 10f))
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new DelaunayCuller<TestPointSource>(sources));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("pointSources"));
+    }
+
+    [Test]
+    public void DelaunayCuller_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var sources = new[]
+        {
+            new FloatPointInfluenceSource(1f, new VectorXY(0f, 0f), 1f),
+            new FloatPointInfluenceSource(1f, new VectorXY(10f, 0f), 2f),
+            new FloatPointInfluenceSource(1f, new VectorXY(0f, 10f), 3f)
+        };
+        var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            culler.Cull(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     [Test]
@@ -196,5 +255,22 @@ public class InfluenceSourceCullerTests
 
         for (int i = 0; i < expected.Count; i++)
             Assert.That(actual[i], Is.SameAs(expected[i]));
+    }
+
+    private sealed class TestPointSource : IPointInfluenceSource
+    {
+        public TestPointSource(VectorXY position)
+        {
+            Position = position;
+        }
+
+        public VectorXY Position { get; }
+
+        public float Weight => 1f;
+
+        public float Distance(VectorXY point)
+        {
+            return Position.Distance(point);
+        }
     }
 }

@@ -25,6 +25,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
         public Line(VectorXY a, VectorXY b)
         {
+            if (!a.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(a), "Line point coordinates must be finite.");
+
+            if (!b.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(b), "Line point coordinates must be finite.");
+
             if (a.Equals(b))
                 throw new ArgumentException("Line endpoints must be distinct.", nameof(b));
 
@@ -100,6 +106,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The distance to this line.</returns>
         public float Distance(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             return MathF.Abs(GetSignedDistance(point));
         }
 
@@ -180,6 +189,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point and distance to this line.</returns>
         public CurveProjection Project(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             float signedDistance = GetSignedDistance(point);
             VectorXY projection = point - Normal * signedDistance;
 

@@ -16,6 +16,24 @@ public class LineTests
         Assert.DoesNotThrow(() => new Line(VectorXY.Zero, new VectorXY(GeometryConstants.GeometryEpsilon * 0.5f, 0f)));
     }
 
+    [TestCase(float.NaN, 0f, "a")]
+    [TestCase(0f, float.NaN, "a")]
+    [TestCase(float.PositiveInfinity, 0f, "a")]
+    [TestCase(0f, float.NegativeInfinity, "a")]
+    [TestCase(float.NaN, 0f, "b")]
+    [TestCase(0f, float.NaN, "b")]
+    [TestCase(float.PositiveInfinity, 0f, "b")]
+    [TestCase(0f, float.NegativeInfinity, "b")]
+    public void Constructor_WhenPointCoordinateIsInvalid_Throws(float x, float y, string paramName)
+    {
+        VectorXY a = paramName == "a" ? new VectorXY(x, y) : VectorXY.Zero;
+        VectorXY b = paramName == "b" ? new VectorXY(x, y) : VectorXY.One;
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Line(a, b));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
     [Test]
     public void Constructor_WhenLinearEquationCoefficientsAreZero_Throws()
     {
@@ -140,6 +158,28 @@ public class LineTests
 
         AssertVector(projection.ProjectedPoint, 2f, 3f);
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Distance_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var line = default(Line);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            line.Distance(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
+    public void Project_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var line = default(Line);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            line.Project(new VectorXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)

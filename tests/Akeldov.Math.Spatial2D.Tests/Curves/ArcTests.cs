@@ -17,6 +17,18 @@ public class ArcTests
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
 
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void Constructor_WhenCenterCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Arc(new VectorXY(x, y), 1f, 0f, MathF.PI));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("center"));
+    }
+
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
@@ -176,6 +188,28 @@ public class ArcTests
 
         AssertVector(projection.ProjectedPoint, 1f, 1f);
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void IsWithinAngularRegion_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            arc.IsWithinAngularRegion(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
+    public void ProjectWithParameter_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            arc.ProjectWithParameter(new VectorXY(float.PositiveInfinity, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     [Test]

@@ -4,6 +4,18 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class CircleTests
 {
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void Constructor_WhenCenterCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Circle(new VectorXY(x, y), 1f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("center"));
+    }
+
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
@@ -45,6 +57,17 @@ public class CircleTests
 
         AssertVector(projection.ProjectedPoint, 3f, 1f);
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void Project_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var circle = new Circle(VectorXY.Zero, 1f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.Project(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     [Test]

@@ -19,6 +19,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// </exception>
         public Site(VectorXY position, float weight)
         {
+            if (!position.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(position), "Site position coordinates must be finite.");
+
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Site weight must be non-negative and not NaN.");
 

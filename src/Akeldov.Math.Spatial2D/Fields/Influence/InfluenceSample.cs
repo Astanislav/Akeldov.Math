@@ -21,6 +21,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </exception>
         public InfluenceSample(TValue value, VectorXY sourcePoint, float distance, float weight)
         {
+            if (!sourcePoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(sourcePoint), "Influence sample source point coordinates must be finite.");
+
             if (distance < 0f || float.IsNaN(distance) || float.IsInfinity(distance))
                 throw new ArgumentOutOfRangeException(nameof(distance), "Influence sample distance must be finite and non-negative.");
 

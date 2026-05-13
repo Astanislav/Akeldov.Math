@@ -63,4 +63,15 @@ public class ContourTests
 
         Assert.That(contour.Contains(new VectorXY(1f, 0f)), Is.True);
     }
+
+    [Test]
+    public void Contains_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.Contains(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
 }

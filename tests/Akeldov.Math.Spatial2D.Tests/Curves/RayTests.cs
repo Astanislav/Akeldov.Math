@@ -29,6 +29,18 @@ public class RayTests
         Assert.That(exception!.ParamName, Is.EqualTo("angle"));
     }
 
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void Constructor_WhenOriginCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Ray(new VectorXY(x, y)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("origin"));
+    }
+
     [Test]
     public void RayIntersections_WhenThisRayOriginBelongsToOtherCollinearRay_ReturnsThisOrigin()
     {
@@ -109,6 +121,17 @@ public class RayTests
         AssertVector(projection.ProjectedPoint, 1f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ProjectWithParameter_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var ray = default(Ray);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ray.ProjectWithParameter(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)

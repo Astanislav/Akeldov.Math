@@ -18,7 +18,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Returns the shortest distance from the specified point to this curve.
         /// </summary>
-        /// <param name="point">The point to measure from.</param>
+        /// <param name="point">The finite point to measure from.</param>
         /// <returns>The distance to this curve.</returns>
         float Distance(VectorXY point);
     }

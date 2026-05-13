@@ -346,11 +346,40 @@ public class InfluenceSamplerTests
             sampler.Sample(sources, VectorXY.Zero));
     }
 
+    [Test]
+    public void BuiltInSamplers_WhenPointCoordinateIsInvalid_ThrowArgumentOutOfRangeException()
+    {
+        var stringSources = new[] { FixedSource("value", VectorXY.Zero, distance: 1f) };
+        var floatSources = new[] { FixedSource(1f, VectorXY.Zero, distance: 1f) };
+        var intSources = new[] { FixedSource(1, VectorXY.Zero, distance: 1f) };
+        var invalidPoint = new VectorXY(float.NaN, 0f);
+
+        AssertThrowsForInvalidPoint(() =>
+            new NearestInfluenceSampler<FixedInfluenceSource<string>, string>().Sample(stringSources, invalidPoint));
+        AssertThrowsForInvalidPoint(() =>
+            new NearestFloatInfluenceSampler<FixedInfluenceSource<float>>().Sample(floatSources, invalidPoint));
+        AssertThrowsForInvalidPoint(() =>
+            new NearestIntInfluenceSampler<FixedInfluenceSource<int>>().Sample(intSources, invalidPoint));
+        AssertThrowsForInvalidPoint(() =>
+            new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>().Sample(floatSources, invalidPoint));
+        AssertThrowsForInvalidPoint(() =>
+            new BarycentricFloatSampler<FixedInfluenceSource<float>>().Sample(floatSources, invalidPoint));
+        AssertThrowsForInvalidPoint(() =>
+            new BarycentricIntSampler<FixedInfluenceSource<int>>().Sample(intSources, invalidPoint));
+    }
+
     private static void AssertThrowsForNullSource(TestDelegate action)
     {
         var exception = Assert.Throws<ArgumentException>(action);
 
         Assert.That(exception!.ParamName, Is.EqualTo("sources"));
+    }
+
+    private static void AssertThrowsForInvalidPoint(TestDelegate action)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(action);
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static FixedInfluenceSource<TValue> FixedSource<TValue>(

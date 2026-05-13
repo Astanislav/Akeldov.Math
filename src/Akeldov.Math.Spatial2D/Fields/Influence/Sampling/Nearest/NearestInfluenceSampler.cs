@@ -31,6 +31,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (sources.Count == 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             var nearestSource = sources[0];
             if (nearestSource is null)
                 throw new ArgumentException("Influence sources collection cannot contain null elements.", nameof(sources));

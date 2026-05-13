@@ -15,6 +15,9 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minimalDistance"/> is not finite and positive.</exception>
         public PoissonDiskPointSample(VectorXY point, float minimalDistance)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Sample point coordinates must be finite.");
+
             if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
                 throw new ArgumentOutOfRangeException(nameof(minimalDistance), "Minimal distance must be finite and positive.");
 

@@ -28,6 +28,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite, or when an angle is NaN or infinite.</exception>
         public Arc(VectorXY center, float radius, float startAngle, float endAngle)
         {
+            if (!center.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(center), "Arc center coordinates must be finite.");
+
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Arc radius must be finite and non-negative.");
 
@@ -110,6 +113,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns><see langword="true"/> if the point lies within this arc's angular region; otherwise, <see langword="false"/>.</returns>
         public bool IsWithinAngularRegion(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             VectorXY toPoint = (point - Center).Normalize();
             float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
 
@@ -235,6 +241,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point, arc length coordinate, and distance to this arc.</returns>
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             VectorXY toPoint = point - _center;
 
             if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)

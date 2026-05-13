@@ -55,6 +55,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
             _sites = new Site[sites.Count];
             for (int i = 0; i < sites.Count; i++)
             {
+                if (!sites[i].Position.IsFinite)
+                    throw new ArgumentOutOfRangeException(nameof(sites), "Site position coordinates must be finite.");
+
                 if (sites[i].Weight < 0f || float.IsNaN(sites[i].Weight))
                     throw new ArgumentOutOfRangeException(nameof(sites), "Site weight must be non-negative and not NaN.");
 
@@ -119,6 +122,9 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
                 var item = items[i];
                 if (item is null)
                     throw new ArgumentException("Partition items cannot contain null elements.", nameof(items));
+
+                if (!item.Position.IsFinite)
+                    throw new ArgumentException("Partition item positions must be finite.", nameof(items));
 
                 int siteIndex = sites.GetNearestWeightedSiteIndex(item.Position);
                 buckets[siteIndex].Add(item);

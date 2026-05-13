@@ -59,6 +59,21 @@ public class VectorXYTests
     }
 
     [Test]
+    public void IsFinite_WhenComponentsAreFinite_ReturnsTrue()
+    {
+        Assert.That(new VectorXY(1f, -2f).IsFinite, Is.True);
+    }
+
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void IsFinite_WhenComponentIsNaNOrInfinity_ReturnsFalse(float x, float y)
+    {
+        Assert.That(new VectorXY(x, y).IsFinite, Is.False);
+    }
+
+    [Test]
     public void RoundToInt_UsesMathFRoundMidpointSemantics()
     {
         var vector = new VectorXY(2.5f, 3.5f);

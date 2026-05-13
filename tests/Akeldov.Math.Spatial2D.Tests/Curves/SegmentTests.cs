@@ -4,6 +4,25 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class SegmentTests
 {
+    [TestCase(float.NaN, 0f, "startPoint")]
+    [TestCase(0f, float.NaN, "startPoint")]
+    [TestCase(float.PositiveInfinity, 0f, "startPoint")]
+    [TestCase(0f, float.NegativeInfinity, "startPoint")]
+    [TestCase(float.NaN, 0f, "endPoint")]
+    [TestCase(0f, float.NaN, "endPoint")]
+    [TestCase(float.PositiveInfinity, 0f, "endPoint")]
+    [TestCase(0f, float.NegativeInfinity, "endPoint")]
+    public void Constructor_WhenEndpointCoordinateIsInvalid_Throws(float x, float y, string paramName)
+    {
+        VectorXY startPoint = paramName == "startPoint" ? new VectorXY(x, y) : VectorXY.Zero;
+        VectorXY endPoint = paramName == "endPoint" ? new VectorXY(x, y) : VectorXY.One;
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Segment(startPoint, endPoint));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
@@ -202,6 +221,17 @@ public class SegmentTests
         AssertVector(projection.ProjectedPoint, 2f, 3f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
+    public void ProjectWithParameter_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var segment = new Segment(VectorXY.Zero, VectorXY.One);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            segment.ProjectWithParameter(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     [Test]

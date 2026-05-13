@@ -67,6 +67,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n <= 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             var samples = new InfluenceSample<int>[n];
             for (var i = 0; i < n; i++)
             {

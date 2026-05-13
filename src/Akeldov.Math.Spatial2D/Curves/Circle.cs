@@ -20,6 +20,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite.</exception>
         public Circle(VectorXY center, float radius)
         {
+            if (!center.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(center), "Circle center coordinates must be finite.");
+
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Circle radius must be finite and non-negative.");
 
@@ -54,6 +57,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point and distance to this circle.</returns>
         public CurveProjection Project(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             VectorXY toPoint = point - _center;
 
             if (_radius <= GeometryConstants.GeometryEpsilon)

@@ -39,6 +39,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <inheritdoc/>
         public bool Contains(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             List<VectorXY> intersections = new List<VectorXY>();
             var ray = new Ray(point);
             int segmentCrossings = 0;

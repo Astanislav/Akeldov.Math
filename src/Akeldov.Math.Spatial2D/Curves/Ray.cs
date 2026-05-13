@@ -24,6 +24,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="origin">The ray origin.</param>
         public Ray(VectorXY origin)
         {
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), "Ray origin coordinates must be finite.");
+
             _origin = origin;
             _angle = 0f;
             _directionXMinusOne = 0f;
@@ -38,6 +41,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         public Ray(VectorXY origin, float angle)
         {
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), "Ray origin coordinates must be finite.");
+
             if (float.IsNaN(angle) || float.IsInfinity(angle))
                 throw new ArgumentOutOfRangeException(nameof(angle), "Ray angle must be finite.");
 
@@ -90,6 +96,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point, ray length coordinate, and distance to this ray.</returns>
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             VectorXY toPoint = point - _origin;
             VectorXY direction = Direction;
             float t = VectorXY.Dot(toPoint, direction);

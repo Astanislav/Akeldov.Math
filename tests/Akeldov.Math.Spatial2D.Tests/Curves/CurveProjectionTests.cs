@@ -4,6 +4,18 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 
 public class CurveProjectionTests
 {
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void CurveProjectionConstructor_WhenProjectedPointIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new CurveProjection(new VectorXY(x, y), 0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("projectedPoint"));
+    }
+
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
@@ -14,6 +26,18 @@ public class CurveProjectionTests
             new CurveProjection(VectorXY.Zero, distance));
 
         Assert.That(exception!.ParamName, Is.EqualTo("distance"));
+    }
+
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void ParameterizedCurveProjectionConstructor_WhenProjectedPointIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedCurveProjection(new VectorXY(x, y), 0f, 0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("projectedPoint"));
     }
 
     [TestCase(-1f)]

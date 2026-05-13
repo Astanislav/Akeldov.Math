@@ -22,6 +22,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="endPoint">The end point.</param>
         public Segment(VectorXY startPoint, VectorXY endPoint)
         {
+            if (!startPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+
+            if (!endPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+
             _startPoint = startPoint;
             _endPoint = endPoint;
             _includesStartPoint = true;
@@ -37,6 +43,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="includesEndPoint">Whether the end point belongs to the segment.</param>
         public Segment(VectorXY startPoint, VectorXY endPoint, bool includesStartPoint, bool includesEndPoint)
         {
+            if (!startPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+
+            if (!endPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+
             _startPoint = startPoint;
             _endPoint = endPoint;
             _includesStartPoint = includesStartPoint;
@@ -253,6 +265,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The projection point, segment length coordinate, and distance to this segment.</returns>
         public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             VectorXY segmentVector = EndPoint - StartPoint;
             VectorXY startToPoint = point - StartPoint;
 

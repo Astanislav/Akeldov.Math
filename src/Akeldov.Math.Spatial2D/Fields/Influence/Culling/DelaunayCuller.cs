@@ -46,6 +46,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 if (pointSource is null)
                     throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
+                if (!pointSource.Position.IsFinite)
+                    throw new ArgumentException("Influence source positions must be finite.", nameof(pointSources));
+
                 _sources[i] = pointSource;
                 _points[i] = pointSource.Position;
             }
@@ -76,6 +79,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </returns>
         public List<TPointSource> Cull(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             var res = new List<TPointSource>(3);
 
             for (int i = 0; i < _triangles.Length; i++)

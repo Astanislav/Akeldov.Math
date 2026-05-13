@@ -79,6 +79,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </exception>
         public virtual TValue Sample(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             if (_influenceSourceCuller == null)
                 return _sampler.Sample(_influenceSources, point);
 

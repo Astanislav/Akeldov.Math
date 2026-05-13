@@ -39,6 +39,13 @@ namespace Akeldov.Math.Spatial2D
         public float SquaredLength => X * X + Y * Y;
 
         /// <summary>
+        /// Gets a value indicating whether both components are neither NaN nor infinite.
+        /// </summary>
+        public bool IsFinite =>
+            !float.IsNaN(X) && !float.IsInfinity(X) &&
+            !float.IsNaN(Y) && !float.IsInfinity(Y);
+
+        /// <summary>
         /// Gets the vector with both components equal to zero.
         /// </summary>
         public static VectorXY Zero => new VectorXY(0f, 0f);

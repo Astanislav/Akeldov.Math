@@ -73,6 +73,24 @@ public class InfluenceFieldCullingTests
     }
 
     [Test]
+    public void Sample_WhenPointCoordinateIsInvalid_Throws()
+    {
+        var sources = new[]
+        {
+            new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f)
+        };
+
+        var field = new InfluenceField<FloatPointInfluenceSource, float>(
+            new SourceCountSampler(),
+            sources);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            field.Sample(new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [Test]
     public void Constructor_WhenHalfPlaneCullerPointSourcesAreEmpty_Throws()
     {
         var exception = Assert.Throws<ArgumentException>(

@@ -15,6 +15,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="value">The value contributed by this source.</param>
         public IntPointInfluenceSource(float weight, VectorXY position, int value)
         {
+            if (!position.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(position), "Influence source position coordinates must be finite.");
+
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
 
@@ -45,6 +48,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>The Euclidean distance from the source position to the point.</returns>
         public float Distance(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             return Position.Distance(point);
         }
 

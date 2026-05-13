@@ -30,6 +30,9 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (sources.Count == 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             float totalWeight = 0f;
             float weightedSum = 0f;
 

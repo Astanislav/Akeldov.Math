@@ -39,6 +39,18 @@ public class VoronoiItemPartitionerTests
         Assert.DoesNotThrow(() => new Site(VectorXY.Zero, 0f));
     }
 
+    [TestCase(float.NaN, 0f)]
+    [TestCase(0f, float.NaN)]
+    [TestCase(float.PositiveInfinity, 0f)]
+    [TestCase(0f, float.NegativeInfinity)]
+    public void SiteConstructor_WhenPositionCoordinateIsInvalid_Throws(float x, float y)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new Site(new VectorXY(x, y), 1f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("position"));
+    }
+
     [Test]
     public void Constructor_WhenAllSiteWeightsAreZero_Throws()
     {
@@ -87,6 +99,18 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[] { new Site(VectorXY.Zero, 1f) };
         var texels = new TestItem[] { null! };
+        var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
+
+        var exception = Assert.Throws<ArgumentException>(() => partitioner.Partition(texels));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("items"));
+    }
+
+    [Test]
+    public void Partition_WhenItemPositionCoordinateIsInvalid_Throws()
+    {
+        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var texels = new[] { new TestItem("invalid", new VectorXY(float.NaN, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var exception = Assert.Throws<ArgumentException>(() => partitioner.Partition(texels));

@@ -15,6 +15,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="distance"/> is negative, NaN, or infinite.</exception>
         public CurveProjection(VectorXY projectedPoint, float distance)
         {
+            if (!projectedPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(projectedPoint), "Projected point coordinates must be finite.");
+
             if (distance < 0f || float.IsNaN(distance) || float.IsInfinity(distance))
                 throw new ArgumentOutOfRangeException(nameof(distance), "Projection distance must be finite and non-negative.");
 

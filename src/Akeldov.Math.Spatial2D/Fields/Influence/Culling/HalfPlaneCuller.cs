@@ -32,6 +32,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 if (pointSource is null)
                     throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
+                if (!pointSource.Position.IsFinite)
+                    throw new ArgumentException("Influence source positions must be finite.", nameof(pointSources));
+
                 copy[i] = pointSource;
             }
 
@@ -45,6 +48,9 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>A new mutable list of visible influence sources owned by the caller.</returns>
         public List<TPointSource> Cull(VectorXY point)
         {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
             var orderedPointSources = OrderBy(_pointSources, x => x.Position.Distance(point));
             var culledPointSources = new List<TPointSource>();
             var lines = new List<Line>();

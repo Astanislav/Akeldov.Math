@@ -47,6 +47,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </exception>
         public ParametricLine(Line line, VectorXY referencePoint, VectorXY direction)
         {
+            if (!referencePoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(referencePoint), "Parametric line reference point coordinates must be finite.");
+
             VectorXY normalizedDirection = NormalizeDirection(direction);
             if (!VectorXY.Cross(normalizedDirection, line.Direction).IsAlmostZero())
                 throw new ArgumentException("Parametric line direction must be parallel to the line.", nameof(direction));
@@ -64,6 +67,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentException">Thrown when <paramref name="direction"/> has zero length.</exception>
         public ParametricLine(VectorXY origin, VectorXY direction)
         {
+            if (!origin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(origin), "Parametric line origin coordinates must be finite.");
+
             VectorXY normalizedDirection = NormalizeDirection(direction);
             var line = new Line(origin, origin + normalizedDirection);
 
@@ -257,6 +263,9 @@ namespace Akeldov.Math.Spatial2D.Curves
 
         private static VectorXY NormalizeDirection(VectorXY direction)
         {
+            if (!direction.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(direction), "Parametric line direction coordinates must be finite.");
+
             if (direction.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
                 throw new ArgumentException("Parametric line direction must have non-zero length.", nameof(direction));
 

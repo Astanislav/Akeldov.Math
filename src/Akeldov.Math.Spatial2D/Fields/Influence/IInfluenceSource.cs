@@ -16,7 +16,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Gets the influence contribution of this source for the specified point.
         /// </summary>
-        /// <param name="point">The point being sampled.</param>
+        /// <param name="point">The finite point being sampled.</param>
         /// <returns>
         /// The value, closest/source point, distance, and weight used by influence samplers.
         /// </returns>

@@ -18,6 +18,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </exception>
         public ParameterizedCurveProjection(VectorXY projectedPoint, float curveCoordinate, float distance)
         {
+            if (!projectedPoint.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(projectedPoint), "Projected point coordinates must be finite.");
+
             if (float.IsNaN(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must not be NaN.");
 

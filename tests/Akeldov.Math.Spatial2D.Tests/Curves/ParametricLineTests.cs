@@ -10,6 +10,36 @@ public class ParametricLineTests
         Assert.Throws<ArgumentException>(() => new ParametricLine(VectorXY.Zero, VectorXY.Zero));
     }
 
+    [TestCase(float.NaN, 0f, "origin")]
+    [TestCase(0f, float.NaN, "origin")]
+    [TestCase(float.PositiveInfinity, 0f, "origin")]
+    [TestCase(0f, float.NegativeInfinity, "origin")]
+    [TestCase(float.NaN, 0f, "direction")]
+    [TestCase(0f, float.NaN, "direction")]
+    [TestCase(float.PositiveInfinity, 0f, "direction")]
+    [TestCase(0f, float.NegativeInfinity, "direction")]
+    public void Constructor_WhenOriginOrDirectionCoordinateIsInvalid_Throws(float x, float y, string paramName)
+    {
+        VectorXY origin = paramName == "origin" ? new VectorXY(x, y) : VectorXY.Zero;
+        VectorXY direction = paramName == "direction" ? new VectorXY(x, y) : new VectorXY(1f, 0f);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParametricLine(origin, direction));
+
+        Assert.That(exception!.ParamName, Is.EqualTo(paramName));
+    }
+
+    [Test]
+    public void Constructor_WhenReferencePointCoordinateIsInvalid_Throws()
+    {
+        var line = default(Line);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParametricLine(line, new VectorXY(float.NaN, 0f)));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("referencePoint"));
+    }
+
     [Test]
     public void Constructor_WhenDirectionIsNotParallelToLine_Throws()
     {

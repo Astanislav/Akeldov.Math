@@ -25,7 +25,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Samples a value from the specified influence sources at the specified point.
         /// </summary>
         /// <param name="influenceSources">The influence sources to sample from. Must be non-null, non-empty, and contain no null elements.</param>
-        /// <param name="point">The point to sample.</param>
+        /// <param name="point">The finite point to sample.</param>
         /// <returns>The sampled value. The value may be outside a bounded field range.</returns>
         TValue Sample(IReadOnlyList<TSource> influenceSources, VectorXY point);
     }
