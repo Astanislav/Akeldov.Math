@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Samples the value of the nearest influence source at the specified point.
         /// </summary>
-        /// <param name="sources">The influence sources to search.</param>
+        /// <param name="sources">The influence sources to search. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The value contributed by the nearest source.</returns>
         public TValue Sample(IReadOnlyList<TSource> sources, VectorXY point)

@@ -27,4 +27,21 @@ public class CurveProjectionTests
 
         Assert.That(exception!.ParamName, Is.EqualTo("distance"));
     }
+
+    [Test]
+    public void ParameterizedCurveProjectionConstructor_WhenCurveCoordinateIsNaN_Throws()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ParameterizedCurveProjection(VectorXY.Zero, float.NaN, 0f));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curveCoordinate"));
+    }
+
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void ParameterizedCurveProjectionConstructor_WhenCurveCoordinateIsInfinity_DoesNotThrow(float curveCoordinate)
+    {
+        Assert.DoesNotThrow(() =>
+            new ParameterizedCurveProjection(VectorXY.Zero, curveCoordinate, 0f));
+    }
 }

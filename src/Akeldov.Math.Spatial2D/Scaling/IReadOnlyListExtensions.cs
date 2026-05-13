@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Akeldov.Math.Spatial2D
@@ -14,14 +15,26 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="items">The items to scale.</param>
         /// <param name="scale">The scale factor.</param>
         /// <returns>The scaled items.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         public static List<T> Scale<T>(this IReadOnlyList<T> items, VectorXY scale)
             where T : IScalable<T>
         {
-            var res = new List<T>();
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            if (items.Count == 0)
+                throw new ArgumentException("Scalable items collection must not be empty.", nameof(items));
+
+            var res = new List<T>(items.Count);
 
             for (int i = 0; i < items.Count; i++)
             {
-                var scaled = items[i].Scale(scale);
+                var item = items[i];
+                if (item is null)
+                    throw new ArgumentException("Scalable items collection cannot contain null elements.", nameof(items));
+
+                var scaled = item.Scale(scale);
 
                 res.Add(scaled);
             }

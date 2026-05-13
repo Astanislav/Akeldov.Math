@@ -27,7 +27,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Samples an integer value at the specified point.
         /// </summary>
-        /// <param name="sources">The influence sources used for interpolation.</param>
+        /// <param name="sources">The influence sources used for interpolation. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated value, rounded to the nearest integer.</returns>
         public int Sample(IReadOnlyList<TSource> sources, VectorXY point)

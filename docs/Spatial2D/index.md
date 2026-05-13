@@ -32,7 +32,7 @@ var segment = new Segment(
     new VectorXY(0f, 0f),
     new VectorXY(10f, 0f));
 
-var projection = segment.Project(new VectorXY(4f, 3f));
+var projection = segment.ProjectWithParameter(new VectorXY(4f, 3f));
 
 VectorXY closestPoint = projection.ProjectedPoint;
 float curveCoordinate = projection.CurveCoordinate;

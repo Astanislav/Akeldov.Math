@@ -10,6 +10,11 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// necessarily clamp their output to a field range. Bounded field implementations such as
     /// <see cref="IFloatField"/> and <see cref="IIntField"/> are responsible for preserving
     /// their public <c>Min</c>/<c>Max</c> contracts.
+    /// <para>
+    /// The source collection passed to <see cref="Sample"/> must be non-null, non-empty, and contain
+    /// no null elements. Implementations may rely on this contract to avoid per-sample element validation
+    /// in hot paths.
+    /// </para>
     /// </remarks>
     /// <typeparam name="TSource">The influence source type.</typeparam>
     /// <typeparam name="TValue">The sampled value type.</typeparam>
@@ -19,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Samples a value from the specified influence sources at the specified point.
         /// </summary>
-        /// <param name="influenceSources">The influence sources to sample from.</param>
+        /// <param name="influenceSources">The influence sources to sample from. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The sampled value. The value may be outside a bounded field range.</returns>
         TValue Sample(IReadOnlyList<TSource> influenceSources, VectorXY point);
