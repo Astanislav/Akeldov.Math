@@ -1,0 +1,141 @@
+name: Publish Spatial2D to NuGet
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        description: Optional NuGet package version. Defaults to the project Version, or the spatial2d-v* tag version.
+        required: false
+        type: string
+  push:
+    tags:
+      - spatial2d-v*
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_PATH: src/Akeldov.Math.Spatial2D/Akeldov.Math.Spatial2D.csproj
+  TEST_PROJECT_PATH: tests/Akeldov.Math.Spatial2D.Tests/Akeldov.Math.Spatial2D.Tests.csproj
+  TEST_ASSEMBLY_PATH: tests/Akeldov.Math.Spatial2D.Tests/bin/Debug/net6.0/Akeldov.Math.Spatial2D.Tests.dll
+  PACKAGE_OUTPUT_PATH: artifacts/packages
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
+jobs:
+  publish:
+    name: Publish Akeldov.Math.Spatial2D
+    runs-on: windows-latest
+    environment: nuget.org
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            9.0.x
+
+      - name: Show .NET info
+        shell: pwsh
+        run: dotnet --info
+
+      - name: Restore
+        shell: pwsh
+        run: |
+          dotnet restore $env:PROJECT_PATH
+          dotnet restore $env:TEST_PROJECT_PATH
+
+      - name: Build tests
+        shell: pwsh
+        run: >
+          dotnet build $env:TEST_PROJECT_PATH
+          --framework net6.0
+          --no-restore
+          --disable-build-servers
+          /maxcpucount:1
+
+      - name: Run tests
+        shell: pwsh
+        run: >
+          dotnet vstest $env:TEST_ASSEMBLY_PATH
+          "--logger:console;verbosity=detailed"
+
+      - name: Resolve package version
+        id: version
+        shell: pwsh
+        env:
+          REQUESTED_PACKAGE_VERSION: ${{ inputs.package_version }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          $packageVersion = $env:REQUESTED_PACKAGE_VERSION
+
+          if ([string]::IsNullOrWhiteSpace($packageVersion) -and $env:REF_TYPE -eq "tag") {
+            $tagName = $env:REF_NAME
+
+            if ($tagName -notmatch '^spatial2d-v(.+)$') {
+              throw "Tag '$tagName' must match spatial2d-v<version>."
+            }
+
+            $packageVersion = $Matches[1]
+          }
+
+          if ([string]::IsNullOrWhiteSpace($packageVersion)) {
+            [xml]$project = Get-Content $env:PROJECT_PATH
+            $packageVersion = @($project.Project.PropertyGroup.Version | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
+          }
+
+          if ([string]::IsNullOrWhiteSpace($packageVersion)) {
+            throw "Could not resolve a package version."
+          }
+
+          if ($packageVersion -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z][0-9A-Za-z.-]*)?$') {
+            throw "Package version '$packageVersion' does not look like a valid NuGet SemVer version."
+          }
+
+          "package_version=$packageVersion" >> $env:GITHUB_OUTPUT
+          "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
+
+      - name: Build package
+        shell: pwsh
+        run: >
+          dotnet build $env:PROJECT_PATH
+          --configuration Release
+          --no-restore
+          --disable-build-servers
+          /p:PackageVersion=$env:PACKAGE_VERSION
+          /p:ContinuousIntegrationBuild=true
+          /maxcpucount:1
+
+      - name: Pack
+        shell: pwsh
+        run: >
+          dotnet pack $env:PROJECT_PATH
+          --configuration Release
+          --no-build
+          --output $env:PACKAGE_OUTPUT_PATH
+          /p:PackageVersion=$env:PACKAGE_VERSION
+          /p:ContinuousIntegrationBuild=true
+
+      - name: Publish to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:NUGET_API_KEY)) {
+            throw "Repository or environment secret NUGET_API_KEY is required."
+          }
+
+          $packages = @(Get-ChildItem $env:PACKAGE_OUTPUT_PATH -Filter "*.nupkg")
+
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one NuGet package, but found $($packages.Count)."
+          }
+
+          dotnet nuget push $packages[0].FullName `
+            --api-key $env:NUGET_API_KEY `
+            --source $env:NUGET_SOURCE `
+            --skip-duplicate
