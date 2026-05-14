@@ -1,0 +1,101 @@
+using Akeldov.Math.Hexes.Vectors.QRS;
+
+namespace Akeldov.Math.Hexes.Tests.VectorsQRS;
+
+public class VectorQRSIntTests
+{
+    [Test]
+    public void Constructor_WithQR_SetsSAsNegativeSum()
+    {
+        var vector = new VectorQRSInt(2, -5);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(vector.Q, Is.EqualTo(2));
+            Assert.That(vector.R, Is.EqualTo(-5));
+            Assert.That(vector.S, Is.EqualTo(3));
+        });
+    }
+
+    [Test]
+    public void Constructor_WithQRS_AcceptsZeroSum()
+    {
+        var vector = new VectorQRSInt(2, -5, 3);
+
+        Assert.That(vector, Is.EqualTo(new VectorQRSInt(2, -5)));
+    }
+
+    [Test]
+    public void Constructor_WithQRS_ThrowsWhenSumIsNotZero()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => _ = new VectorQRSInt(2, -5, 2));
+    }
+
+    [Test]
+    public void StaticVectors_ReturnExpectedValues()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(VectorQRSInt.Zero, Is.EqualTo(new VectorQRSInt(0, 0)));
+            Assert.That(VectorQRSInt.One, Is.EqualTo(new VectorQRSInt(1, 1)));
+        });
+    }
+
+    [Test]
+    public void EqualityMembers_CompareQAndR()
+    {
+        var left = new VectorQRSInt(2, -3);
+        var same = new VectorQRSInt(2, -3);
+        var different = new VectorQRSInt(2, -4);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(left.Equals(same), Is.True);
+            Assert.That(left.Equals((object)same), Is.True);
+            Assert.That(left.Equals((object?)null), Is.False);
+            Assert.That(left == same, Is.True);
+            Assert.That(left != different, Is.True);
+            Assert.That(left.GetHashCode(), Is.EqualTo(same.GetHashCode()));
+        });
+    }
+
+    [Test]
+    public void ToString_ReturnsQAndR()
+    {
+        Assert.That(new VectorQRSInt(2, -4).ToString(), Is.EqualTo("(2, -4)"));
+    }
+
+    [Test]
+    public void Deconstruct_ReturnsQAndR()
+    {
+        var (q, r) = new VectorQRSInt(2, -4);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(q, Is.EqualTo(2));
+            Assert.That(r, Is.EqualTo(-4));
+        });
+    }
+
+    [Test]
+    public void Operators_ReturnExpectedVectors()
+    {
+        var left = new VectorQRSInt(5, -7);
+        var right = new VectorQRSInt(-2, 3);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(left + right, Is.EqualTo(new VectorQRSInt(3, -4)));
+            Assert.That(left - right, Is.EqualTo(new VectorQRSInt(7, -10)));
+            Assert.That(left * 2, Is.EqualTo(new VectorQRSInt(10, -14)));
+            Assert.That(2 * left, Is.EqualTo(new VectorQRSInt(10, -14)));
+            Assert.That(left / 2, Is.EqualTo(new VectorQRSInt(2, -3)));
+        });
+    }
+
+    [Test]
+    public void Division_ThrowsWhenScalarIsZero()
+    {
+        Assert.Throws<DivideByZeroException>(() => _ = new VectorQRSInt(1, 2) / 0);
+    }
+}
