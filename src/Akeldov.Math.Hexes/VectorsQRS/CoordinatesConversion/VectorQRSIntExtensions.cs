@@ -1,4 +1,5 @@
 using Akeldov.Math.Spatial2D;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
@@ -8,19 +9,18 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXYInt ToXYIndex(this VectorQRSInt index, Layout layout)
         {
-            if (layout.IsPointyTop())
+            switch (layout)
             {
-                int x = index.Q + (index.R >= 0 ? index.R / 2 : (index.R - 1) / 2);
-                int y = index.R;
-
-                return new VectorXYInt(x, y);
-            }
-            else
-            {
-                int x = index.Q;
-                int y = index.R + (index.Q >= 0 ? index.Q / 2 : (index.Q - 1) / 2);
-
-                return new VectorXYInt(x, y);
+                case Layout.OddR:
+                    return new VectorXYInt(index.Q + ((index.R - (index.R & 1)) / 2), index.R);
+                case Layout.EvenR:
+                    return new VectorXYInt(index.Q + ((index.R + (index.R & 1)) / 2), index.R);
+                case Layout.OddQ:
+                    return new VectorXYInt(index.Q, index.R + ((index.Q - (index.Q & 1)) / 2));
+                case Layout.EvenQ:
+                    return new VectorXYInt(index.Q, index.R + ((index.Q + (index.Q & 1)) / 2));
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
             }
         }
     }
