@@ -1,0 +1,35 @@
+﻿using System;
+using System.Runtime.CompilerServices;
+
+namespace Akeldov.Math.Hexes.Vectors.QRS
+{
+    public static partial class VectorQRSIntExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static VectorQRS Rotate(this VectorQRSInt point, float angleRad)
+        {
+            float cos = MathF.Cos(angleRad);
+            float sin = MathF.Sin(angleRad);
+
+            float q = point.Q * cos - point.R * sin;
+            float r = point.Q * sin + point.R * cos;
+
+            return new VectorQRS(q, r);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static VectorQRSInt Rotate(this VectorQRSInt v, SixfoldAngle angle)
+        {
+            return angle switch
+            {
+                SixfoldAngle.Deg0 => v,
+                SixfoldAngle.Deg60 => new VectorQRSInt(-v.R, -v.S),
+                SixfoldAngle.Deg120 => new VectorQRSInt(v.S, v.Q),
+                SixfoldAngle.Deg180 => new VectorQRSInt(-v.Q, -v.R),
+                SixfoldAngle.Deg240 => new VectorQRSInt(v.R, v.S),
+                SixfoldAngle.Deg300 => new VectorQRSInt(-v.S, -v.Q),
+                _ => throw new ArgumentOutOfRangeException(nameof(angle), angle, $"The given angle: {angle} is not a sixfold angle.")
+            };
+        }
+    }
+}
