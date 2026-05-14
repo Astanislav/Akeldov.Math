@@ -4,12 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       package_version:
-        description: Optional NuGet package version. Defaults to the project Version, or the spatial2d-v* tag version.
+        description: Optional NuGet package version. Defaults to the project Version.
         required: false
         type: string
-  push:
-    tags:
-      - spatial2d-v*
 
 permissions:
   contents: read
@@ -68,20 +65,8 @@ jobs:
         shell: pwsh
         env:
           REQUESTED_PACKAGE_VERSION: ${{ inputs.package_version }}
-          REF_TYPE: ${{ github.ref_type }}
-          REF_NAME: ${{ github.ref_name }}
         run: |
           $packageVersion = $env:REQUESTED_PACKAGE_VERSION
-
-          if ([string]::IsNullOrWhiteSpace($packageVersion) -and $env:REF_TYPE -eq "tag") {
-            $tagName = $env:REF_NAME
-
-            if ($tagName -notmatch '^spatial2d-v(.+)$') {
-              throw "Tag '$tagName' must match spatial2d-v<version>."
-            }
-
-            $packageVersion = $Matches[1]
-          }
 
           if ([string]::IsNullOrWhiteSpace($packageVersion)) {
             [xml]$project = Get-Content $env:PROJECT_PATH
