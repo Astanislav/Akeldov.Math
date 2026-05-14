@@ -2,11 +2,6 @@ name: Publish Spatial2D to NuGet
 
 on:
   workflow_dispatch:
-    inputs:
-      package_version:
-        description: Optional NuGet package version. Defaults to the project Version.
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -63,18 +58,12 @@ jobs:
       - name: Resolve package version
         id: version
         shell: pwsh
-        env:
-          REQUESTED_PACKAGE_VERSION: ${{ inputs.package_version }}
         run: |
-          $packageVersion = $env:REQUESTED_PACKAGE_VERSION
+          [xml]$project = Get-Content $env:PROJECT_PATH
+          $packageVersion = @($project.Project.PropertyGroup.Version | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
 
           if ([string]::IsNullOrWhiteSpace($packageVersion)) {
-            [xml]$project = Get-Content $env:PROJECT_PATH
-            $packageVersion = @($project.Project.PropertyGroup.Version | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })[0]
-          }
-
-          if ([string]::IsNullOrWhiteSpace($packageVersion)) {
-            throw "Could not resolve a package version."
+            throw "Could not read <Version> from $env:PROJECT_PATH."
           }
 
           if ($packageVersion -notmatch '^\d+\.\d+\.\d+([-.][0-9A-Za-z][0-9A-Za-z.-]*)?$') {
