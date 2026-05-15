@@ -15,6 +15,15 @@ namespace Akeldov.Math.Hexes
             _values = new TValue[resolution.X * resolution.Y];
         }
 
+        internal HexMap(VectorXYInt resolution, TValue[] values)
+        {
+            if (values.Length != resolution.X * resolution.Y)
+                throw new ArgumentException("Values length must match resolution.", nameof(values));
+
+            _resolution = resolution;
+            _values = values;
+        }
+
         public TValue this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
