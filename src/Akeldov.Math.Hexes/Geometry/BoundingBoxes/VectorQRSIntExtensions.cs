@@ -1,0 +1,34 @@
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
+using System;
+
+namespace Akeldov.Math.Hexes.Geometry
+{
+    public static partial class VectorQRSIntExtensions
+    {
+        public static VectorXY BoundingBoxSize(this VectorQRSInt size, float apothem, float radius, Layout layout)
+        {
+            if (size.Q < 0 || size.R < 0)
+                throw new ArgumentOutOfRangeException(nameof(size), size, "Couldn't calculate bounding box for size with negative numbers.");
+
+            if (size.Q == 0 || size.R == 0)
+                return new VectorXY(0, 0);
+
+            switch (layout)
+            {
+                case Layout.OddR:
+                case Layout.EvenR:
+                    return new VectorXY(
+                        apothem * (2f * size.Q + size.R - 1),
+                        radius * (1.5f * size.R + 0.5f));
+                case Layout.OddQ:
+                case Layout.EvenQ:
+                    return new VectorXY(
+                        radius * (1.5f * size.Q + 0.5f),
+                        apothem * (2f * size.R + size.Q - 1));
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
+    }
+}
