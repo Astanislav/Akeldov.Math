@@ -1,0 +1,44 @@
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
+using System;
+
+namespace Akeldov.Math.Hexes.Geometry
+{
+    public static partial class VectorXYExtensions
+    {
+        private static readonly VectorXY[] RowLayoutNormalizedHexVertexes =
+        {
+            new VectorXY(Constants.Cos30Deg, Constants.Sin30Deg),
+            new VectorXY(Constants.Cos90Deg, Constants.Sin90Deg),
+            new VectorXY(Constants.Cos150Deg, Constants.Sin150Deg),
+            new VectorXY(Constants.Cos210Deg, Constants.Sin210Deg),
+            new VectorXY(Constants.Cos270Deg, Constants.Sin270Deg),
+            new VectorXY(Constants.Cos330Deg, Constants.Sin330Deg),
+        };
+
+        private static readonly VectorXY[] ColumnLayoutNormalizedHexVertexes =
+        {
+            new VectorXY(Constants.Cos0Deg, Constants.Sin0Deg),
+            new VectorXY(Constants.Cos60Deg, Constants.Sin60Deg),
+            new VectorXY(Constants.Cos120Deg, Constants.Sin120Deg),
+            new VectorXY(Constants.Cos180Deg, Constants.Sin180Deg),
+            new VectorXY(Constants.Cos240Deg, Constants.Sin240Deg),
+            new VectorXY(Constants.Cos300Deg, Constants.Sin300Deg),
+        };
+
+        public static VectorXY[] GetNormalizedHexVertexes(Layout layout)
+        {
+            switch (layout)
+            {
+                case Layout.OddR:
+                case Layout.EvenR:
+                    return RowLayoutNormalizedHexVertexes;
+                case Layout.OddQ:
+                case Layout.EvenQ:
+                    return ColumnLayoutNormalizedHexVertexes;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
+    }
+}

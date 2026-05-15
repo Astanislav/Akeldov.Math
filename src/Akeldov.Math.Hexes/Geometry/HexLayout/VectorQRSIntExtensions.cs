@@ -1,0 +1,30 @@
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
+using System;
+using System.Runtime.CompilerServices;
+
+namespace Akeldov.Math.Hexes.Geometry
+{
+    public static partial class VectorQRSIntExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static VectorXY GetHexOffset(this VectorQRSInt hexIndex, float hexApothem, float hexRadius, Layout layout)
+        {
+            switch (layout)
+            {
+                case Layout.OddR:
+                case Layout.EvenR:
+                    return new VectorXY(
+                        2f * hexApothem * hexIndex.Q + hexApothem * hexIndex.R,
+                        1.5f * hexRadius * hexIndex.R);
+                case Layout.OddQ:
+                case Layout.EvenQ:
+                    return new VectorXY(
+                        1.5f * hexRadius * hexIndex.Q,
+                        2f * hexApothem * hexIndex.R + hexApothem * hexIndex.Q);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+        }
+    }
+}
