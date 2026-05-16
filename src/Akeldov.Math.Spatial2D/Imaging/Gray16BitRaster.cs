@@ -4,15 +4,15 @@ using Akeldov.Math.Spatial2D.Rasterization;
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
-    /// Stores 16-bit grayscale raster values on a raster grid.
+    /// Stores mutable 16-bit grayscale raster values on a raster grid.
     /// </summary>
     public sealed class Gray16BitRaster
     {
         /// <summary>
-        /// Initializes a new 16-bit grayscale raster.
+        /// Initializes a new 16-bit grayscale raster and stores the supplied value buffer by reference.
         /// </summary>
         /// <param name="grid">The raster grid that describes the image coordinates.</param>
-        /// <param name="values">The grayscale values indexed as [x, y].</param>
+        /// <param name="values">The mutable grayscale value buffer indexed as [x, y].</param>
         public Gray16BitRaster(RasterGrid grid, ushort[,] values)
         {
             if (values == null)
@@ -31,8 +31,12 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public RasterGrid Grid { get; }
 
         /// <summary>
-        /// Gets the grayscale values indexed as [x, y].
+        /// Gets the mutable grayscale value buffer indexed as [x, y].
         /// </summary>
+        /// <remarks>
+        /// The raster stores the supplied array by reference for performance. Changes to this array are reflected in the raster.
+        /// Use <see cref="Clone"/> when a detached snapshot is needed.
+        /// </remarks>
         public ushort[,] Values { get; }
 
         /// <summary>
@@ -44,5 +48,14 @@ namespace Akeldov.Math.Spatial2D.Imaging
         /// Gets the raster height in pixels.
         /// </summary>
         public int Height => Values.GetLength(1);
+
+        /// <summary>
+        /// Creates a detached copy of this raster and its grayscale value buffer.
+        /// </summary>
+        /// <returns>A raster snapshot with an independent mutable value buffer.</returns>
+        public Gray16BitRaster Clone()
+        {
+            return new Gray16BitRaster(Grid, (ushort[,])Values.Clone());
+        }
     }
 }
