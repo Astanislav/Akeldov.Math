@@ -84,6 +84,29 @@ public class ContourRasterizationImageTests
         Assert.That(bytes[25], Is.EqualTo(0));
     }
 
+    [Test]
+    public void SaveAsPng_WhenRoundedSquareIsRasterizedToGray16Bit_WritesPng16()
+    {
+        Contour contour = CreateSquareContour().SmoothRadii(0.35f);
+        var grid = new RasterGrid(
+            origin: new VectorXY(-0.5f, -0.5f),
+            size: new VectorXY(5f, 5f),
+            resolution: new VectorXYInt(160, 160));
+        var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rounded-square-gray16.png");
+
+        contour
+            .Rasterize(grid, new ContourSignedDistanceGray16BitRasterizer(ToGray16))
+            .SaveAsPng(path);
+
+        Assert.That(File.Exists(path), Is.True);
+        Assert.That(new FileInfo(path).Length, Is.GreaterThan(0));
+
+        byte[] bytes = File.ReadAllBytes(path);
+        Assert.That(bytes[0..8], Is.EqualTo(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }));
+        Assert.That(bytes[24], Is.EqualTo(16));
+        Assert.That(bytes[25], Is.EqualTo(0));
+    }
+
     private static Contour CreateTriangleContour()
     {
         return new Contour(new IBoundedParameterizedCurve[]
@@ -91,6 +114,17 @@ public class ContourRasterizationImageTests
             new Segment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
             new Segment(new VectorXY(4f, 0f), new VectorXY(2f, 3.5f)),
             new Segment(new VectorXY(2f, 3.5f), new VectorXY(0f, 0f))
+        });
+    }
+
+    private static Contour CreateSquareContour()
+    {
+        return new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Segment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
+            new Segment(new VectorXY(4f, 0f), new VectorXY(4f, 4f)),
+            new Segment(new VectorXY(4f, 4f), new VectorXY(0f, 4f)),
+            new Segment(new VectorXY(0f, 4f), new VectorXY(0f, 0f))
         });
     }
 
