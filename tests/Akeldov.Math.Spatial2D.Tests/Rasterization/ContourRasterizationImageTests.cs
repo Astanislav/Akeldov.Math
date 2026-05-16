@@ -9,6 +9,43 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class ContourRasterizationImageTests
 {
     [Test]
+    public void Rasterize_WhenGridHasDefaultValue_Throws()
+    {
+        var contour = CreateTriangleContour();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.Rasterize(default, new ContourSignedDistanceGray8BitRasterizer(ToGray8)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.Rasterize(default, new ContourSignedDistanceGray16BitRasterizer(ToGray16)));
+    }
+
+    [Test]
+    public void SaveAsBmp_WhenRasterHasZeroSize_Throws()
+    {
+        var raster = new Gray8BitRaster(default, new byte[0, 0]);
+        var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray8.bmp");
+
+        if (File.Exists(path))
+            File.Delete(path);
+
+        Assert.Throws<ArgumentException>(() => raster.SaveAsBmp(path));
+        Assert.That(File.Exists(path), Is.False);
+    }
+
+    [Test]
+    public void SaveAsPng_WhenRasterHasZeroSize_Throws()
+    {
+        var raster = new Gray16BitRaster(default, new ushort[0, 0]);
+        var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "zero-size-gray16.png");
+
+        if (File.Exists(path))
+            File.Delete(path);
+
+        Assert.Throws<ArgumentException>(() => raster.SaveAsPng(path));
+        Assert.That(File.Exists(path), Is.False);
+    }
+
+    [Test]
     public void SaveAsBmp_WhenTriangleIsRasterizedToGray8Bit_WritesBmp8()
     {
         var contour = CreateTriangleContour();

@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>
     /// Encodes grayscale rasters into PNG images.
     /// </summary>
-    public static class PngEncoder
+    internal static class PngEncoder
     {
         private static readonly byte[] PngSignature =
         {
@@ -24,6 +24,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
+            ValidateRasterSize(raster.Width, raster.Height);
             using (var stream = File.Create(path))
                 Save(raster, stream);
         }
@@ -41,7 +42,14 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
+            ValidateRasterSize(raster.Width, raster.Height);
             WriteGray16(raster, stream);
+        }
+
+        private static void ValidateRasterSize(int width, int height)
+        {
+            if (width <= 0 || height <= 0)
+                throw new ArgumentException("Raster width and height must be positive.");
         }
 
         private static void WriteGray16(Gray16BitRaster raster, Stream stream)

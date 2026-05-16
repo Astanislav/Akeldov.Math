@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
     /// <summary>
     /// Encodes grayscale rasters into BMP images.
     /// </summary>
-    public static class BmpEncoder
+    internal static class BmpEncoder
     {
         private const int FileHeaderSize = 14;
         private const int InfoHeaderSize = 40;
@@ -24,6 +24,7 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (raster == null)
                 throw new ArgumentNullException(nameof(raster));
 
+            ValidateRasterSize(raster.Width, raster.Height);
             using (var stream = File.Create(path))
                 Save(raster, stream);
         }
@@ -41,7 +42,14 @@ namespace Akeldov.Math.Spatial2D.Imaging
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
+            ValidateRasterSize(raster.Width, raster.Height);
             WriteGray8(raster, stream);
+        }
+
+        private static void ValidateRasterSize(int width, int height)
+        {
+            if (width <= 0 || height <= 0)
+                throw new ArgumentException("Raster width and height must be positive.");
         }
 
         private static void WriteGray8(Gray8BitRaster raster, Stream stream)

@@ -11,15 +11,15 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
     /// </summary>
     public sealed class ContourSignedDistanceGray8BitRasterizer : IRasterizer<IContour, Gray8BitRaster>
     {
-        private readonly Func<float, byte> _distanceToGrayLevel;
+        private readonly Func<float, byte> _signedDistanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new contour rasterizer.
         /// </summary>
-        /// <param name="distanceToGrayLevel">The function that maps signed distance to the contour to an 8-bit grayscale value. Negative distances are inside the contour; positive distances are outside.</param>
-        public ContourSignedDistanceGray8BitRasterizer(Func<float, byte> distanceToGrayLevel)
+        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to the contour to an 8-bit grayscale value. Negative distances are inside the contour; positive distances are outside.</param>
+        public ContourSignedDistanceGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
         {
-            _distanceToGrayLevel = distanceToGrayLevel ?? throw new ArgumentNullException(nameof(distanceToGrayLevel));
+            _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
@@ -28,6 +28,7 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
+            ValidateGrid(grid);
             IReadOnlyList<IBoundedParameterizedCurve> curves = GetCurves(source);
             var values = new byte[grid.Resolution.X, grid.Resolution.Y];
             VectorXY cellSize = grid.CellSize;
@@ -41,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
                 {
                     VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
                     float signedDistance = GetSignedDistanceToContour(source, point, curves);
-                    values[x, y] = _distanceToGrayLevel(signedDistance);
+                    values[x, y] = _signedDistanceToGrayLevel(signedDistance);
                 }
             }
 
@@ -55,6 +56,15 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
                 throw new InvalidOperationException("Contour must expose at least one bounded parameterized curve.");
 
             return curves;
+        }
+
+        private static void ValidateGrid(RasterGrid grid)
+        {
+            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
+
+            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
         }
 
         private static float GetSignedDistanceToContour(IContour contour, VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
