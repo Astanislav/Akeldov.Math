@@ -52,7 +52,7 @@ namespace Akeldov.Math.Hexes.Topology
             return new HexMap<AdjacentIndices>(resolution, adjacentIndices);
         }
 
-        public static HexHieldTopology ToHexHieldTopology(this VectorXYInt resolution, Layout layout)
+        public static HexFieldTopology ToHexHieldTopology(this VectorXYInt resolution, Layout layout)
         {
             if (resolution.X < 0 || resolution.Y < 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution));
@@ -84,7 +84,7 @@ namespace Akeldov.Math.Hexes.Topology
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
 
-            return new HexHieldTopology(
+            return new HexFieldTopology(
                 resolution.X,
                 resolution.Y,
                 adjacentMasks,

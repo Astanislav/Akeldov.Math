@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYIntExtensions
     {
-        public static HexGeometrySoA ToHexGeometrySoA(this VectorXYInt resolution, Layout layout, float apothem)
+        public static HexFieldGeometry ToHexGeometrySoA(this VectorXYInt resolution, Layout layout, float apothem)
         {
             if (resolution.X < 0 || resolution.Y < 0)
                 throw new ArgumentOutOfRangeException(nameof(resolution));
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes.Geometry
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
 
-            return new HexGeometrySoA(centers);
+            return new HexFieldGeometry(resolution.X, resolution.Y, centers);
         }
 
         private static void FillRowLayoutCenters(

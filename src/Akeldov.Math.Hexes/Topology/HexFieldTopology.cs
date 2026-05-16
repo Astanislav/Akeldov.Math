@@ -1,11 +1,11 @@
 ﻿namespace Akeldov.Math.Hexes.Topology
 {
-    public class HexHieldTopology
+    public class HexFieldTopology
     {
         private readonly int _width;
         private readonly int _height;
 
-        public HexHieldTopology(
+        public HexFieldTopology(
             int width,
             int height,
             byte[] hasAdjacent0,
