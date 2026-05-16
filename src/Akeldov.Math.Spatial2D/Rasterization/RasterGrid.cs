@@ -3,7 +3,7 @@ using System;
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Describes a rectangular raster sampling grid in two-dimensional space.
+    /// Describes an axis-aligned rectangular raster sampling grid in two-dimensional space.
     /// </summary>
     public readonly struct RasterGrid : IEquatable<RasterGrid>
     {
