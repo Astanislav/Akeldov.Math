@@ -17,6 +17,7 @@ using Akeldov.Math.Spatial2D;
 Feature areas use sub-namespaces:
 
 ```csharp
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Fields;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
@@ -46,4 +47,3 @@ var b = new VectorXY(1f + GeometryConstants.GeometryEpsilon / 2f, 2f);
 
 bool closeEnough = a.AlmostEquals(b);
 ```
-

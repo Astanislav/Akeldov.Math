@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Akeldov.Math.Spatial2D.Curves;
 
-namespace Akeldov.Math.Spatial2D.Curves
+namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
     /// Represents a closed two-dimensional contour made from curves.

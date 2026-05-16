@@ -8,7 +8,6 @@ The curves package contains basic 2D primitives:
 - `Segment`
 - `Circle`
 - `Arc`
-- `Contour`
 
 These types support distance, projection, and intersection-style workflows.
 `Project` returns the projected point and distance. Curves with a length-based parameterization also expose
@@ -20,6 +19,7 @@ Angles are expressed in radians by default. Non-radian members use an explicit s
 
 ```csharp
 using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
 var segment = new Segment(
@@ -63,6 +63,8 @@ bool isWithinAngularRegion = arc.IsWithinAngularRegion(new VectorXY(1f, 1f));
 ```
 
 ## Contours
+
+Contours are closed boundaries made from curves and live in the `Akeldov.Math.Spatial2D.Contours` namespace.
 
 ```csharp
 var contour = new Contour(new ICurve[]
