@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class ContourSmoothingExtensionsTests
 {
     [Test]
-    public void SmoothRadii_WhenContourIsSegmentSquare_InsertsArcAtEachCorner()
+    public void FilletCorners_WhenContourIsSegmentSquare_InsertsArcAtEachCorner()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
@@ -16,7 +16,7 @@ public class ContourSmoothingExtensionsTests
             new Segment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
         });
 
-        Contour smoothed = contour.SmoothRadii(0.25f);
+        Contour smoothed = contour.FilletCorners(0.25f);
 
         Assert.That(smoothed.Curves, Has.Count.EqualTo(8));
         Assert.That(smoothed.Curves.OfType<Segment>().Count(), Is.EqualTo(4));
@@ -29,7 +29,7 @@ public class ContourSmoothingExtensionsTests
     }
 
     [Test]
-    public void SmoothRadii_WhenOnlySomeAdjacentCurvesAreSegments_InsertsArcsOnlyAtSegmentSegmentCorners()
+    public void FilletCorners_WhenOnlySomeAdjacentCurvesAreSegments_InsertsArcsOnlyAtSegmentSegmentCorners()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
@@ -39,7 +39,7 @@ public class ContourSmoothingExtensionsTests
             new Segment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
         });
 
-        Contour smoothed = contour.SmoothRadii(0.25f);
+        Contour smoothed = contour.FilletCorners(0.25f);
 
         Assert.That(smoothed.Curves, Has.Count.EqualTo(6));
         Assert.That(smoothed.Curves.OfType<Arc>().Count(), Is.EqualTo(3));
@@ -51,7 +51,7 @@ public class ContourSmoothingExtensionsTests
     [TestCase(-1f)]
     [TestCase(float.NaN)]
     [TestCase(float.PositiveInfinity)]
-    public void SmoothRadii_WhenRadiusIsInvalid_Throws(float radius)
+    public void FilletCorners_WhenRadiusIsInvalid_Throws(float radius)
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
@@ -60,7 +60,7 @@ public class ContourSmoothingExtensionsTests
             new Segment(new VectorXY(0f, 1f), new VectorXY(0f, 0f))
         });
 
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => contour.SmoothRadii(radius));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => contour.FilletCorners(radius));
 
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }

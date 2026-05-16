@@ -87,7 +87,7 @@ public class ContourRasterizationImageTests
     [Test]
     public void SaveAsPng_WhenRoundedSquareIsRasterizedToGray16Bit_WritesPng16()
     {
-        Contour contour = CreateSquareContour().SmoothRadii(0.35f);
+        Contour contour = CreateSquareContour().FilletCorners(0.35f);
         var grid = new RasterGrid(
             origin: new VectorXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),

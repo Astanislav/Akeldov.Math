@@ -10,12 +10,12 @@ namespace Akeldov.Math.Spatial2D.Contours
     public static class ContourSmoothingExtensions
     {
         /// <summary>
-        /// Returns a contour with tangent arcs inserted at corners where two adjacent segments meet.
+        /// Returns a contour with fillet arcs inserted at corners where two adjacent segments meet.
         /// </summary>
-        /// <param name="contour">The contour to smooth.</param>
-        /// <param name="radius">The radius of inserted tangent arcs.</param>
-        /// <returns>A new contour with segment-segment corners smoothed by arcs.</returns>
-        public static Contour SmoothRadii(this IContour contour, float radius)
+        /// <param name="contour">The contour to fillet.</param>
+        /// <param name="radius">The radius of inserted fillet arcs.</param>
+        /// <returns>A new contour with segment-segment corners filleted by arcs.</returns>
+        public static Contour FilletCorners(this IContour contour, float radius)
         {
             if (contour == null)
                 throw new ArgumentNullException(nameof(contour));
