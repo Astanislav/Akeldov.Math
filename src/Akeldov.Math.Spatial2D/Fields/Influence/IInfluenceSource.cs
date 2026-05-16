@@ -3,7 +3,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// <summary>
     /// Represents an object that can influence sampled field values and measure distance to a point.
     /// </summary>
-    public interface IInfluenceSource : IDistanceMeasurable
+    public interface IInfluenceSource : IPointDistanceProvider
     {
     }
 
