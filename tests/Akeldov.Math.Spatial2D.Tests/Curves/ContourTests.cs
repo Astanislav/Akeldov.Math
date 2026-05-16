@@ -14,29 +14,32 @@ public class ContourTests
     [Test]
     public void Constructor_WhenCurvesIsEmpty_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Contour(Array.Empty<ICurve>()));
+        Assert.Throws<ArgumentException>(() => new Contour(Array.Empty<IBoundedParameterizedCurve>()));
     }
 
     [Test]
     public void Constructor_WhenCurvesContainsNull_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Contour(new ICurve[] { null! }));
+        Assert.Throws<ArgumentException>(() => new Contour(new IBoundedParameterizedCurve[] { null! }));
     }
 
     [Test]
     public void Curves_WhenAccessed_ReturnsReadOnlyView()
     {
-        var contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+        var contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
 
-        Assert.That(contour.Curves, Is.Not.InstanceOf<ICurve[]>());
+        Assert.That(contour.Curves, Is.Not.InstanceOf<IBoundedParameterizedCurve[]>());
         Assert.Throws<NotSupportedException>(() =>
-            ((IList<ICurve>)contour.Curves)[0] = new Circle(VectorXY.Zero, 2f));
+            ((IList<IBoundedParameterizedCurve>)contour.Curves)[0] = new Segment(VectorXY.Zero, VectorXY.One));
     }
 
     [Test]
     public void Contains_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
-        var contour = new Contour(new ICurve[]
+        var contour = new Contour(new IBoundedParameterizedCurve[]
         {
             new Segment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
             new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 2f)),
@@ -50,7 +53,10 @@ public class ContourTests
     [Test]
     public void Contains_WhenPointIsOutsideContour_ReturnsFalse()
     {
-        IContour contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+        IContour contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
 
         bool isInside = contour.Contains(new VectorXY(2f, 0f));
 
@@ -60,7 +66,10 @@ public class ContourTests
     [Test]
     public void Contains_WhenPointIsOnContour_ReturnsTrue()
     {
-        var contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+        var contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
 
         Assert.That(contour.Contains(new VectorXY(1f, 0f)), Is.True);
     }
@@ -68,7 +77,10 @@ public class ContourTests
     [Test]
     public void Contains_WhenPointCoordinateIsInvalid_Throws()
     {
-        var contour = new Contour(new ICurve[] { new Circle(VectorXY.Zero, 1f) });
+        var contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             contour.Contains(new VectorXY(float.NaN, 0f)));

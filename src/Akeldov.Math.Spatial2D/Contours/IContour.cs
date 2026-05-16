@@ -4,14 +4,14 @@ using Akeldov.Math.Spatial2D.Curves;
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour made from curves.
+    /// Represents a closed two-dimensional contour made from bounded parameterized curves.
     /// </summary>
     public interface IContour
     {
         /// <summary>
-        /// Gets the curves that form this contour.
+        /// Gets the bounded parameterized curves that form this contour.
         /// </summary>
-        IReadOnlyList<ICurve> Curves { get; }
+        IReadOnlyList<IBoundedParameterizedCurve> Curves { get; }
 
         /// <summary>
         /// Determines whether the specified point lies inside or on this contour.

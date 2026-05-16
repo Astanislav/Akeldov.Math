@@ -64,12 +64,12 @@ bool isWithinAngularRegion = arc.IsWithinAngularRegion(new VectorXY(1f, 1f));
 
 ## Contours
 
-Contours are closed boundaries made from curves and live in the `Akeldov.Math.Spatial2D.Contours` namespace.
+Contours are closed boundaries made from bounded parameterized curves and live in the `Akeldov.Math.Spatial2D.Contours` namespace.
 
 ```csharp
-var contour = new Contour(new ICurve[]
+var contour = new Contour(new IBoundedParameterizedCurve[]
 {
-    new Circle(VectorXY.Zero, radius: 5f)
+    new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: 2f * MathF.PI)
 });
 
 bool isInside = contour.Contains(new VectorXY(3f, 0f));

@@ -5,18 +5,18 @@ using Akeldov.Math.Spatial2D.Curves;
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour made from curves.
+    /// Represents a closed two-dimensional contour made from bounded parameterized curves.
     /// </summary>
     public sealed class Contour : IContour
     {
-        private readonly ICurve[] _curves;
-        private readonly IReadOnlyList<ICurve> _readOnlyCurves;
+        private readonly IBoundedParameterizedCurve[] _curves;
+        private readonly IReadOnlyList<IBoundedParameterizedCurve> _readOnlyCurves;
 
         /// <summary>
-        /// Initializes a new contour from the specified curves.
+        /// Initializes a new contour from the specified bounded parameterized curves.
         /// </summary>
-        /// <param name="curves">The curves that form the contour.</param>
-        public Contour(IReadOnlyList<ICurve> curves)
+        /// <param name="curves">The bounded parameterized curves that form the contour.</param>
+        public Contour(IReadOnlyList<IBoundedParameterizedCurve> curves)
         {
             if (curves == null)
                 throw new ArgumentNullException(nameof(curves));
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (curves.Count == 0)
                 throw new ArgumentException("A contour must contain at least one curve.", nameof(curves));
 
-            _curves = new ICurve[curves.Count];
+            _curves = new IBoundedParameterizedCurve[curves.Count];
 
             for (int i = 0; i < curves.Count; i++)
             {
@@ -35,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<ICurve> Curves => _readOnlyCurves;
+        public IReadOnlyList<IBoundedParameterizedCurve> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
         public bool Contains(VectorXY point)
@@ -95,11 +95,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             return x > point.X + GeometryConstants.GeometryEpsilon;
         }
 
-        private static bool IsTangentIntersection(ICurve curve, Ray ray)
+        private static bool IsTangentIntersection(IBoundedParameterizedCurve curve, Ray ray)
         {
-            if (curve is Circle circle)
-                return IsTangentToCircle(ray, circle.Center, circle.Radius);
-
             if (curve is Arc arc)
                 return IsTangentToCircle(ray, arc.Center, arc.Radius);
 
