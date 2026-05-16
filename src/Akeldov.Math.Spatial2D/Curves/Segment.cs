@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a finite line segment in two-dimensional space.
     /// </summary>
-    public readonly struct Segment : IParameterizedProjectableCurve, IEquatable<Segment>
+    public readonly struct Segment : IBoundedParameterizedCurve, IEquatable<Segment>
     {
         private readonly VectorXY _startPoint;
         private readonly VectorXY _endPoint;
@@ -64,6 +64,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the end point.
         /// </summary>
         public VectorXY EndPoint => _endPoint;
+
+        /// <summary>
+        /// Gets the segment length.
+        /// </summary>
+        public float Length => StartPoint.Distance(EndPoint);
 
         /// <summary>
         /// Gets a value indicating whether the start point belongs to the segment.

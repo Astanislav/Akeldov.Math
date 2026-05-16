@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a closed circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct Arc : IParameterizedProjectableCurve, IEquatable<Arc>
+    public readonly struct Arc : IBoundedParameterizedCurve, IEquatable<Arc>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
@@ -83,15 +83,31 @@ namespace Akeldov.Math.Spatial2D.Curves
         public bool IsFullCircle => _isFullCircle;
 
         /// <summary>
+        /// Gets the point at the start angle of this arc.
+        /// </summary>
+        public VectorXY StartPoint => new VectorXY(
+            _center.X + _radius * MathF.Cos(_startAngle),
+            _center.Y + _radius * MathF.Sin(_startAngle));
+
+        /// <summary>
+        /// Gets the point at the end angle of this arc.
+        /// </summary>
+        public VectorXY EndPoint => new VectorXY(
+            _center.X + _radius * MathF.Cos(_endAngle),
+            _center.Y + _radius * MathF.Sin(_endAngle));
+
+        /// <summary>
+        /// Gets the arc length.
+        /// </summary>
+        public float Length => GetArcLength();
+
+        /// <summary>
         /// Returns the point at the start angle of this arc.
         /// </summary>
         /// <returns>The arc start point.</returns>
         public VectorXY GetStartPoint()
         {
-            return new VectorXY(
-                _center.X + _radius * MathF.Cos(_startAngle),
-                _center.Y + _radius * MathF.Sin(_startAngle)
-            );
+            return StartPoint;
         }
 
         /// <summary>
@@ -100,10 +116,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The arc end point.</returns>
         public VectorXY GetEndPoint()
         {
-            return new VectorXY(
-                _center.X + _radius * MathF.Cos(_endAngle),
-                _center.Y + _radius * MathF.Sin(_endAngle)
-            );
+            return EndPoint;
         }
 
         /// <summary>
