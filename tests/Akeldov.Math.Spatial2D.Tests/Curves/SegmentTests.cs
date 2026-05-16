@@ -84,6 +84,16 @@ public class SegmentTests
     }
 
     [Test]
+    public void BoundedParameterizedCurveContract_WhenSegmentIsUsed_ExposesEndpointsAndLength()
+    {
+        IBoundedParameterizedCurve curve = new Segment(new VectorXY(1f, 2f), new VectorXY(4f, 6f));
+
+        AssertVector(curve.StartPoint, 1f, 2f);
+        AssertVector(curve.EndPoint, 4f, 6f);
+        Assert.That(curve.Length, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
     {
         var segment = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));

@@ -75,6 +75,16 @@ public class ArcTests
     }
 
     [Test]
+    public void BoundedParameterizedCurveContract_WhenArcIsUsed_ExposesEndpointsAndLength()
+    {
+        IBoundedParameterizedCurve curve = new Arc(VectorXY.Zero, 2f, 0f, MathF.PI / 2f);
+
+        AssertVector(curve.StartPoint, 2f, 0f);
+        AssertVector(curve.EndPoint, 0f, 2f);
+        Assert.That(curve.Length, Is.EqualTo(MathF.PI).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void RayIntersections_WhenRayHitsCircleOutsideArc_ReturnsEmpty()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);
