@@ -31,6 +31,8 @@ namespace Akeldov.Math.Spatial2D.Contours
                 _curves[i] = curves[i] ?? throw new ArgumentException("A contour cannot contain null curves.", nameof(curves));
             }
 
+            ValidateCurvesFormClosedChain(_curves, nameof(curves));
+
             _readOnlyCurves = Array.AsReadOnly(_curves);
         }
 
@@ -108,6 +110,18 @@ namespace Akeldov.Math.Spatial2D.Contours
             VectorXY originToCenter = center - ray.Origin;
             float signedDistance = VectorXY.Cross(ray.Direction, originToCenter);
             return MathF.Abs(MathF.Abs(signedDistance) - radius) <= GeometryConstants.GeometryEpsilon;
+        }
+
+        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IBoundedParameterizedCurve> curves, string parameterName)
+        {
+            for (int i = 0; i < curves.Count; i++)
+            {
+                IBoundedParameterizedCurve currentCurve = curves[i];
+                IBoundedParameterizedCurve nextCurve = curves[(i + 1) % curves.Count];
+
+                if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
+                    throw new ArgumentException("Contour curves must form a closed continuous chain.", parameterName);
+            }
         }
     }
 }

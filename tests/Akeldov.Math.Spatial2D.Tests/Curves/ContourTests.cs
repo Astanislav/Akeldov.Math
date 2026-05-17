@@ -24,6 +24,32 @@ public class ContourTests
     }
 
     [Test]
+    public void Constructor_WhenCurvesAreDisconnected_Throws()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Segment(new VectorXY(0f, 0f), new VectorXY(1f, 0f)),
+            new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 1f)),
+            new Segment(new VectorXY(2f, 1f), new VectorXY(0f, 0f))
+        }));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curves"));
+    }
+
+    [Test]
+    public void Constructor_WhenCurvesDoNotClose_Throws()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Segment(new VectorXY(0f, 0f), new VectorXY(1f, 0f)),
+            new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f)),
+            new Segment(new VectorXY(1f, 1f), new VectorXY(0f, 1f))
+        }));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("curves"));
+    }
+
+    [Test]
     public void Curves_WhenAccessed_ReturnsReadOnlyView()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
