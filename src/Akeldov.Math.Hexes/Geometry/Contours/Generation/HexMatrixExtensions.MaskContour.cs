@@ -2,6 +2,7 @@ using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System.Collections.Generic;
+using System;
 
 namespace Akeldov.Math.Hexes.Geometry.Contours
 {
@@ -63,7 +64,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 }
             }
 
-            return borderLines.ToArray().OrderContour();
+            throw new NotImplementedException();
+            //return borderLines.ToArray().OrderContour();
         }
     }
 }

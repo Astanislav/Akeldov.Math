@@ -46,12 +46,6 @@ namespace Akeldov.Math.Hexes.Topology
             new VectorXYInt(-1, 1)
         };
 
-        public static HexMap<AdjacentIndices> ToAdjacentIndicesMap(this VectorXYInt resolution, Layout layout)
-        {
-            var adjacentIndices = AdjacentIndicesCalculator.Calculate(resolution, layout);
-            return new HexMap<AdjacentIndices>(resolution, adjacentIndices);
-        }
-
         public static HexFieldTopology ToHexHieldTopology(this VectorXYInt resolution, Layout layout)
         {
             if (resolution.X < 0 || resolution.Y < 0)

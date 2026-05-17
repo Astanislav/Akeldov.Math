@@ -65,7 +65,8 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
             var distinctSegments = segments.Distinct().ToList().Merge(hexApothem * 0.01f).OrderSegments();
 
-            return distinctSegments.Merge(hexApothem * 0.01f).ToArray().OrderContour();
+            throw new NotImplementedException();
+            //return distinctSegments.Merge(hexApothem * 0.01f).ToArray().OrderContour();
         }
 
         private static VectorXY GetAremOffset(float hexApothem, float hexRadius, Layout layout)

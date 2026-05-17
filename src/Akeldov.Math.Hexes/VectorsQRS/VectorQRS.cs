@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Akeldov.Math.Hexes.Vectors.QRS
 {
@@ -27,7 +28,7 @@ namespace Akeldov.Math.Hexes.Vectors.QRS
 
         public override int GetHashCode() => HashCode.Combine(Q, R);
 
-        public override string ToString() => $"({Q}, {R})";
+        public override string ToString() => $"({Q.ToString(CultureInfo.InvariantCulture)}, {R.ToString(CultureInfo.InvariantCulture)})";
 
         public void Deconstruct(out float x, out float y)
         {
