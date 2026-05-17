@@ -35,6 +35,32 @@ public class RegionTests
     }
 
     [Test]
+    public void Constructor_WhenContoursIntersect_Throws()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new Region(new IContour[]
+            {
+                CreateSquareContour(0f, 0f, 4f, 4f),
+                CreateSquareContour(2f, -1f, 5f, 2f)
+            }));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("contours"));
+    }
+
+    [Test]
+    public void Constructor_WhenContoursTouch_Throws()
+    {
+        var exception = Assert.Throws<ArgumentException>(() =>
+            new Region(new IContour[]
+            {
+                CreateSquareContour(0f, 0f, 4f, 4f),
+                CreateSquareContour(4f, 1f, 5f, 3f)
+            }));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("contours"));
+    }
+
+    [Test]
     public void Contours_WhenAccessed_ReturnsReadOnlyView()
     {
         var region = new Region(new IContour[]
