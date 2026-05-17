@@ -1,4 +1,4 @@
-namespace Akeldov.Math.Spatial2D.Contours
+namespace Akeldov.Math.Spatial2D.Regions
 {
     /// <summary>
     /// Defines how multiple contours are converted into a filled region.

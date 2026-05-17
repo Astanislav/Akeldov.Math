@@ -1,8 +1,8 @@
 using Akeldov.Math.Spatial2D.Contours;
-using Akeldov.Math.Spatial2D.Contours.Rasterization;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 
 namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 

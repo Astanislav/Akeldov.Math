@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
-using Akeldov.Math.Spatial2D.Rasterization;
 
-namespace Akeldov.Math.Spatial2D.Contours.Rasterization
+namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
     /// Rasterizes contours into 8-bit grayscale rasters using signed distance-to-contour mapping.

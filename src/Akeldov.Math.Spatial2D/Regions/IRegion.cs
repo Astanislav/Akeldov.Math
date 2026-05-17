@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Akeldov.Math.Spatial2D.Contours;
 
-namespace Akeldov.Math.Spatial2D.Contours
+namespace Akeldov.Math.Spatial2D.Regions
 {
     /// <summary>
     /// Represents a filled two-dimensional region defined by one or more contours.

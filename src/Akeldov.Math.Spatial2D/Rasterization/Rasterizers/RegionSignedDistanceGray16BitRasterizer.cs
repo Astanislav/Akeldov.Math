@@ -1,36 +1,37 @@
 using System;
 using System.Collections.Generic;
+using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
-using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 
-namespace Akeldov.Math.Spatial2D.Contours.Rasterization
+namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Rasterizes regions into 8-bit grayscale rasters using signed distance-to-boundary mapping.
+    /// Rasterizes regions into 16-bit grayscale rasters using signed distance-to-boundary mapping.
     /// </summary>
-    public sealed class RegionSignedDistanceGray8BitRasterizer : IRasterizer<IRegion, Gray8BitRaster>
+    public sealed class RegionSignedDistanceGray16BitRasterizer : IRasterizer<IRegion, Gray16BitRaster>
     {
-        private readonly Func<float, byte> _signedDistanceToGrayLevel;
+        private readonly Func<float, ushort> _signedDistanceToGrayLevel;
 
         /// <summary>
         /// Initializes a new region rasterizer.
         /// </summary>
-        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to the region boundary to an 8-bit grayscale value. Negative distances are inside the region; positive distances are outside.</param>
-        public RegionSignedDistanceGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
+        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to the region boundary to a 16-bit grayscale value. Negative distances are inside the region; positive distances are outside.</param>
+        public RegionSignedDistanceGray16BitRasterizer(Func<float, ushort> signedDistanceToGrayLevel)
         {
             _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IRegion source, RasterGrid grid)
+        public Gray16BitRaster Rasterize(IRegion source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
             IReadOnlyList<IBoundedParameterizedCurve> curves = GetCurves(source);
-            var values = new byte[grid.Resolution.X, grid.Resolution.Y];
+            var values = new ushort[grid.Resolution.X, grid.Resolution.Y];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -46,7 +47,7 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
                 }
             }
 
-            return new Gray8BitRaster(grid, values);
+            return new Gray16BitRaster(grid, values);
         }
 
         private static IReadOnlyList<IBoundedParameterizedCurve> GetCurves(IRegion region)

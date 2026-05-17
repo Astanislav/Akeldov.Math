@@ -1,7 +1,8 @@
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Regions;
 
-namespace Akeldov.Math.Spatial2D.Tests.Contours;
+namespace Akeldov.Math.Spatial2D.Tests.Regions;
 
 public class RegionTests
 {
