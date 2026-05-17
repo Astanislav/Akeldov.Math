@@ -63,7 +63,7 @@ public class ContourTests
     }
 
     [Test]
-    public void Contains_WhenPointIsInsideSegmentContour_ReturnsTrue()
+    public void Encloses_WhenPointIsInsideSegmentContour_ReturnsTrue()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
@@ -73,35 +73,35 @@ public class ContourTests
             new Segment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
         });
 
-        Assert.That(contour.Contains(new VectorXY(1f, 1f)), Is.True);
+        Assert.That(contour.Encloses(new VectorXY(1f, 1f)), Is.True);
     }
 
     [Test]
-    public void Contains_WhenPointIsOutsideContour_ReturnsFalse()
+    public void Encloses_WhenPointIsOutsideContour_ReturnsFalse()
     {
         IContour contour = new Contour(new IBoundedParameterizedCurve[]
         {
             new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
         });
 
-        bool isInside = contour.Contains(new VectorXY(2f, 0f));
+        bool isInside = contour.Encloses(new VectorXY(2f, 0f));
 
         Assert.That(isInside, Is.False);
     }
 
     [Test]
-    public void Contains_WhenPointIsOnContour_ReturnsTrue()
+    public void Encloses_WhenPointIsOnContour_ReturnsTrue()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
             new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
         });
 
-        Assert.That(contour.Contains(new VectorXY(1f, 0f)), Is.True);
+        Assert.That(contour.Encloses(new VectorXY(1f, 0f)), Is.True);
     }
 
     [Test]
-    public void Contains_WhenPointCoordinateIsInvalid_Throws()
+    public void Encloses_WhenPointCoordinateIsInvalid_Throws()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
         {
@@ -109,7 +109,7 @@ public class ContourTests
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Contains(new VectorXY(float.NaN, 0f)));
+            contour.Encloses(new VectorXY(float.NaN, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }

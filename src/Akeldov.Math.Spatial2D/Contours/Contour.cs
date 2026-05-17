@@ -40,7 +40,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         public IReadOnlyList<IBoundedParameterizedCurve> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
-        public bool Contains(VectorXY point)
+        public bool Encloses(VectorXY point)
         {
             if (!point.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");

@@ -79,7 +79,7 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             for (int i = 0; i < _contours.Length; i++)
             {
-                if (_contours[i].Contains(point))
+                if (_contours[i].Encloses(point))
                     containingContours++;
             }
 

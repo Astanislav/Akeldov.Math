@@ -70,7 +70,7 @@ namespace Akeldov.Math.Spatial2D.Contours.Rasterization
         private static float GetSignedDistanceToContour(IContour contour, VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
         {
             float distance = DistanceToContour(point, curves);
-            return contour.Contains(point) ? -distance : distance;
+            return contour.Encloses(point) ? -distance : distance;
         }
 
         private static float DistanceToContour(VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
