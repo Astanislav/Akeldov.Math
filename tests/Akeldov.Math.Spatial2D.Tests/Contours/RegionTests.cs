@@ -110,6 +110,22 @@ public class RegionTests
     }
 
     [Test]
+    public void Contains_WhenRegionIsSquareWithSquareHole_ClassifiesPoints()
+    {
+        var region = new Region(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 4f, 4f),
+            CreateSquareContour(1f, 1f, 3f, 3f)
+        });
+
+        Assert.That(region.Contains(new VectorXY(-0.5f, 2f)), Is.False);
+        Assert.That(region.Contains(new VectorXY(0.5f, 0.5f)), Is.True);
+        Assert.That(region.Contains(new VectorXY(2f, 2f)), Is.False);
+        Assert.That(region.Contains(new VectorXY(0f, 2f)), Is.True);
+        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.True);
+    }
+
+    [Test]
     public void Contains_WhenContoursAreNested_AlternatesInsideAndOutside()
     {
         var region = new Region(new IContour[]
