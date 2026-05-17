@@ -1,17 +1,40 @@
 # Akeldov.Math.Spatial2D
 
-Akeldov.Math.Spatial2D is a .NET library for practical two-dimensional geometry, spatial sampling, partitioning, and value fields.
+Akeldov.Math.Spatial2D is a .NET library for practical two-dimensional geometry, contours, regions, rasterization, spatial sampling, partitioning, and value fields.
 
 ## Features
 
-The library provides:
+The library is organized around a few practical geometry workflows.
+
+### Core Geometry
 
 - Float and integer vector types: `VectorXY` and `VectorXYInt`.
 - Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
-- Projection, distance, intersection, angle, contour, and centroid helpers.
+- Projection, distance, intersection, angle, and centroid helpers.
+
+### Boundaries and Areas
+
+- Closed contours made from bounded parameterized curves.
+- Filled regions with holes and nested contours.
+- Contour smoothing and corner filleting helpers.
+
+### Rasterization and Imaging
+
+- Axis-aligned raster grids for sampling geometry into cells.
+- Signed-distance rasterizers for contours and regions.
+- Mutable grayscale rasters with 8-bit BMP and 16-bit PNG export helpers.
+
+### Spatial Sampling
+
 - Poisson disk point sampling with constant or spatially varying minimal distance.
+
+### Spatial Partitioning
+
 - Weighted Voronoi partitioning for positioned items.
-- Influence fields for sampling values from point or curve sources.
+
+### Influence Fields
+
+- Value fields sampled from point or curve sources.
 - Source culling and interpolation strategies for local field behavior.
 
 Most primitives are immutable, and public collection inputs are copied where mutation would otherwise leak into library state. Geometry comparisons use the shared `GeometryConstants.GeometryEpsilon` tolerance where exact floating-point equality would be too brittle.

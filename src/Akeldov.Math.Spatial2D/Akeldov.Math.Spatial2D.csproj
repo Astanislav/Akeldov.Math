@@ -5,13 +5,14 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.1.0</Version>
+		<Version>0.2.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
-		<Description>Two-dimensional geometry, vector math, spatial sampling, partitioning, and influence field utilities.</Description>
+		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
+		<PackageReleaseNotes>Added rasterization primitives, grayscale rasters, BMP/PNG export, signed-distance rasterizers, contour smoothing/filleting, and Region support for multi-contour areas with holes via FillRule.EvenOdd. Breaking changes: Contour APIs moved to the Contours namespace, IContour.Contains was renamed to Encloses, IDistanceMeasurable was renamed to IPointDistanceProvider, and contours now require a closed continuous chain of bounded curves.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>math;geometry;2d;vectors;spatial;sampling;voronoi;poisson-disk</PackageTags>
+		<PackageTags>math;geometry;2d;vectors;spatial;curves;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
 		<RepositoryUrl>https://github.com/Akeldov/Akeldov.Math</RepositoryUrl>
 		<PackageProjectUrl>https://akeldov.github.io/Akeldov.Math/Spatial2D/</PackageProjectUrl>
 	</PropertyGroup>

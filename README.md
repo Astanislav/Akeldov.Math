@@ -14,5 +14,5 @@ The project documentation is published at:
 
 | Library | Version | Description |
 | --- | --- | --- |
-| [Akeldov.Math.Spatial2D](https://akeldov.github.io/Akeldov.Math/Spatial2D/) | [![NuGet](https://img.shields.io/nuget/v/Akeldov.Math.Spatial2D.svg)](https://www.nuget.org/packages/Akeldov.Math.Spatial2D/) | Two-dimensional geometry, vector math, spatial sampling, partitioning, and influence field utilities. |
+| [Akeldov.Math.Spatial2D](https://akeldov.github.io/Akeldov.Math/Spatial2D/) | [![NuGet](https://img.shields.io/nuget/v/Akeldov.Math.Spatial2D.svg)](https://www.nuget.org/packages/Akeldov.Math.Spatial2D/) | Two-dimensional geometry, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities. |
 | [Akeldov.Math.Intervals](https://akeldov.github.io/Akeldov.Math/Intervals/) | Not packaged | Interval primitives for numeric ranges. |

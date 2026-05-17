@@ -20,7 +20,10 @@ Feature areas use sub-namespaces:
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Imaging;
 using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
+using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
 using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 ```
 
@@ -47,3 +50,9 @@ var b = new VectorXY(1f + GeometryConstants.GeometryEpsilon / 2f, 2f);
 
 bool closeEnough = a.AlmostEquals(b);
 ```
+
+## Boundaries and Areas
+
+Use `Contour` for a single closed boundary and `Region` for a filled area.
+
+`Contour.Encloses` tests whether a point is inside the contour boundary. `Region.Contains` tests whether a point lies inside or on the filled region.
