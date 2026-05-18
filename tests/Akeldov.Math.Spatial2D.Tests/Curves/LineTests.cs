@@ -153,6 +153,21 @@ public class LineTests
         AssertVector(tolerantIntersections[0], 2f, 0.005f);
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var line = default(Line);
+        var ray = new Ray(VectorXY.Zero);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            line.GetRayIntersections(ray, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     [Test]
     public void RayIntersections_WhenIntersectionIsBehindRay_ReturnsEmpty()
     {

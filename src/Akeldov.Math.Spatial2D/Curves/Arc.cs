@@ -172,6 +172,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             var intersections = new List<VectorXY>();
 
             if (_radius <= geometryEpsilon)

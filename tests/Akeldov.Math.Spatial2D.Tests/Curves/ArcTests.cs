@@ -110,6 +110,21 @@ public class ArcTests
         AssertVector(tolerantIntersections[0], 0f, 1.00005f);
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI);
+        var ray = new Ray(VectorXY.Zero);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            arc.GetRayIntersections(ray, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     [Test]
     public void Distance_WhenPointIsNearArcEndpoint_UsesNearestEndpoint()
     {

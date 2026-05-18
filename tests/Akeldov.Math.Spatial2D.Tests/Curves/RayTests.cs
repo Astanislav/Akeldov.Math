@@ -103,6 +103,21 @@ public class RayTests
         AssertVector(tolerantIntersections[0], 2f, 0.005f);
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var ray = new Ray(VectorXY.Zero);
+        var other = new Ray(new VectorXY(2f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ray.GetRayIntersections(other, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     [Test]
     public void RayIntersections_WhenNonParallelRaysCrossAhead_ReturnsIntersection()
     {

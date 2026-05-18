@@ -210,6 +210,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             return _line.GetRayIntersections(ray, geometryEpsilon);
         }
 

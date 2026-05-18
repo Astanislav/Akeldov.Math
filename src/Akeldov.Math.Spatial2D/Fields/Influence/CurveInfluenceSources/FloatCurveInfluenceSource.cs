@@ -86,6 +86,8 @@ namespace Akeldov.Math.Spatial2D.Fields
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             return _curve.GetRayIntersections(ray, geometryEpsilon);
         }
 

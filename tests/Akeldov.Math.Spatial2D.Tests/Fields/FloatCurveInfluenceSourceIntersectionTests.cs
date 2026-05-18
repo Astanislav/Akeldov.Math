@@ -21,6 +21,22 @@ public class FloatCurveInfluenceSourceIntersectionTests
         AssertVector(tolerantIntersections[0], 4f, 0.005f);
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void GetRayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var curve = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
+        var source = new FloatCurveInfluenceSource(1f, curve, 0f);
+        var ray = new Ray(VectorXY.Zero);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            source.GetRayIntersections(ray, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));

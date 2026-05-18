@@ -109,6 +109,21 @@ public class CircleTests
         AssertVector(tolerantIntersections[0], 0f, 1.00005f);
     }
 
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var circle = new Circle(VectorXY.Zero, 1f);
+        var ray = new Ray(VectorXY.Zero);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            circle.GetRayIntersections(ray, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     [Test]
     public void RayIntersections_WhenCircleIsBehindRay_ReturnsEmpty()
     {

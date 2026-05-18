@@ -82,6 +82,8 @@ namespace Akeldov.Math.Spatial2D.Curves
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             List<VectorXY> intersections = new List<VectorXY>();
 
             VectorXY d = ray.Direction;
