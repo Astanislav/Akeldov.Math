@@ -40,8 +40,12 @@ namespace Akeldov.Math.Spatial2D.Contours
         public IReadOnlyList<IBoundedParameterizedCurve> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
-        public bool Encloses(VectorXY point)
+        public bool Encloses(
+            VectorXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             if (!point.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
 
@@ -52,18 +56,18 @@ namespace Akeldov.Math.Spatial2D.Contours
             for (int i = 0; i < _curves.Length; i++)
             {
                 var curve = _curves[i];
-                if (curve.Distance(point) <= GeometryConstants.GeometryEpsilon)
+                if (curve.Distance(point) <= geometryEpsilon)
                     return true;
 
                 if (curve is Segment segment)
                 {
-                    if (CrossesPositiveXRay(point, segment))
+                    if (CrossesPositiveXRay(point, segment, geometryEpsilon))
                         segmentCrossings++;
 
                     continue;
                 }
 
-                var newIntersections = curve.GetRayIntersections(ray);
+                var newIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
 
                 if (newIntersections == null)
                     continue;
@@ -71,20 +75,20 @@ namespace Akeldov.Math.Spatial2D.Contours
                 for (int j = 0; j < newIntersections.Count; j++)
                 {
                     var intersection = newIntersections[j];
-                    if (intersection.X <= point.X + GeometryConstants.GeometryEpsilon)
+                    if (intersection.X <= point.X + geometryEpsilon)
                         continue;
 
-                    if (IsTangentIntersection(curve, ray))
+                    if (IsTangentIntersection(curve, ray, geometryEpsilon))
                         continue;
 
-                    intersections.AddDistinct(intersection);
+                    intersections.AddDistinct(intersection, geometryEpsilon);
                 }
             }
 
             return (intersections.Count + segmentCrossings) % 2 == 1;
         }
 
-        private static bool CrossesPositiveXRay(VectorXY point, Segment segment)
+        private static bool CrossesPositiveXRay(VectorXY point, Segment segment, float geometryEpsilon)
         {
             VectorXY startPoint = segment.StartPoint;
             VectorXY endPoint = segment.EndPoint;
@@ -94,22 +98,22 @@ namespace Akeldov.Math.Spatial2D.Contours
                 return false;
 
             float x = startPoint.X + (point.Y - startPoint.Y) * (endPoint.X - startPoint.X) / (endPoint.Y - startPoint.Y);
-            return x > point.X + GeometryConstants.GeometryEpsilon;
+            return x > point.X + geometryEpsilon;
         }
 
-        private static bool IsTangentIntersection(IBoundedParameterizedCurve curve, Ray ray)
+        private static bool IsTangentIntersection(IBoundedParameterizedCurve curve, Ray ray, float geometryEpsilon)
         {
             if (curve is Arc arc)
-                return IsTangentToCircle(ray, arc.Center, arc.Radius);
+                return IsTangentToCircle(ray, arc.Center, arc.Radius, geometryEpsilon);
 
             return false;
         }
 
-        private static bool IsTangentToCircle(Ray ray, VectorXY center, float radius)
+        private static bool IsTangentToCircle(Ray ray, VectorXY center, float radius, float geometryEpsilon)
         {
             VectorXY originToCenter = center - ray.Origin;
             float signedDistance = VectorXY.Cross(ray.Direction, originToCenter);
-            return MathF.Abs(MathF.Abs(signedDistance) - radius) <= GeometryConstants.GeometryEpsilon;
+            return MathF.Abs(MathF.Abs(signedDistance) - radius) <= geometryEpsilon;
         }
 
         private static void ValidateCurvesFormClosedChain(IReadOnlyList<IBoundedParameterizedCurve> curves, string parameterName)

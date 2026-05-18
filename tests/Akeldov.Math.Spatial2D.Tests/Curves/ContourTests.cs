@@ -101,6 +101,32 @@ public class ContourTests
     }
 
     [Test]
+    public void Encloses_WhenPointIsWithinCustomGeometryEpsilonOfContour_ReturnsTrue()
+    {
+        IContour contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
+
+        var point = new VectorXY(1.0005f, 0f);
+
+        Assert.That(contour.Encloses(point), Is.False);
+        Assert.That(contour.Encloses(point, 0.001f), Is.True);
+    }
+
+    [Test]
+    public void Encloses_PassesGeometryEpsilonToCurveRayIntersections()
+    {
+        var curve = new EpsilonAwareCurve();
+        IContour contour = new Contour(new IBoundedParameterizedCurve[] { curve });
+
+        bool encloses = contour.Encloses(VectorXY.Zero, 0.25f);
+
+        Assert.That(encloses, Is.True);
+        Assert.That(curve.LastGeometryEpsilon, Is.EqualTo(0.25f));
+    }
+
+    [Test]
     public void Encloses_WhenPointCoordinateIsInvalid_Throws()
     {
         var contour = new Contour(new IBoundedParameterizedCurve[]
@@ -112,5 +138,53 @@ public class ContourTests
             contour.Encloses(new VectorXY(float.NaN, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
+    }
+
+    [TestCase(-1e-6f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Encloses_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        IContour contour = new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+        });
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            contour.Encloses(VectorXY.Zero, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
+    private sealed class EpsilonAwareCurve : IBoundedParameterizedCurve
+    {
+        public float LastGeometryEpsilon { get; private set; }
+
+        public VectorXY StartPoint => VectorXY.Zero;
+
+        public VectorXY EndPoint => VectorXY.Zero;
+
+        public float Length => 0f;
+
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            LastGeometryEpsilon = geometryEpsilon;
+
+            return geometryEpsilon.AlmostEquals(0.25f)
+                ? new List<VectorXY> { new VectorXY(1f, 0f) }
+                : new List<VectorXY>();
+        }
+
+        public float Distance(VectorXY point) => 1f;
+
+        public CurveProjection Project(VectorXY point) => new(VectorXY.Zero, Distance(point));
+
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point) => new(
+            VectorXY.Zero,
+            0f,
+            Distance(point));
     }
 }
