@@ -328,8 +328,6 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return 2f * MathF.PI * _radius;
 
             float span = PositiveAngleDelta(_startAngle, _endAngle);
-            if (span <= GeometryConstants.GeometryEpsilon)
-                return 0f;
 
             return span * _radius;
         }
