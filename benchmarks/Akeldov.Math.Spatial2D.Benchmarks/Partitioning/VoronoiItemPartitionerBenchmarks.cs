@@ -18,6 +18,9 @@ public class VoronoiItemPartitionerBenchmarks
     [Params(1_000, 10_000)]
     public int ItemCount { get; set; }
 
+    [Params(0, 2)]
+    public int RelaxationIterations { get; set; }
+
     [GlobalSetup]
     public void Setup()
     {
@@ -37,6 +40,7 @@ public class VoronoiItemPartitionerBenchmarks
 
         _partitioner = new VoronoiItemPartitioner<PointItem>(
             _sites,
+            RelaxationIterations,
             EmptyCellPolicy.LeaveAsIs);
     }
 

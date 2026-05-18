@@ -1,0 +1,99 @@
+using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+using Akeldov.Math.Spatial2D.Regions;
+using BenchmarkDotNet.Attributes;
+
+namespace Akeldov.Math.Spatial2D.Benchmarks.Rasterization;
+
+[MemoryDiagnoser]
+[ShortRunJob]
+public class SignedDistanceRasterizationBenchmarks
+{
+    private Contour _contour = null!;
+    private Region _region = null!;
+    private RasterGrid _grid;
+    private ContourSignedDistanceGray8BitRasterizer _contourGray8Rasterizer = null!;
+    private ContourSignedDistanceGray16BitRasterizer _contourGray16Rasterizer = null!;
+    private RegionSignedDistanceGray8BitRasterizer _regionGray8Rasterizer = null!;
+    private RegionSignedDistanceGray16BitRasterizer _regionGray16Rasterizer = null!;
+
+    [Params(128, 256)]
+    public int Resolution { get; set; }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        _contour = CreateSquareContour(0f, 0f, 100f, 100f).FilletCorners(6f);
+        _region = new Region(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 100f, 100f),
+            CreateSquareContour(35f, 35f, 65f, 65f)
+        });
+        _grid = new RasterGrid(
+            origin: new VectorXY(-10f, -10f),
+            size: new VectorXY(120f, 120f),
+            resolution: new VectorXYInt(Resolution, Resolution));
+        _contourGray8Rasterizer = new ContourSignedDistanceGray8BitRasterizer(ToGray8);
+        _contourGray16Rasterizer = new ContourSignedDistanceGray16BitRasterizer(ToGray16);
+        _regionGray8Rasterizer = new RegionSignedDistanceGray8BitRasterizer(ToGray8);
+        _regionGray16Rasterizer = new RegionSignedDistanceGray16BitRasterizer(ToGray16);
+    }
+
+    [Benchmark]
+    public Gray8BitRaster RasterizeContourGray8()
+    {
+        return _contour.Rasterize(_grid, _contourGray8Rasterizer);
+    }
+
+    [Benchmark]
+    public Gray16BitRaster RasterizeContourGray16()
+    {
+        return _contour.Rasterize(_grid, _contourGray16Rasterizer);
+    }
+
+    [Benchmark]
+    public Gray8BitRaster RasterizeRegionGray8()
+    {
+        return _region.Rasterize(_grid, _regionGray8Rasterizer);
+    }
+
+    [Benchmark]
+    public Gray16BitRaster RasterizeRegionGray16()
+    {
+        return _region.Rasterize(_grid, _regionGray16Rasterizer);
+    }
+
+    private static Contour CreateSquareContour(float left, float bottom, float right, float top)
+    {
+        return new Contour(new IBoundedParameterizedCurve[]
+        {
+            new Segment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
+            new Segment(new VectorXY(right, bottom), new VectorXY(right, top)),
+            new Segment(new VectorXY(right, top), new VectorXY(left, top)),
+            new Segment(new VectorXY(left, top), new VectorXY(left, bottom))
+        });
+    }
+
+    private static byte ToGray8(float signedDistance)
+    {
+        if (signedDistance <= 0f)
+            return byte.MaxValue;
+
+        const float falloffDistance = 4f;
+        float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
+        return (byte)MathF.Round(normalized * byte.MaxValue);
+    }
+
+    private static ushort ToGray16(float signedDistance)
+    {
+        if (signedDistance <= 0f)
+            return ushort.MaxValue;
+
+        const float falloffDistance = 4f;
+        float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
+        return (ushort)MathF.Round(normalized * ushort.MaxValue);
+    }
+}
