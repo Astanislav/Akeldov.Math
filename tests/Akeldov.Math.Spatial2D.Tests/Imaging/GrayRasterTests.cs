@@ -30,6 +30,24 @@ public class GrayRasterTests
     }
 
     [Test]
+    public void SaveAsPng_WhenRasterIsGray8Bit_WritesPng8()
+    {
+        byte[,] values = { { 0x12, 0x34 }, { 0x56, 0x78 } };
+        var raster = new Gray8BitRaster(CreateGrid(), values);
+        string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "gray8.png");
+
+        raster.SaveAsPng(path);
+
+        Assert.That(File.Exists(path), Is.True);
+        Assert.That(new FileInfo(path).Length, Is.GreaterThan(0));
+
+        byte[] bytes = File.ReadAllBytes(path);
+        Assert.That(bytes[0..8], Is.EqualTo(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }));
+        Assert.That(bytes[24], Is.EqualTo(8));
+        Assert.That(bytes[25], Is.EqualTo(0));
+    }
+
+    [Test]
     public void Gray16BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
         ushort[,] values = { { 1, 2 }, { 3, 4 } };
