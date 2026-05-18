@@ -9,42 +9,19 @@ namespace Akeldov.Math.Spatial2D.Imaging
     public sealed class RGBA16BitRaster
     {
         /// <summary>
-        /// Initializes a new 16-bit RGBA raster and stores the supplied channel buffers by reference.
+        /// Initializes a new 16-bit RGBA raster and stores the supplied value buffer by reference.
         /// </summary>
         /// <param name="grid">The raster grid that describes the image coordinates.</param>
-        /// <param name="redValues">The mutable red channel buffer indexed as [x, y].</param>
-        /// <param name="greenValues">The mutable green channel buffer indexed as [x, y].</param>
-        /// <param name="blueValues">The mutable blue channel buffer indexed as [x, y].</param>
-        /// <param name="alphaValues">The mutable alpha channel buffer indexed as [x, y].</param>
-        public RGBA16BitRaster(
-            RasterGrid grid,
-            ushort[,] redValues,
-            ushort[,] greenValues,
-            ushort[,] blueValues,
-            ushort[,] alphaValues)
+        /// <param name="values">The mutable RGBA value buffer indexed as y * Width + x.</param>
+        public RGBA16BitRaster(RasterGrid grid, RGBA16BitColor[] values)
         {
-            if (redValues == null)
-                throw new ArgumentNullException(nameof(redValues));
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
 
-            if (greenValues == null)
-                throw new ArgumentNullException(nameof(greenValues));
-
-            if (blueValues == null)
-                throw new ArgumentNullException(nameof(blueValues));
-
-            if (alphaValues == null)
-                throw new ArgumentNullException(nameof(alphaValues));
-
-            ValidateChannelDimensions(grid, redValues, nameof(redValues));
-            ValidateChannelDimensions(grid, greenValues, nameof(greenValues));
-            ValidateChannelDimensions(grid, blueValues, nameof(blueValues));
-            ValidateChannelDimensions(grid, alphaValues, nameof(alphaValues));
+            ValidateValueCount(grid, values);
 
             Grid = grid;
-            RedValues = redValues;
-            GreenValues = greenValues;
-            BlueValues = blueValues;
-            AlphaValues = alphaValues;
+            Values = values;
         }
 
         /// <summary>
@@ -53,69 +30,62 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public RasterGrid Grid { get; }
 
         /// <summary>
-        /// Gets the mutable red channel buffer indexed as [x, y].
+        /// Gets the mutable RGBA value buffer indexed as y * Width + x.
         /// </summary>
         /// <remarks>
         /// The raster stores the supplied array by reference for performance. Changes to this array are reflected in the raster.
         /// Use <see cref="Clone"/> when a detached snapshot is needed.
         /// </remarks>
-        public ushort[,] RedValues { get; }
-
-        /// <summary>
-        /// Gets the mutable green channel buffer indexed as [x, y].
-        /// </summary>
-        /// <remarks>
-        /// The raster stores the supplied array by reference for performance. Changes to this array are reflected in the raster.
-        /// Use <see cref="Clone"/> when a detached snapshot is needed.
-        /// </remarks>
-        public ushort[,] GreenValues { get; }
-
-        /// <summary>
-        /// Gets the mutable blue channel buffer indexed as [x, y].
-        /// </summary>
-        /// <remarks>
-        /// The raster stores the supplied array by reference for performance. Changes to this array are reflected in the raster.
-        /// Use <see cref="Clone"/> when a detached snapshot is needed.
-        /// </remarks>
-        public ushort[,] BlueValues { get; }
-
-        /// <summary>
-        /// Gets the mutable alpha channel buffer indexed as [x, y].
-        /// </summary>
-        /// <remarks>
-        /// The raster stores the supplied array by reference for performance. Changes to this array are reflected in the raster.
-        /// Use <see cref="Clone"/> when a detached snapshot is needed.
-        /// </remarks>
-        public ushort[,] AlphaValues { get; }
+        public RGBA16BitColor[] Values { get; }
 
         /// <summary>
         /// Gets the raster width in pixels.
         /// </summary>
-        public int Width => RedValues.GetLength(0);
+        public int Width => Grid.Resolution.X;
 
         /// <summary>
         /// Gets the raster height in pixels.
         /// </summary>
-        public int Height => RedValues.GetLength(1);
+        public int Height => Grid.Resolution.Y;
 
         /// <summary>
-        /// Creates a detached copy of this raster and its channel buffers.
+        /// Gets or sets the RGBA value at the specified raster coordinates.
         /// </summary>
-        /// <returns>A raster snapshot with independent mutable channel buffers.</returns>
-        public RGBA16BitRaster Clone()
+        /// <param name="x">The zero-based X pixel index.</param>
+        /// <param name="y">The zero-based Y pixel index.</param>
+        /// <returns>The RGBA value at the specified raster coordinates.</returns>
+        public RGBA16BitColor this[int x, int y]
         {
-            return new RGBA16BitRaster(
-                Grid,
-                (ushort[,])RedValues.Clone(),
-                (ushort[,])GreenValues.Clone(),
-                (ushort[,])BlueValues.Clone(),
-                (ushort[,])AlphaValues.Clone());
+            get => Values[GetIndex(x, y)];
+            set => Values[GetIndex(x, y)] = value;
         }
 
-        private static void ValidateChannelDimensions(RasterGrid grid, ushort[,] values, string parameterName)
+        /// <summary>
+        /// Creates a detached copy of this raster and its value buffer.
+        /// </summary>
+        /// <returns>A raster snapshot with an independent mutable value buffer.</returns>
+        public RGBA16BitRaster Clone()
         {
-            if (values.GetLength(0) != grid.Resolution.X || values.GetLength(1) != grid.Resolution.Y)
-                throw new ArgumentException("RGBA raster channel dimensions must match the raster grid resolution.", parameterName);
+            return new RGBA16BitRaster(Grid, (RGBA16BitColor[])Values.Clone());
+        }
+
+        private int GetIndex(int x, int y)
+        {
+            if ((uint)x >= (uint)Width)
+                throw new ArgumentOutOfRangeException(nameof(x), "Raster X index must be inside the raster width.");
+
+            if ((uint)y >= (uint)Height)
+                throw new ArgumentOutOfRangeException(nameof(y), "Raster Y index must be inside the raster height.");
+
+            return y * Width + x;
+        }
+
+        private static void ValidateValueCount(RasterGrid grid, RGBA16BitColor[] values)
+        {
+            int expectedCount = checked(grid.Resolution.X * grid.Resolution.Y);
+
+            if (values.Length != expectedCount)
+                throw new ArgumentException("RGBA raster value count must match the raster grid resolution.", nameof(values));
         }
     }
 }

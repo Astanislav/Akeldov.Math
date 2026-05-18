@@ -230,20 +230,23 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int rowLength = checked(width * 4);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
+            RGBA8BitColor[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
                 int y = height - 1 - row;
                 int offset = row * stride;
+                int valueIndex = y * width;
                 scanlines[offset] = 0;
 
                 for (int x = 0; x < width; x++)
                 {
+                    RGBA8BitColor color = values[valueIndex++];
                     int valueOffset = offset + 1 + x * 4;
-                    scanlines[valueOffset] = raster.RedValues[x, y];
-                    scanlines[valueOffset + 1] = raster.GreenValues[x, y];
-                    scanlines[valueOffset + 2] = raster.BlueValues[x, y];
-                    scanlines[valueOffset + 3] = raster.AlphaValues[x, y];
+                    scanlines[valueOffset] = color.Red;
+                    scanlines[valueOffset + 1] = color.Green;
+                    scanlines[valueOffset + 2] = color.Blue;
+                    scanlines[valueOffset + 3] = color.Alpha;
                 }
             }
 
@@ -267,20 +270,23 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int rowLength = checked(width * 8);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
+            RGBA16BitColor[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
                 int y = height - 1 - row;
                 int offset = row * stride;
+                int valueIndex = y * width;
                 scanlines[offset] = 0;
 
                 for (int x = 0; x < width; x++)
                 {
+                    RGBA16BitColor color = values[valueIndex++];
                     int valueOffset = offset + 1 + x * 8;
-                    WriteUInt16BigEndian(scanlines, valueOffset, raster.RedValues[x, y]);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 2, raster.GreenValues[x, y]);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 4, raster.BlueValues[x, y]);
-                    WriteUInt16BigEndian(scanlines, valueOffset + 6, raster.AlphaValues[x, y]);
+                    WriteUInt16BigEndian(scanlines, valueOffset, color.Red);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 2, color.Green);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 4, color.Blue);
+                    WriteUInt16BigEndian(scanlines, valueOffset + 6, color.Alpha);
                 }
             }
 

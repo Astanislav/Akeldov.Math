@@ -6,72 +6,56 @@ namespace Akeldov.Math.Spatial2D.Tests.Imaging;
 public class RGBA16BitRasterTests
 {
     [Test]
-    public void RGBA16BitRaster_WhenSourceBuffersChange_ReflectsMutation()
+    public void RGBA16BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
-        var redValues = new ushort[2, 3];
-        var greenValues = new ushort[2, 3];
-        var blueValues = new ushort[2, 3];
-        var alphaValues = new ushort[2, 3];
-        var raster = new RGBA16BitRaster(CreateGrid(), redValues, greenValues, blueValues, alphaValues);        
+        var values = new RGBA16BitColor[6];
+        var raster = new RGBA16BitRaster(CreateGrid(), values);
+        var color = new RGBA16BitColor(1, 2, 3, 4);
 
-        redValues[1, 2] = 1;
-        greenValues[1, 2] = 2;
-        blueValues[1, 2] = 3;
-        alphaValues[1, 2] = 4;
+        values[5] = color;
 
-        Assert.That(raster.RedValues[1, 2], Is.EqualTo(1));
-        Assert.That(raster.GreenValues[1, 2], Is.EqualTo(2));
-        Assert.That(raster.BlueValues[1, 2], Is.EqualTo(3));
-        Assert.That(raster.AlphaValues[1, 2], Is.EqualTo(4));
+        Assert.That(raster[1, 2], Is.EqualTo(color));
+        Assert.That(raster.Values[5], Is.EqualTo(color));
     }
 
     [Test]
     public void RGBA16BitRasterClone_WhenCloneBuffersChange_DoesNotChangeSource()
     {
-        var raster = new RGBA16BitRaster(
-            CreateGrid(),
-            new ushort[2, 3],
-            new ushort[2, 3],
-            new ushort[2, 3],
-            new ushort[2, 3]);
+        var raster = new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[6]);
 
         RGBA16BitRaster clone = raster.Clone();
+        var color = new RGBA16BitColor(1, 2, 3, 4);
 
-        clone.RedValues[1, 2] = 1;
-        clone.GreenValues[1, 2] = 2;
-        clone.BlueValues[1, 2] = 3;
-        clone.AlphaValues[1, 2] = 4;
+        clone[1, 2] = color;
 
-        Assert.That(raster.RedValues[1, 2], Is.EqualTo(0));
-        Assert.That(raster.GreenValues[1, 2], Is.EqualTo(0));
-        Assert.That(raster.BlueValues[1, 2], Is.EqualTo(0));
-        Assert.That(raster.AlphaValues[1, 2], Is.EqualTo(0));
+        Assert.That(raster[1, 2], Is.EqualTo(default(RGBA16BitColor)));
+        Assert.That(clone[1, 2], Is.EqualTo(color));
     }
 
     [Test]
-    public void RGBA16BitRaster_WhenChannelDimensionsDoNotMatchGrid_Throws()
+    public void RGBA16BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
     {
         Assert.Throws<ArgumentException>(() =>
-            new RGBA16BitRaster(
-                CreateGrid(),
-                new ushort[1, 3],
-                new ushort[2, 3],
-                new ushort[2, 3],
-                new ushort[2, 3]));
+            new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[5]));
+    }
+
+    [Test]
+    public void RGBA16BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
+    {
+        var raster = new RGBA16BitRaster(CreateGrid(), new RGBA16BitColor[6]);
+        var color = new RGBA16BitColor(1, 2, 3, 4);
+
+        raster[1, 2] = color;
+
+        Assert.That(raster.Values[5], Is.EqualTo(color));
     }
 
     [Test]
     public void SaveAsPng_WhenRasterIsRGBA16Bit_WritesPng16WithAlpha()
     {
-        var redValues = new ushort[2, 3];
-        var greenValues = new ushort[2, 3];
-        var blueValues = new ushort[2, 3];
-        var alphaValues = new ushort[2, 3];
-        redValues[0, 0] = 0x1234;
-        greenValues[0, 0] = 0x5678;
-        blueValues[0, 0] = 0x9abc;
-        alphaValues[0, 0] = 0xdef0;
-        var raster = new RGBA16BitRaster(CreateGrid(), redValues, greenValues, blueValues, alphaValues);
+        var values = new RGBA16BitColor[6];
+        values[0] = new RGBA16BitColor(0x1234, 0x5678, 0x9abc, 0xdef0);
+        var raster = new RGBA16BitRaster(CreateGrid(), values);
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rgba16.png");
 
         raster.SaveAsPng(path);

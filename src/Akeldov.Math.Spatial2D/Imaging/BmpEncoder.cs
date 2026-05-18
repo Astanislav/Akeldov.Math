@@ -178,14 +178,19 @@ namespace Akeldov.Math.Spatial2D.Imaging
         {
             int rowBytes = checked(width * 4);
             int padding = rowStride - rowBytes;
+            RGBA8BitColor[] values = raster.Values;
+
             for (int y = 0; y < height; y++)
             {
+                int valueIndex = y * width;
+
                 for (int x = 0; x < width; x++)
                 {
-                    writer.Write(raster.BlueValues[x, y]);
-                    writer.Write(raster.GreenValues[x, y]);
-                    writer.Write(raster.RedValues[x, y]);
-                    writer.Write(raster.AlphaValues[x, y]);
+                    RGBA8BitColor color = values[valueIndex++];
+                    writer.Write(color.Blue);
+                    writer.Write(color.Green);
+                    writer.Write(color.Red);
+                    writer.Write(color.Alpha);
                 }
 
                 WritePadding(writer, padding);
