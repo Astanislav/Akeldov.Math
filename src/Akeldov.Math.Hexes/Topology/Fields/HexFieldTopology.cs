@@ -1,4 +1,6 @@
-﻿namespace Akeldov.Math.Hexes.Topology
+using Akeldov.Math.Hexes.Vectors.QRS;
+
+namespace Akeldov.Math.Hexes.Topology
 {
     public class HexFieldTopology
     {
@@ -8,6 +10,7 @@
         public HexFieldTopology(
             int width,
             int height,
+            Layout layout,
             byte[] hasAdjacent,
             int[] adjacent0Index,
             int[] adjacent1Index,
@@ -18,6 +21,7 @@
         {
             _width = width;
             _height = height;
+            Layout = layout;
             HasAdjacent = hasAdjacent;
             Adjacent0Index = adjacent0Index;
             Adjacent1Index = adjacent1Index;
@@ -29,6 +33,7 @@
 
         public int Width => _width;
         public int Height => _height;
+        public Layout Layout { get; }
         public byte[] HasAdjacent { get; }
         public int[] Adjacent0Index { get; }
         public int[] Adjacent1Index { get; }

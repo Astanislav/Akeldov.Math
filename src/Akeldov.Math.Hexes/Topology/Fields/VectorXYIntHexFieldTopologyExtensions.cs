@@ -81,6 +81,7 @@ namespace Akeldov.Math.Hexes.Topology
             return new HexFieldTopology(
                 resolution.X,
                 resolution.Y,
+                layout,
                 adjacentMasks,
                 adjacent0Index,
                 adjacent1Index,
