@@ -166,18 +166,21 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this arc and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this arc.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             var intersections = new List<VectorXY>();
 
-            if (_radius <= GeometryConstants.GeometryEpsilon)
+            if (_radius <= geometryEpsilon)
             {
                 VectorXY toCenter = _center - ray.Origin;
-                if (VectorXY.Dot(toCenter, ray.Direction) >= -GeometryConstants.GeometryEpsilon &&
-                    VectorXY.Cross(toCenter, ray.Direction).IsAlmostZero())
+                if (VectorXY.Dot(toCenter, ray.Direction) >= -geometryEpsilon &&
+                    VectorXY.Cross(toCenter, ray.Direction).IsAlmostZero(geometryEpsilon))
                 {
-                    intersections.AddDistinct(_center);
+                    intersections.AddDistinct(_center, geometryEpsilon);
                 }
 
                 return intersections;
@@ -194,8 +197,11 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float discriminant = b * b - 4f * a * c;
 
-            if (discriminant < 0f)
+            if (discriminant < -geometryEpsilon)
                 return circleIntersections;
+
+            if (discriminant < 0f)
+                discriminant = 0f;
 
             float sqrtD = MathF.Sqrt(discriminant);
 
@@ -205,19 +211,19 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (t1 >= 0f)
             {
                 VectorXY point1 = ray.Origin + dir * t1;
-                circleIntersections.AddDistinct(point1);
+                circleIntersections.AddDistinct(point1, geometryEpsilon);
 
                 if (IsWithinAngularRegion(point1))
-                    intersections.AddDistinct(point1);
+                    intersections.AddDistinct(point1, geometryEpsilon);
             }
 
             if (t2 >= 0f)
             {
                 VectorXY point2 = ray.Origin + dir * t2;
-                circleIntersections.AddDistinct(point2);
+                circleIntersections.AddDistinct(point2, geometryEpsilon);
 
                 if (IsWithinAngularRegion(point2))
-                    intersections.AddDistinct(point2);
+                    intersections.AddDistinct(point2, geometryEpsilon);
             }
 
             if (circleIntersections.Count == 0)

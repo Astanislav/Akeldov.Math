@@ -12,8 +12,9 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this curve and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this curve.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        List<VectorXY> GetRayIntersections(Ray ray);
+        List<VectorXY> GetRayIntersections(Ray ray, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this curve.

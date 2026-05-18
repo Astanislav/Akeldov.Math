@@ -76,8 +76,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns point intersections between this circle and the specified ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with the circle.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             List<VectorXY> intersections = new List<VectorXY>();
 
@@ -90,10 +93,13 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float discriminant = b * b - 4 * a * c;
 
-            if (discriminant < 0)
+            if (discriminant < -geometryEpsilon)
             {
                 return intersections;
             }
+
+            if (discriminant < 0f)
+                discriminant = 0f;
 
             discriminant = MathF.Sqrt(discriminant);
 
@@ -102,12 +108,12 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t1 >= 0)
             {
-                intersections.AddDistinct(ray.Origin + d * t1);
+                intersections.AddDistinct(ray.Origin + d * t1, geometryEpsilon);
             }
 
-            if (t2 >= 0 && !t2.AlmostEquals(t1))
+            if (t2 >= 0 && !t2.AlmostEquals(t1, geometryEpsilon))
             {
-                intersections.AddDistinct(ray.Origin + d * t2);
+                intersections.AddDistinct(ray.Origin + d * t2, geometryEpsilon);
             }
 
             return intersections;

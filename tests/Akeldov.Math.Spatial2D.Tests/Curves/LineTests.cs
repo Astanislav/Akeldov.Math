@@ -139,6 +139,21 @@ public class LineTests
     }
 
     [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
+    {
+        const float geometryEpsilon = 0.01f;
+        var line = new Line(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
+        var ray = new Ray(new VectorXY(2f, 0.005f));
+
+        var defaultIntersections = line.GetRayIntersections(ray);
+        var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 2f, 0.005f);
+    }
+
+    [Test]
     public void RayIntersections_WhenIntersectionIsBehindRay_ReturnsEmpty()
     {
         var line = new Line(new VectorXY(-1f, -1f), new VectorXY(-1f, 1f));

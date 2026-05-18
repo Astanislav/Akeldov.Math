@@ -82,9 +82,11 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
-        public List<VectorXY> GetRayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return _curve.GetRayIntersections(ray);
+            return _curve.GetRayIntersections(ray, geometryEpsilon);
         }
 
         /// <inheritdoc/>

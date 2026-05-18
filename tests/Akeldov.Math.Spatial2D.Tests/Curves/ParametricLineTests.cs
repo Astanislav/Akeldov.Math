@@ -77,6 +77,21 @@ public class ParametricLineTests
     }
 
     [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
+    {
+        const float geometryEpsilon = 0.01f;
+        var line = new ParametricLine(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
+        var ray = new Ray(new VectorXY(2f, 0.005f));
+
+        var defaultIntersections = line.GetRayIntersections(ray);
+        var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 2f, 0.005f);
+    }
+
+    [Test]
     public void Constructor_WhenReferencePointModeIsGlobalZero_UsesClosestPointToGlobalOrigin()
     {
         var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.GlobalZero);

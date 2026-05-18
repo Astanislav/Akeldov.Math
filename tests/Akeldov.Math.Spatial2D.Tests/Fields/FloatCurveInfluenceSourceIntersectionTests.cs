@@ -1,0 +1,29 @@
+using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Fields;
+
+namespace Akeldov.Math.Spatial2D.Tests.Fields;
+
+public class FloatCurveInfluenceSourceIntersectionTests
+{
+    [Test]
+    public void GetRayIntersections_WithCustomGeometryEpsilon_PassesToleranceToUnderlyingCurve()
+    {
+        const float geometryEpsilon = 0.01f;
+        var curve = new Segment(new VectorXY(4f, 0.005f), new VectorXY(10f, 0.005f));
+        var source = new FloatCurveInfluenceSource(1f, curve, 0f);
+        var ray = new Ray(VectorXY.Zero);
+
+        var defaultIntersections = source.GetRayIntersections(ray);
+        var tolerantIntersections = source.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 4f, 0.005f);
+    }
+
+    private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+}

@@ -95,6 +95,21 @@ public class CircleTests
     }
 
     [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayNearlyTouchesCircle_ReturnsSingleIntersection()
+    {
+        const float geometryEpsilon = 0.001f;
+        var circle = new Circle(VectorXY.Zero, 1f);
+        var ray = new Ray(new VectorXY(-2f, 1.00005f));
+
+        var defaultIntersections = circle.GetRayIntersections(ray);
+        var tolerantIntersections = circle.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 0f, 1.00005f);
+    }
+
+    [Test]
     public void RayIntersections_WhenCircleIsBehindRay_ReturnsEmpty()
     {
         var circle = new Circle(VectorXY.Zero, 1f);

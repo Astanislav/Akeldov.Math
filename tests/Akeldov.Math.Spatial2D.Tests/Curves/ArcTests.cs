@@ -96,6 +96,21 @@ public class ArcTests
     }
 
     [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenRayNearlyTouchesArc_ReturnsSingleIntersection()
+    {
+        const float geometryEpsilon = 0.001f;
+        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI);
+        var ray = new Ray(new VectorXY(-2f, 1.00005f));
+
+        var defaultIntersections = arc.GetRayIntersections(ray);
+        var tolerantIntersections = arc.GetRayIntersections(ray, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 0f, 1.00005f);
+    }
+
+    [Test]
     public void Distance_WhenPointIsNearArcEndpoint_UsesNearestEndpoint()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);

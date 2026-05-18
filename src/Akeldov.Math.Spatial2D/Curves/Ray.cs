@@ -115,8 +115,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// returns the first point along this ray that belongs to the other ray.
         /// </summary>
         /// <param name="other">The other ray to intersect with this ray.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of this ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(Ray other)
+        public List<VectorXY> GetRayIntersections(
+            Ray other,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             List<VectorXY> intersections = new List<VectorXY>();
 
@@ -127,9 +130,9 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             float cross = VectorXY.Cross(r, s);
 
-            if (cross.IsAlmostZero())
+            if (cross.IsAlmostZero(geometryEpsilon))
             {
-                AddFirstCollinearIntersection(other, intersections);
+                AddFirstCollinearIntersection(other, intersections, geometryEpsilon);
                 return intersections;
             }
 
@@ -141,39 +144,42 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (t >= 0 && u >= 0)
             {
                 VectorXY intersectionPoint = p + r * t;
-                intersections.AddDistinct(intersectionPoint);
+                intersections.AddDistinct(intersectionPoint, geometryEpsilon);
             }
 
             return intersections;
         }
 
-        private void AddFirstCollinearIntersection(Ray other, List<VectorXY> intersections)
+        private void AddFirstCollinearIntersection(Ray other, List<VectorXY> intersections, float geometryEpsilon)
         {
             VectorXY originDelta = other._origin - _origin;
             VectorXY direction = Direction;
 
-            if (!VectorXY.Cross(originDelta, direction).IsAlmostZero())
+            if (!VectorXY.Cross(originDelta, direction).IsAlmostZero(geometryEpsilon))
                 return;
 
-            if (IsPointOnRay(_origin, other))
+            if (IsPointOnRay(_origin, other, geometryEpsilon))
             {
-                intersections.AddDistinct(_origin);
+                intersections.AddDistinct(_origin, geometryEpsilon);
                 return;
             }
 
-            if (IsPointOnRay(other._origin, this))
-                intersections.AddDistinct(other._origin);
+            if (IsPointOnRay(other._origin, this, geometryEpsilon))
+                intersections.AddDistinct(other._origin, geometryEpsilon);
         }
 
-        private static bool IsPointOnRay(VectorXY point, Ray ray)
+        private static bool IsPointOnRay(
+            VectorXY point,
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             VectorXY toPoint = point - ray._origin;
             VectorXY direction = ray.Direction;
 
-            if (VectorXY.Dot(toPoint, direction) < -GeometryConstants.GeometryEpsilon)
+            if (VectorXY.Dot(toPoint, direction) < -geometryEpsilon)
                 return false;
 
-            return VectorXY.Cross(toPoint, direction).IsAlmostZero();
+            return VectorXY.Cross(toPoint, direction).IsAlmostZero(geometryEpsilon);
         }
     }
 }
