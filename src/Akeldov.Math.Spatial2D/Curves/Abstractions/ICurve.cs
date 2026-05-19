@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Represents a two-dimensional curve that can be measured and intersected with rays.
+    /// Represents a two-dimensional curve that can measure distances to points and be intersected with rays.
     /// </summary>
     public interface ICurve
     {
@@ -21,7 +21,8 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Returns the shortest distance from the specified point to this curve.
         /// </summary>
         /// <param name="point">The finite point to measure from.</param>
-        /// <returns>The distance to this curve.</returns>
+        /// <returns>The non-negative distance to this curve in world coordinate units.</returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
         float Distance(VectorXY point);
     }
 }
