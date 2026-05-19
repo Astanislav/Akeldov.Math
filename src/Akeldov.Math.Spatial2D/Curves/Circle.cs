@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a circle in two-dimensional space.
     /// </summary>
-    public readonly struct Circle : IProjectableCurve, IEquatable<Circle>
+    public readonly struct Circle : IFiniteCurve, IProjectableCurve, IEquatable<Circle>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
@@ -39,6 +39,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the circle radius.
         /// </summary>
         public float Radius => _radius;
+
+        /// <summary>
+        /// Gets the circumference length.
+        /// </summary>
+        public float Length => 2f * MathF.PI * _radius;
 
         /// <summary>
         /// Returns the shortest distance from the specified point to the circle circumference.

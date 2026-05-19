@@ -3,7 +3,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a finite parameterized curve with explicit start and end points.
     /// </summary>
-    public interface IBoundedParameterizedCurve : IParameterizedProjectableCurve
+    public interface IBoundedParameterizedCurve : IFiniteCurve, IParameterizedProjectableCurve
     {
         /// <summary>
         /// Gets the start point.
@@ -14,10 +14,5 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the end point.
         /// </summary>
         VectorXY EndPoint { get; }
-
-        /// <summary>
-        /// Gets the curve length.
-        /// </summary>
-        float Length { get; }
     }
 }
