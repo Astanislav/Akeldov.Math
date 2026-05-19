@@ -68,30 +68,34 @@ namespace Akeldov.Math.Spatial2D.Regions
         public FillRule FillRule { get; }
 
         /// <inheritdoc/>
-        public bool Contains(VectorXY point)
+        public bool Contains(
+            VectorXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
             if (!point.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
 
-            if (IsOnBoundary(point))
+            if (IsOnBoundary(point, geometryEpsilon))
                 return true;
 
             int containingContours = 0;
 
             for (int i = 0; i < _contours.Length; i++)
             {
-                if (_contours[i].Encloses(point))
+                if (_contours[i].Encloses(point, geometryEpsilon))
                     containingContours++;
             }
 
             return containingContours % 2 == 1;
         }
 
-        private bool IsOnBoundary(VectorXY point)
+        private bool IsOnBoundary(VectorXY point, float geometryEpsilon)
         {
             for (int i = 0; i < _boundaryCurves.Length; i++)
             {
-                if (_boundaryCurves[i].Distance(point) <= GeometryConstants.GeometryEpsilon)
+                if (_boundaryCurves[i].Distance(point) <= geometryEpsilon)
                     return true;
             }
 

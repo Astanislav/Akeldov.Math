@@ -204,10 +204,15 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// returns the ray origin as the first point encountered by the ray.
         /// </summary>
         /// <param name="ray">The ray to intersect with this line.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(Ray ray)
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return _line.GetRayIntersections(ray);
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            return _line.GetRayIntersections(ray, geometryEpsilon);
         }
 
         /// <summary>

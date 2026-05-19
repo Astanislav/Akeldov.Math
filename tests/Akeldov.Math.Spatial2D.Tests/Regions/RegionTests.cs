@@ -111,6 +111,32 @@ public class RegionTests
     }
 
     [Test]
+    public void Contains_WhenPointIsWithinCustomGeometryEpsilonOfBoundary_ReturnsTrue()
+    {
+        IRegion region = new Region(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 1f, 1f)
+        });
+
+        var point = new VectorXY(-0.0005f, 0.5f);
+
+        Assert.That(region.Contains(point), Is.False);
+        Assert.That(region.Contains(point, 0.001f), Is.True);
+    }
+
+    [Test]
+    public void Contains_PassesGeometryEpsilonToContours()
+    {
+        var contour = new EpsilonAwareContour();
+        IRegion region = new Region(new IContour[] { contour });
+
+        bool contains = region.Contains(VectorXY.Zero, 0.25f);
+
+        Assert.That(contains, Is.True);
+        Assert.That(contour.LastGeometryEpsilon, Is.EqualTo(0.25f));
+    }
+
+    [Test]
     public void Contains_WhenRegionIsSquareWithSquareHole_ClassifiesPoints()
     {
         var region = new Region(new IContour[]
@@ -158,6 +184,23 @@ public class RegionTests
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
+    [TestCase(-1e-6f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Contains_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        IRegion region = new Region(new IContour[]
+        {
+            CreateSquareContour(0f, 0f, 1f, 1f)
+        });
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            region.Contains(VectorXY.Zero, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
     private static Contour CreateSquareContour(float left, float bottom, float right, float top)
     {
         return new Contour(new IBoundedParameterizedCurve[]
@@ -167,5 +210,50 @@ public class RegionTests
             new Segment(new VectorXY(right, top), new VectorXY(left, top)),
             new Segment(new VectorXY(left, top), new VectorXY(left, bottom))
         });
+    }
+
+    private sealed class EpsilonAwareContour : IContour
+    {
+        private static readonly IBoundedParameterizedCurve[] ContourCurves =
+        {
+            new DistantBoundaryCurve()
+        };
+
+        public float LastGeometryEpsilon { get; private set; }
+
+        public IReadOnlyList<IBoundedParameterizedCurve> Curves => ContourCurves;
+
+        public bool Encloses(
+            VectorXY point,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            LastGeometryEpsilon = geometryEpsilon;
+            return geometryEpsilon == 0.25f;
+        }
+    }
+
+    private sealed class DistantBoundaryCurve : IBoundedParameterizedCurve
+    {
+        public VectorXY StartPoint => VectorXY.Zero;
+
+        public VectorXY EndPoint => VectorXY.Zero;
+
+        public float Length => 0f;
+
+        public List<VectorXY> GetRayIntersections(
+            Ray ray,
+            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            return new List<VectorXY>();
+        }
+
+        public float Distance(VectorXY point) => 1f;
+
+        public CurveProjection Project(VectorXY point) => new(VectorXY.Zero, Distance(point));
+
+        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point) => new(
+            VectorXY.Zero,
+            0f,
+            Distance(point));
     }
 }

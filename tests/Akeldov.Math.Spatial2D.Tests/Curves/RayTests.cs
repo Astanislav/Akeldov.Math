@@ -89,6 +89,36 @@ public class RayTests
     }
 
     [Test]
+    public void RayIntersections_WithCustomGeometryEpsilon_WhenRaysAreNearlyCollinear_ReturnsOtherOrigin()
+    {
+        const float geometryEpsilon = 0.01f;
+        var ray = new Ray(VectorXY.Zero);
+        var other = new Ray(new VectorXY(2f, 0.005f));
+
+        var defaultIntersections = ray.GetRayIntersections(other);
+        var tolerantIntersections = ray.GetRayIntersections(other, geometryEpsilon);
+
+        Assert.That(defaultIntersections, Is.Empty);
+        Assert.That(tolerantIntersections, Has.Count.EqualTo(1));
+        AssertVector(tolerantIntersections[0], 2f, 0.005f);
+    }
+
+    [TestCase(-1f)]
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
+    {
+        var ray = new Ray(VectorXY.Zero);
+        var other = new Ray(new VectorXY(2f, 0f));
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ray.GetRayIntersections(other, geometryEpsilon));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
+    }
+
+    [Test]
     public void RayIntersections_WhenNonParallelRaysCrossAhead_ReturnsIntersection()
     {
         var ray = new Ray(VectorXY.Zero);
