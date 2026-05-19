@@ -5,19 +5,20 @@ using System.Collections.Generic;
 namespace Akeldov.Math.Spatial2D.Curves
 {
     /// <summary>
-    /// Represents a closed circular arc in two-dimensional space.
+    /// Represents a parameterized circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct Arc : IFiniteCurve, IProjectableCurve, IEquatable<Arc>
+    public readonly struct ParameterizedArc : IFiniteCurve, IParameterizedProjectableCurve, IParameterizedTwoEndpointCurve, IEquatable<ParameterizedArc>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
         private readonly float _startAngle;
         private readonly float _endAngle;
+        private readonly AngularDirection _angularDirection;
         private readonly bool _isFullCircle;
 
         /// <summary>
-        /// Creates a closed arc from <paramref name="startAngle"/> to <paramref name="endAngle"/>.
+        /// Creates a parameterized arc from <paramref name="startAngle"/> to <paramref name="endAngle"/>.
         /// Equal input angles represent a zero-length arc. An end angle one full turn after the start angle
         /// represents a full circle even though both angles normalize to the same value.
         /// </summary>
@@ -25,8 +26,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="radius">The radius of the source circle.</param>
         /// <param name="startAngle">The start angle in radians.</param>
         /// <param name="endAngle">The end angle in radians.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite, or when an angle is NaN or infinite.</exception>
-        public Arc(VectorXY center, float radius, float startAngle, float endAngle)
+        /// <param name="angularDirection">The direction in which curve coordinates increase.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="radius"/> is negative, NaN, or infinite, when an angle is NaN or infinite,
+        /// or when <paramref name="angularDirection"/> is unsupported.
+        /// </exception>
+        public ParameterizedArc(VectorXY center, float radius, float startAngle, float endAngle, AngularDirection angularDirection)
         {
             if (!center.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(center), "Arc center coordinates must be finite.");
@@ -40,10 +45,17 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (float.IsNaN(endAngle) || float.IsInfinity(endAngle))
                 throw new ArgumentOutOfRangeException(nameof(endAngle), "Arc end angle must be finite.");
 
+            if (angularDirection != AngularDirection.Counterclockwise &&
+                angularDirection != AngularDirection.Clockwise)
+            {
+                throw new ArgumentOutOfRangeException(nameof(angularDirection), "Angular direction is not supported.");
+            }
+
             _center = center;
             _radius = radius;
             _startAngle = startAngle.NormalizeAngleRad();
             _endAngle = endAngle.NormalizeAngleRad();
+            _angularDirection = angularDirection;
             _isFullCircle = IsFullTurn(startAngle, endAngle);
         }
 
@@ -68,6 +80,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         public float EndAngle => _endAngle;
 
         /// <summary>
+        /// Gets the direction in which curve coordinates increase.
+        /// </summary>
+        public AngularDirection AngularDirection => _angularDirection;
+
+        /// <summary>
         /// Gets the normalized start angle in degrees.
         /// </summary>
         public float StartAngleDeg => _startAngle * Constants.Rad2Deg;
@@ -85,16 +102,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the point at the start angle of this arc.
         /// </summary>
-        public VectorXY StartPoint => new VectorXY(
-            _center.X + _radius * MathF.Cos(_startAngle),
-            _center.Y + _radius * MathF.Sin(_startAngle));
+        public VectorXY StartPoint => GetPointAtAngle(_startAngle);
 
         /// <summary>
         /// Gets the point at the end angle of this arc.
         /// </summary>
-        public VectorXY EndPoint => new VectorXY(
-            _center.X + _radius * MathF.Cos(_endAngle),
-            _center.Y + _radius * MathF.Sin(_endAngle));
+        public VectorXY EndPoint => GetPointAtAngle(_endAngle);
 
         /// <summary>
         /// Gets the arc length.
@@ -102,22 +115,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         public float Length => GetArcLength();
 
         /// <summary>
-        /// Returns the point at the start angle of this arc.
+        /// Gets the endpoint at the start of the traversal direction.
         /// </summary>
-        /// <returns>The arc start point.</returns>
-        public VectorXY GetStartPoint()
-        {
-            return StartPoint;
-        }
+        public VectorXY EndpointA => StartPoint;
 
         /// <summary>
-        /// Returns the point at the end angle of this arc.
+        /// Gets the endpoint at the end of the traversal direction.
         /// </summary>
-        /// <returns>The arc end point.</returns>
-        public VectorXY GetEndPoint()
-        {
-            return EndPoint;
-        }
+        public VectorXY EndpointB => EndPoint;
 
         /// <summary>
         /// Determines whether the direction from this arc's center to the specified point lies within this arc's angular region.
@@ -136,31 +141,32 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is Arc other && Equals(other);
+        public override bool Equals(object? obj) => obj is ParameterizedArc other && Equals(other);
 
         /// <summary>
-        /// Indicates whether this arc has the same center, radius, angles, and full-circle flag as another arc.
+        /// Indicates whether this arc has the same center, radius, angles, traversal direction, and full-circle flag as another arc.
         /// </summary>
         /// <param name="other">The arc to compare with this arc.</param>
         /// <returns><see langword="true"/> if both arcs are equal; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(Arc other) =>
+        public bool Equals(ParameterizedArc other) =>
             Center.Equals(other.Center) &&
             Radius.Equals(other.Radius) &&
             StartAngle.Equals(other.StartAngle) &&
             EndAngle.Equals(other.EndAngle) &&
+            AngularDirection == other.AngularDirection &&
             IsFullCircle == other.IsFullCircle;
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(Center, Radius, StartAngle, EndAngle, IsFullCircle);
+        public override int GetHashCode() => HashCode.Combine(Center, Radius, StartAngle, EndAngle, AngularDirection, IsFullCircle);
 
         /// <inheritdoc/>
-        public override string ToString() => $"Arc(center: {Center}, radius: {Radius}, rad: {StartAngle} - {EndAngle}, fullCircle: {IsFullCircle})";
+        public override string ToString() => $"ParameterizedArc(center: {Center}, radius: {Radius}, rad: {StartAngle} - {EndAngle}, direction: {AngularDirection}, fullCircle: {IsFullCircle})";
 
         /// <summary>
         /// Returns a string representation of this arc with angles in degrees.
         /// </summary>
         /// <returns>A string representation of this arc with degree angles.</returns>
-        public string ToDegreesString() => $"Arc(center: {Center}, radius: {Radius}, deg: {StartAngleDeg} - {EndAngleDeg}, fullCircle: {IsFullCircle})";
+        public string ToDegreesString() => $"ParameterizedArc(center: {Center}, radius: {Radius}, deg: {StartAngleDeg} - {EndAngleDeg}, direction: {AngularDirection}, fullCircle: {IsFullCircle})";
 
         /// <summary>
         /// Returns point intersections between this arc and the specified ray.
@@ -188,19 +194,17 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return intersections;
             }
 
-            var circleIntersections = new List<VectorXY>();
             VectorXY dir = ray.Direction;
-            var circle = new Circle(Center, Radius);
-            VectorXY f = ray.Origin - circle.Center;
+            VectorXY f = ray.Origin - _center;
 
             float a = 1f;
             float b = 2f * VectorXY.Dot(f, dir);
-            float c = f.SquaredLength - circle.Radius * circle.Radius;
+            float c = f.SquaredLength - _radius * _radius;
 
             float discriminant = b * b - 4f * a * c;
 
             if (discriminant < -geometryEpsilon)
-                return circleIntersections;
+                return intersections;
 
             if (discriminant < 0f)
                 discriminant = 0f;
@@ -213,7 +217,6 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (t1 >= 0f)
             {
                 VectorXY point1 = ray.Origin + dir * t1;
-                circleIntersections.AddDistinct(point1, geometryEpsilon);
 
                 if (IsWithinAngularRegion(point1))
                     intersections.AddDistinct(point1, geometryEpsilon);
@@ -222,14 +225,10 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (t2 >= 0f)
             {
                 VectorXY point2 = ray.Origin + dir * t2;
-                circleIntersections.AddDistinct(point2, geometryEpsilon);
 
                 if (IsWithinAngularRegion(point2))
                     intersections.AddDistinct(point2, geometryEpsilon);
             }
-
-            if (circleIntersections.Count == 0)
-                return circleIntersections;
 
             return intersections;
         }
@@ -269,7 +268,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
-                VectorXY start = GetStartPoint();
+                VectorXY start = StartPoint;
                 return new ParameterizedCurveProjection(start, 0f, point.Distance(start));
             }
 
@@ -282,8 +281,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return new ParameterizedCurveProjection(projected, curveCoordinate, point.Distance(projected));
             }
 
-            VectorXY arcStart = GetStartPoint();
-            VectorXY arcEnd = GetEndPoint();
+            VectorXY arcStart = StartPoint;
+            VectorXY arcEnd = EndPoint;
 
             float distStart = point.Distance(arcStart);
             float distEnd = point.Distance(arcEnd);
@@ -300,7 +299,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first arc.</param>
         /// <param name="right">The second arc.</param>
         /// <returns><see langword="true"/> if the arcs are equal; otherwise, <see langword="false"/>.</returns>
-        public static bool operator ==(Arc left, Arc right) => left.Equals(right);
+        public static bool operator ==(ParameterizedArc left, ParameterizedArc right) => left.Equals(right);
 
         /// <summary>
         /// Indicates whether two arcs are different.
@@ -308,18 +307,18 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="left">The first arc.</param>
         /// <param name="right">The second arc.</param>
         /// <returns><see langword="true"/> if the arcs are different; otherwise, <see langword="false"/>.</returns>
-        public static bool operator !=(Arc left, Arc right) => !(left == right);
+        public static bool operator !=(ParameterizedArc left, ParameterizedArc right) => !(left == right);
 
         private float GetCurveCoordinate(float angle)
         {
             if (IsFullCircle)
-                return PositiveAngleDelta(_startAngle, angle) * _radius;
+                return GetAngleDeltaFromStart(angle) * _radius;
 
-            float span = PositiveAngleDelta(_startAngle, _endAngle);
+            float span = GetAngularSpan();
             if (span <= GeometryConstants.GeometryEpsilon)
                 return 0f;
 
-            return PositiveAngleDelta(_startAngle, angle) * _radius;
+            return GetAngleDeltaFromStart(angle) * _radius;
         }
 
         private float GetArcLength()
@@ -327,14 +326,62 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (IsFullCircle)
                 return 2f * MathF.PI * _radius;
 
-            float span = PositiveAngleDelta(_startAngle, _endAngle);
+            float span = GetAngularSpan();
 
             return span * _radius;
         }
 
         private bool ContainsAngle(float angle)
         {
-            return IsFullCircle || angle.IsAngleWithinArc(_startAngle, _endAngle);
+            return IsFullCircle || (AngularDirection == AngularDirection.Counterclockwise
+                ? angle.IsAngleWithinArc(_startAngle, _endAngle)
+                : angle.IsAngleWithinArc(_endAngle, _startAngle));
+        }
+
+        private float GetAngularSpan()
+        {
+            return AngularDirection == AngularDirection.Counterclockwise
+                ? PositiveAngleDelta(_startAngle, _endAngle)
+                : PositiveAngleDelta(_endAngle, _startAngle);
+        }
+
+        private float GetAngleDeltaFromStart(float angle)
+        {
+            return AngularDirection == AngularDirection.Counterclockwise
+                ? PositiveAngleDelta(_startAngle, angle)
+                : PositiveAngleDelta(angle, _startAngle);
+        }
+
+        /// <summary>
+        /// Returns the point at the specified arc length coordinate.
+        /// </summary>
+        /// <param name="curveCoordinate">The finite curve coordinate in world coordinate units.</param>
+        /// <returns>The point on this arc.</returns>
+        public VectorXY GetPoint(float curveCoordinate)
+        {
+            if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
+
+            float length = Length;
+            if (curveCoordinate < 0f || curveCoordinate > length)
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the arc length.");
+
+            if (_radius <= GeometryConstants.GeometryEpsilon)
+                return StartPoint;
+
+            float angleDelta = curveCoordinate / _radius;
+            float angle = AngularDirection == AngularDirection.Counterclockwise
+                ? (_startAngle + angleDelta).NormalizeAngleRad()
+                : (_startAngle - angleDelta).NormalizeAngleRad();
+
+            return GetPointAtAngle(angle);
+        }
+
+        private VectorXY GetPointAtAngle(float angle)
+        {
+            return new VectorXY(
+                _center.X + _radius * MathF.Cos(angle),
+                _center.Y + _radius * MathF.Sin(angle));
         }
 
         private static float PositiveAngleDelta(float from, float to)

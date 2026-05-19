@@ -238,6 +238,19 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new ParameterizedCurveProjection(projection.ProjectedPoint, curveCoordinate, projection.Distance);
         }
 
+        /// <summary>
+        /// Returns the point at the specified signed parametric line coordinate.
+        /// </summary>
+        /// <param name="curveCoordinate">The finite signed curve coordinate in world coordinate units.</param>
+        /// <returns>The point on this parametric line.</returns>
+        public VectorXY GetPoint(float curveCoordinate)
+        {
+            if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
+
+            return Origin + curveCoordinate * Direction;
+        }
+
         /// <inheritdoc/>
         public override string ToString() => $"({Origin} + t*{Direction})";
 
@@ -291,5 +304,6 @@ namespace Akeldov.Math.Spatial2D.Curves
                     return VectorXY.Zero;
             }
         }
+
     }
 }
