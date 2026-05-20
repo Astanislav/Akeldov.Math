@@ -88,7 +88,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.NegativeInfinity)]
     public void FloatCurveInfluenceSource_WhenConstantWeightIsInvalid_Throws(float weight)
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FloatCurveInfluenceSource(weight, curve, 1f));
@@ -98,7 +98,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.PositiveInfinity)]
     public void FloatCurveInfluenceSource_WhenConstantWeightIsAllowed_DoesNotThrow(float weight)
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
 
         Assert.DoesNotThrow(() =>
             new FloatCurveInfluenceSource(weight, curve, 1f));
@@ -107,7 +107,7 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenConstantValueIsNaN_Throws()
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FloatCurveInfluenceSource(1f, curve, float.NaN));
@@ -118,7 +118,7 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenValueProviderReturnsNaN_Throws()
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
         var source = new FloatCurveInfluenceSource(1f, curve, _ => float.NaN);
 
         Assert.Throws<InvalidOperationException>(() =>
@@ -130,7 +130,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.NegativeInfinity)]
     public void FloatCurveInfluenceSource_WhenWeightProviderReturnsInvalidWeight_Throws(float weight)
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
         var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
         Assert.Throws<InvalidOperationException>(() =>
@@ -141,7 +141,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.PositiveInfinity)]
     public void FloatCurveInfluenceSource_WhenWeightProviderReturnsAllowedWeight_ReturnsWeight(float weight)
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
         var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
         var influence = source.GetInfluence(VectorXY.Zero);
@@ -152,7 +152,7 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenPointCoordinateIsInvalid_Throws()
     {
-        var curve = new Segment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
         var source = new FloatCurveInfluenceSource(1f, curve, 1f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>

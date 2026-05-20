@@ -55,15 +55,15 @@ public class SegmentTests
         var segment = new Segment(
             new VectorXY(0f, 0f),
             new VectorXY(10f, 0f),
-            includesStartPoint: false,
-            includesEndPoint: true);
+            includesEndpointA: false,
+            includesEndpointB: true);
 
         var shortened = segment.Shorten(1f);
 
-        AssertVector(shortened.StartPoint, 1f, 0f);
-        AssertVector(shortened.EndPoint, 9f, 0f);
-        Assert.That(shortened.IncludesStartPoint, Is.False);
-        Assert.That(shortened.IncludesEndPoint, Is.True);
+        AssertVector(shortened.EndpointA, 1f, 0f);
+        AssertVector(shortened.EndpointB, 9f, 0f);
+        Assert.That(shortened.IncludesEndpointA, Is.False);
+        Assert.That(shortened.IncludesEndpointB, Is.True);
     }
 
     [Test]
@@ -72,24 +72,24 @@ public class SegmentTests
         var segment = new Segment(
             new VectorXY(0f, 0f),
             new VectorXY(10f, 0f),
-            includesStartPoint: true,
-            includesEndPoint: false);
+            includesEndpointA: true,
+            includesEndpointB: false);
 
         var extended = segment.Extend(1f);
 
-        AssertVector(extended.StartPoint, -1f, 0f);
-        AssertVector(extended.EndPoint, 11f, 0f);
-        Assert.That(extended.IncludesStartPoint, Is.True);
-        Assert.That(extended.IncludesEndPoint, Is.False);
+        AssertVector(extended.EndpointA, -1f, 0f);
+        AssertVector(extended.EndpointB, 11f, 0f);
+        Assert.That(extended.IncludesEndpointA, Is.True);
+        Assert.That(extended.IncludesEndpointB, Is.False);
     }
 
     [Test]
-    public void BoundedParameterizedCurveContract_WhenSegmentIsUsed_ExposesEndpointsAndLength()
+    public void FiniteTwoEndpointCurveContract_WhenSegmentIsUsed_ExposesEndpointsAndLength()
     {
-        IBoundedParameterizedCurve curve = new Segment(new VectorXY(1f, 2f), new VectorXY(4f, 6f));
+        IFiniteTwoEndpointCurve curve = new Segment(new VectorXY(1f, 2f), new VectorXY(4f, 6f));
 
-        AssertVector(curve.StartPoint, 1f, 2f);
-        AssertVector(curve.EndPoint, 4f, 6f);
+        AssertVector(curve.EndpointA, 1f, 2f);
+        AssertVector(curve.EndpointB, 4f, 6f);
         Assert.That(curve.Length, Is.EqualTo(5f).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -108,7 +108,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenEndpointIsExcluded_DoesNotReturnThatEndpoint()
     {
-        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: false, includesEndPoint: true);
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesEndpointA: false, includesEndpointB: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -119,7 +119,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenEndpointIsIncluded_ReturnsThatEndpoint()
     {
-        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: true, includesEndPoint: true);
+        var segment = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesEndpointA: true, includesEndpointB: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -185,7 +185,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenCollinearSegmentStartsAtExcludedRayOrigin_ReturnsEmpty()
     {
-        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesStartPoint: false, includesEndPoint: true);
+        var segment = new Segment(new VectorXY(0f, 0f), new VectorXY(10f, 0f), includesEndpointA: false, includesEndpointB: true);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -196,7 +196,7 @@ public class SegmentTests
     [Test]
     public void ProjectWithParameter_WhenPointProjectsOutsideSegment_ClampsToNearestEndpoint()
     {
-        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+        var segment = new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
 
         var projection = segment.ProjectWithParameter(VectorXY.Zero);
 
@@ -231,7 +231,7 @@ public class SegmentTests
     [Test]
     public void RayIntersections_WhenDegenerateSegmentPointIsExcluded_ReturnsEmpty()
     {
-        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesStartPoint: false, includesEndPoint: false);
+        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(2f, 0f), includesEndpointA: false, includesEndpointB: false);
         var ray = new Ray(VectorXY.Zero);
 
         var intersections = segment.GetRayIntersections(ray);
@@ -242,7 +242,7 @@ public class SegmentTests
     [Test]
     public void ProjectWithParameter_WhenPointProjectsInsideSegment_ReturnsInteriorProjection()
     {
-        var segment = new Segment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
+        var segment = new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
 
         var projection = segment.ProjectWithParameter(new VectorXY(3f, 2f));
 
@@ -254,7 +254,7 @@ public class SegmentTests
     [Test]
     public void ProjectWithParameter_WhenSegmentIsDegenerate_ReturnsEndpoint()
     {
-        var segment = new Segment(new VectorXY(2f, 3f), new VectorXY(2f, 3f));
+        var segment = new ParameterizedSegment(new VectorXY(2f, 3f), new VectorXY(2f, 3f));
 
         var projection = segment.ProjectWithParameter(new VectorXY(5f, 7f));
 
@@ -266,7 +266,7 @@ public class SegmentTests
     [Test]
     public void ProjectWithParameter_WhenPointCoordinateIsInvalid_Throws()
     {
-        var segment = new Segment(VectorXY.Zero, VectorXY.One);
+        var segment = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             segment.ProjectWithParameter(new VectorXY(float.NaN, 0f)));
@@ -277,8 +277,8 @@ public class SegmentTests
     [Test]
     public void Equals_WhenEndpointInclusionDiffers_ReturnsFalse()
     {
-        var closed = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: true, includesEndPoint: true);
-        var openAtA = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesStartPoint: false, includesEndPoint: true);
+        var closed = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesEndpointA: true, includesEndpointB: true);
+        var openAtA = new Segment(new VectorXY(1f, 0f), new VectorXY(1f, 1f), includesEndpointA: false, includesEndpointB: true);
 
         Assert.That(closed, Is.Not.EqualTo(openAtA));
         Assert.That(closed.GetHashCode(), Is.Not.EqualTo(openAtA.GetHashCode()));

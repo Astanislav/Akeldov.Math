@@ -36,29 +36,25 @@ public class RegionTests
     }
 
     [Test]
-    public void Constructor_WhenContoursIntersect_Throws()
+    public void Constructor_WhenContoursIntersect_DoesNotThrow()
     {
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.DoesNotThrow(() =>
             new Region(new IContour[]
             {
                 CreateSquareContour(0f, 0f, 4f, 4f),
                 CreateSquareContour(2f, -1f, 5f, 2f)
             }));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("contours"));
     }
 
     [Test]
-    public void Constructor_WhenContoursTouch_Throws()
+    public void Constructor_WhenContoursTouch_DoesNotThrow()
     {
-        var exception = Assert.Throws<ArgumentException>(() =>
+        Assert.DoesNotThrow(() =>
             new Region(new IContour[]
             {
                 CreateSquareContour(0f, 0f, 4f, 4f),
                 CreateSquareContour(4f, 1f, 5f, 3f)
             }));
-
-        Assert.That(exception!.ParamName, Is.EqualTo("contours"));
     }
 
     [Test]
@@ -99,7 +95,7 @@ public class RegionTests
     }
 
     [Test]
-    public void Contains_WhenPointIsOnHoleBoundary_ReturnsTrue()
+    public void Contains_WhenPointIsOnHoleBoundary_ReturnsFalse()
     {
         var region = new Region(new IContour[]
         {
@@ -107,7 +103,7 @@ public class RegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.True);
+        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.False);
     }
 
     [Test]
@@ -149,7 +145,7 @@ public class RegionTests
         Assert.That(region.Contains(new VectorXY(0.5f, 0.5f)), Is.True);
         Assert.That(region.Contains(new VectorXY(2f, 2f)), Is.False);
         Assert.That(region.Contains(new VectorXY(0f, 2f)), Is.True);
-        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.True);
+        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.False);
     }
 
     [Test]
@@ -203,25 +199,25 @@ public class RegionTests
 
     private static Contour CreateSquareContour(float left, float bottom, float right, float top)
     {
-        return new Contour(new IBoundedParameterizedCurve[]
+        return new Contour(new IFinitePath[]
         {
-            new Segment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new Segment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new Segment(new VectorXY(right, top), new VectorXY(left, top)),
-            new Segment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
+            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
+            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
+            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
         });
     }
 
     private sealed class EpsilonAwareContour : IContour
     {
-        private static readonly IBoundedParameterizedCurve[] ContourCurves =
+        private static readonly IFinitePath[] ContourCurves =
         {
             new DistantBoundaryCurve()
         };
 
         public float LastGeometryEpsilon { get; private set; }
 
-        public IReadOnlyList<IBoundedParameterizedCurve> Curves => ContourCurves;
+        public IReadOnlyList<IFinitePath> Curves => ContourCurves;
 
         public bool Encloses(
             VectorXY point,
@@ -232,13 +228,19 @@ public class RegionTests
         }
     }
 
-    private sealed class DistantBoundaryCurve : IBoundedParameterizedCurve
+    private sealed class DistantBoundaryCurve : IFinitePath
     {
         public VectorXY StartPoint => VectorXY.Zero;
 
         public VectorXY EndPoint => VectorXY.Zero;
 
+        public VectorXY EndpointA => StartPoint;
+
+        public VectorXY EndpointB => EndPoint;
+
         public float Length => 0f;
+
+        public VectorXY GetPoint(float curveCoordinate) => VectorXY.Zero;
 
         public List<VectorXY> GetRayIntersections(
             Ray ray,

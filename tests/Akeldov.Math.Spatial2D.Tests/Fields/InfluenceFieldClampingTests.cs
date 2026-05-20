@@ -180,7 +180,7 @@ public class InfluenceFieldClampingTests
 
     private static ICurveInfluenceSource<float>[] CreateCurveSources()
     {
-        var curve = new Segment(VectorXY.Zero, new VectorXY(10f, 0f));
+        var curve = new ParameterizedSegment(VectorXY.Zero, new VectorXY(10f, 0f));
 
         return new ICurveInfluenceSource<float>[]
         {

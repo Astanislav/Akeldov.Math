@@ -77,7 +77,7 @@ public class ArcTests
     [Test]
     public void BoundedParameterizedCurveContract_WhenArcIsUsed_ExposesEndpointsAndLength()
     {
-        IBoundedParameterizedCurve curve = new Arc(VectorXY.Zero, 2f, 0f, MathF.PI / 2f);
+        IFinitePath curve = new Arc(VectorXY.Zero, 2f, 0f, MathF.PI / 2f);
 
         AssertVector(curve.StartPoint, 2f, 0f);
         AssertVector(curve.EndPoint, 0f, 2f);
