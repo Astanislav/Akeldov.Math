@@ -226,6 +226,26 @@ public class RegionTests
             LastGeometryEpsilon = geometryEpsilon;
             return geometryEpsilon == 0.25f;
         }
+
+        public float Distance(VectorXY point)
+        {
+            float minDistance = float.MaxValue;
+
+            for (int i = 0; i < Curves.Count; i++)
+            {
+                float distance = Curves[i].Distance(point);
+                if (distance < minDistance)
+                    minDistance = distance;
+            }
+
+            return minDistance;
+        }
+
+        public float SignedDistance(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        {
+            float distance = Distance(point);
+            return Encloses(point, geometryEpsilon) ? -distance : distance;
+        }
     }
 
     private sealed class DistantBoundaryCurve : IFinitePath

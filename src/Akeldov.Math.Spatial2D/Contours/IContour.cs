@@ -1,15 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Akeldov.Math.Spatial2D.Curves;
 
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour made from bounded parameterized curves.
+    /// Represents a closed two-dimensional contour made from finite paths.
     /// </summary>
     public interface IContour
     {
         /// <summary>
-        /// Gets the bounded parameterized curves that form this contour.
+        /// Gets the finite paths that form this contour.
         /// </summary>
         IReadOnlyList<IFinitePath> Curves { get; }
 
@@ -23,5 +24,27 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
         bool Encloses(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
+
+        /// <summary>
+        /// Returns the shortest unsigned distance from the specified point to a contour boundary.
+        /// </summary>
+        /// <param name="point">The finite point to measure from.</param>
+        /// <returns>The shortest non-negative distance to the contour boundary in world coordinate units.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
+        float Distance(VectorXY point);
+
+        /// <summary>
+        /// Returns the signed distance from the specified point to this contour boundary.
+        /// </summary>
+        /// <param name="point">The finite point to measure from.</param>
+        /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
+        /// <returns>
+        /// The shortest distance to the contour boundary, negated when <paramref name="point"/> lies inside or on this contour.
+        /// </returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="point"/> has a non-finite coordinate, or when
+        /// <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
+        /// </exception>
+        float SignedDistance(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
     }
 }
