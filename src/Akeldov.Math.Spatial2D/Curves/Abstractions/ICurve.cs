@@ -24,5 +24,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns>The non-negative distance to this curve in world coordinate units.</returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
         float Distance(VectorXY point);
+
+        /// <summary>
+        /// Projects the specified point onto this curve.
+        /// </summary>
+        /// <param name="point">The finite point to project.</param>
+        /// <returns>The projection point and distance to this curve.</returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
+        CurveProjection Project(VectorXY point);
     }
 }

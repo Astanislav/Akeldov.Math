@@ -5,7 +5,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     /// <remarks>
     /// <see cref="EndpointA"/> and <see cref="EndpointB"/> identify the two boundary points of the curve.
-    /// They do not imply traversal direction. Use <see cref="IParameterizedTwoEndpointCurve"/> when start
+    /// They do not imply traversal direction. Use <see cref="IPath"/> when start
     /// and end points are part of the contract.
     /// </remarks>
     public interface ITwoEndpointCurve : ICurve
