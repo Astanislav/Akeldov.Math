@@ -1,0 +1,61 @@
+using System;
+using Akeldov.Math.Spatial2D.Curves;
+using Akeldov.Math.Spatial2D.Imaging;
+
+namespace Akeldov.Math.Spatial2D.Rasterization
+{
+    /// <summary>
+    /// Rasterizes parameterized curves into 8-bit grayscale rasters using projection-to-curve mapping.
+    /// </summary>
+    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : IRasterizer<IParameterizedCurve, Gray8BitRaster>
+    {
+        private readonly Func<float, float, byte> _projectionToGrayLevel;
+
+        /// <summary>
+        /// Initializes a new parameterized curve rasterizer.
+        /// </summary>
+        /// <param name="projectionToGrayLevel">
+        /// The function that maps distance to the curve and curve coordinate to an 8-bit grayscale value.
+        /// The first argument is distance in world coordinate units; the second argument is curve coordinate.
+        /// </param>
+        public ParameterizedCurveDistanceGray8BitRasterizer(Func<float, float, byte> projectionToGrayLevel)
+        {
+            _projectionToGrayLevel = projectionToGrayLevel ?? throw new ArgumentNullException(nameof(projectionToGrayLevel));
+        }
+
+        /// <inheritdoc/>
+        public Gray8BitRaster Rasterize(IParameterizedCurve source, RasterGrid grid)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            ValidateGrid(grid);
+            var values = new byte[grid.Resolution.X, grid.Resolution.Y];
+            VectorXY cellSize = grid.CellSize;
+            float firstX = grid.Origin.X + cellSize.X * 0.5f;
+            float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
+
+            for (int y = 0; y < grid.Resolution.Y; y++)
+            {
+                float pointY = firstY + y * cellSize.Y;
+                for (int x = 0; x < grid.Resolution.X; x++)
+                {
+                    VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
+                    ParameterizedCurveProjection projection = source.ProjectWithParameter(point);
+                    values[x, y] = _projectionToGrayLevel(projection.Distance, projection.CurveCoordinate);
+                }
+            }
+
+            return new Gray8BitRaster(grid, values);
+        }
+
+        private static void ValidateGrid(RasterGrid grid)
+        {
+            if (!grid.Size.IsFinite || grid.Size.X <= 0f || grid.Size.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid size components must be finite and positive.");
+
+            if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
+        }
+    }
+}
