@@ -54,7 +54,7 @@ public class ContourTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         Assert.That(contour.Curves, Is.Not.InstanceOf<IFinitePath[]>());
@@ -81,7 +81,7 @@ public class ContourTests
     {
         IContour contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         bool isInside = contour.Encloses(new VectorXY(2f, 0f));
@@ -94,7 +94,7 @@ public class ContourTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         Assert.That(contour.Encloses(new VectorXY(1f, 0f)), Is.True);
@@ -105,7 +105,7 @@ public class ContourTests
     {
         IContour contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         var point = new VectorXY(1.0005f, 0f);
@@ -149,7 +149,7 @@ public class ContourTests
     {
         IContour contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         float signedDistance = contour.SignedDistance(new VectorXY(1.0005f, 0f), 0.001f);
@@ -174,7 +174,7 @@ public class ContourTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -202,7 +202,7 @@ public class ContourTests
     {
         IContour contour = new Contour(new IFinitePath[]
         {
-            new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI)
+            CreateUnitCirclePath()
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -234,6 +234,16 @@ public class ContourTests
             new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
             new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
         });
+    }
+
+    private static ParameterizedArc CreateUnitCirclePath()
+    {
+        return new ParameterizedArc(
+            VectorXY.Zero,
+            1f,
+            0f,
+            2f * MathF.PI,
+            AngularDirection.Counterclockwise);
     }
 
     private sealed class EpsilonAwareCurve : IFinitePath
