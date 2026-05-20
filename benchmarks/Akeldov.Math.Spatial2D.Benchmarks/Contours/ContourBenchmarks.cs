@@ -47,13 +47,13 @@ public class ContourBenchmarks
 
     private static Contour CreateRegularPolygonContour(int segmentCount, float radius)
     {
-        var curves = new IBoundedParameterizedCurve[segmentCount];
+        var curves = new IFinitePath[segmentCount];
 
         for (int i = 0; i < curves.Length; i++)
         {
             VectorXY start = GetRegularPolygonVertex(i, segmentCount, radius);
             VectorXY end = GetRegularPolygonVertex((i + 1) % segmentCount, segmentCount, radius);
-            curves[i] = new Segment(start, end);
+            curves[i] = new ParameterizedSegment(start, end);
         }
 
         return new Contour(curves);
