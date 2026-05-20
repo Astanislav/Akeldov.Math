@@ -10,11 +10,11 @@ namespace Akeldov.Math.Spatial2D.Contours
     public static class ContourSmoothingExtensions
     {
         /// <summary>
-        /// Returns a contour with fillet arcs inserted at corners where two adjacent segments meet.
+        /// Returns a contour with fillet arcs inserted at corners where two adjacent parameterized segments meet.
         /// </summary>
         /// <param name="contour">The contour to fillet.</param>
         /// <param name="radius">The radius of inserted fillet arcs.</param>
-        /// <returns>A new contour with segment-segment corners filleted by arcs.</returns>
+        /// <returns>A new contour with segment-segment corners filleted by parameterized arcs.</returns>
         public static Contour FilletCorners(this IContour contour, float radius)
         {
             if (contour == null)
@@ -23,21 +23,21 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (radius <= 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be finite and positive.");
 
-            IReadOnlyList<IBoundedParameterizedCurve> curves = contour.Curves;
+            IReadOnlyList<IFinitePath> curves = contour.Curves;
             if (curves == null || curves.Count == 0)
-                throw new InvalidOperationException("Contour must expose at least one bounded parameterized curve.");
+                throw new InvalidOperationException("Contour must expose at least one finite path.");
 
-            Arc?[] cornerArcs = CreateCornerArcs(curves, radius);
-            var smoothedCurves = new List<IBoundedParameterizedCurve>(curves.Count + cornerArcs.Length);
+            ParameterizedArc?[] cornerArcs = CreateCornerArcs(curves, radius);
+            var smoothedCurves = new List<IFinitePath>(curves.Count + cornerArcs.Length);
 
             for (int i = 0; i < curves.Count; i++)
             {
-                IBoundedParameterizedCurve curve = curves[i];
+                IFinitePath curve = curves[i];
+                ParameterizedArc? startArc = cornerArcs[GetPreviousIndex(i, curves.Count)];
+                ParameterizedArc? endArc = cornerArcs[i];
 
-                if (curve is Segment segment)
+                if (curve is ParameterizedSegment segment)
                 {
-                    Arc? startArc = cornerArcs[GetPreviousIndex(i, curves.Count)];
-                    Arc? endArc = cornerArcs[i];
                     smoothedCurves.Add(CreateTrimmedSegment(segment, startArc, endArc));
                 }
                 else
@@ -45,26 +45,25 @@ namespace Akeldov.Math.Spatial2D.Contours
                     smoothedCurves.Add(curve);
                 }
 
-                Arc? cornerArc = cornerArcs[i];
-                if (cornerArc.HasValue)
-                    smoothedCurves.Add(cornerArc.Value);
+                if (endArc.HasValue)
+                    smoothedCurves.Add(endArc.Value);
             }
 
             return new Contour(smoothedCurves);
         }
 
-        private static Arc?[] CreateCornerArcs(IReadOnlyList<IBoundedParameterizedCurve> curves, float radius)
+        private static ParameterizedArc?[] CreateCornerArcs(IReadOnlyList<IFinitePath> curves, float radius)
         {
-            var cornerArcs = new Arc?[curves.Count];
+            var cornerArcs = new ParameterizedArc?[curves.Count];
 
             for (int i = 0; i < curves.Count; i++)
             {
                 int nextIndex = (i + 1) % curves.Count;
 
-                if (curves[i] is Segment previousSegment &&
-                    curves[nextIndex] is Segment nextSegment &&
+                if (curves[i] is ParameterizedSegment previousSegment &&
+                    curves[nextIndex] is ParameterizedSegment nextSegment &&
                     previousSegment.EndPoint.AlmostEquals(nextSegment.StartPoint) &&
-                    TryCreateFilletArc(previousSegment, nextSegment, radius, out Arc arc))
+                    TryCreateFilletArc(previousSegment, nextSegment, radius, out ParameterizedArc arc))
                 {
                     cornerArcs[i] = arc;
                 }
@@ -73,15 +72,41 @@ namespace Akeldov.Math.Spatial2D.Contours
             return cornerArcs;
         }
 
-        private static bool TryCreateFilletArc(Segment previousSegment, Segment nextSegment, float radius, out Arc arc)
+        private static bool TryCreateFilletArc(
+            ParameterizedSegment previousSegment,
+            ParameterizedSegment nextSegment,
+            float radius,
+            out ParameterizedArc arc)
         {
             try
             {
-                arc = CornerExtensions.CreateFilletArc(
+                Arc tangentArc = CornerExtensions.CreateFilletArc(
                     previousSegment.StartPoint,
                     previousSegment.EndPoint,
                     nextSegment.EndPoint,
                     radius);
+
+                VectorXY startPoint = GetCircleTangentPointOnSegmentLine(
+                    tangentArc.Center,
+                    previousSegment,
+                    previousSegment.EndPoint);
+
+                VectorXY endPoint = GetCircleTangentPointOnSegmentLine(
+                    tangentArc.Center,
+                    nextSegment,
+                    nextSegment.StartPoint);
+
+                float startAngle = GetAngle(tangentArc.Center, startPoint);
+                float endAngle = GetAngle(tangentArc.Center, endPoint);
+                AngularDirection direction = GetShortestAngularDirection(startAngle, endAngle);
+
+                arc = new ParameterizedArc(
+                    tangentArc.Center,
+                    tangentArc.Radius,
+                    startAngle,
+                    endAngle,
+                    direction);
+
                 return true;
             }
             catch (ArgumentException)
@@ -91,7 +116,10 @@ namespace Akeldov.Math.Spatial2D.Contours
             }
         }
 
-        private static Segment CreateTrimmedSegment(Segment segment, Arc? startArc, Arc? endArc)
+        private static ParameterizedSegment CreateTrimmedSegment(
+            ParameterizedSegment segment,
+            ParameterizedArc? startArc,
+            ParameterizedArc? endArc)
         {
             VectorXY startPoint = segment.StartPoint;
             VectorXY endPoint = segment.EndPoint;
@@ -100,37 +128,50 @@ namespace Akeldov.Math.Spatial2D.Contours
 
             if (startArc.HasValue)
             {
-                startPoint = GetArcTangentPointOnSegmentLine(startArc.Value, segment, segment.StartPoint);
+                startPoint = startArc.Value.EndPoint;
                 includesStartPoint = false;
             }
 
             if (endArc.HasValue)
             {
-                endPoint = GetArcTangentPointOnSegmentLine(endArc.Value, segment, segment.EndPoint);
+                endPoint = endArc.Value.StartPoint;
                 includesEndPoint = false;
             }
 
-            return new Segment(startPoint, endPoint, includesStartPoint, includesEndPoint);
+            return new ParameterizedSegment(startPoint, endPoint, includesStartPoint, includesEndPoint);
         }
 
-        private static VectorXY GetArcTangentPointOnSegmentLine(Arc arc, Segment segment, VectorXY fallbackPoint)
+        private static VectorXY GetCircleTangentPointOnSegmentLine(
+            VectorXY circleCenter,
+            ParameterizedSegment segment,
+            VectorXY fallbackPoint)
         {
             if (segment.Length <= GeometryConstants.GeometryEpsilon)
                 return fallbackPoint;
 
             var line = new Line(segment.StartPoint, segment.EndPoint);
-            float startDistance = line.Distance(arc.StartPoint);
-            float endDistance = line.Distance(arc.EndPoint);
+            return line.Project(circleCenter).ProjectedPoint;
+        }
 
-            if (startDistance < endDistance - GeometryConstants.GeometryEpsilon)
-                return arc.StartPoint;
+        private static float GetAngle(VectorXY center, VectorXY point)
+        {
+            return MathF.Atan2((point - center).Y, (point - center).X).NormalizeAngleRad();
+        }
 
-            if (endDistance < startDistance - GeometryConstants.GeometryEpsilon)
-                return arc.EndPoint;
+        private static AngularDirection GetShortestAngularDirection(float startAngle, float endAngle)
+        {
+            return PositiveAngleDelta(startAngle, endAngle) <= MathF.PI
+                ? AngularDirection.Counterclockwise
+                : AngularDirection.Clockwise;
+        }
 
-            return fallbackPoint.Distance(arc.StartPoint) <= fallbackPoint.Distance(arc.EndPoint)
-                ? arc.StartPoint
-                : arc.EndPoint;
+        private static float PositiveAngleDelta(float from, float to)
+        {
+            float delta = to - from;
+            if (delta < 0f)
+                delta += 2f * MathF.PI;
+
+            return delta;
         }
 
         private static int GetPreviousIndex(int index, int count)

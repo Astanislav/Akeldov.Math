@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a parameterized circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct ParameterizedArc : IFiniteCurve, IParameterizedProjectableCurve, IParameterizedTwoEndpointCurve, IEquatable<ParameterizedArc>
+    public readonly struct ParameterizedArc : IFinitePath, IEquatable<ParameterizedArc>
     {
         private readonly VectorXY _center;
         private readonly float _radius;

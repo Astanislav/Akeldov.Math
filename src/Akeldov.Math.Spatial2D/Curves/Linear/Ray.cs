@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value starts at <see cref="VectorXY.Zero"/> and points along the positive X axis.
     /// </remarks>
-    public readonly struct Ray : IOneEndpointCurve, IParameterizedProjectableCurve, IEquatable<Ray>
+    public readonly struct Ray : IRayPath, IEquatable<Ray>
     {
         private readonly VectorXY _origin;
         private readonly float _angle;

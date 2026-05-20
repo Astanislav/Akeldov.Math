@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// The default value represents the horizontal line <c>y = 0</c>, with origin at <see cref="VectorXY.Zero"/>
     /// and direction along the positive X axis.
     /// </remarks>
-    public readonly struct ParametricLine : IParameterizedProjectableCurve, IEquatable<ParametricLine>
+    public readonly struct ParametricLine : IParameterizedCurve, IEquatable<ParametricLine>
     {
         private readonly Line _line;
         private readonly VectorXY _origin;

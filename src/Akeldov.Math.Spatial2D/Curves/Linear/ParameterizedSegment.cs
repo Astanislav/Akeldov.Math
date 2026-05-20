@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a finite line segment in two-dimensional space.
     /// </summary>
-    public readonly struct ParameterizedSegment : IParameterizedTwoEndpointCurve, IParameterizedProjectableCurve, IFiniteCurve, IEquatable<ParameterizedSegment>
+    public readonly struct ParameterizedSegment : IFinitePath, IEquatable<ParameterizedSegment>
     {
         private readonly VectorXY _startPoint;
         private readonly VectorXY _endPoint;

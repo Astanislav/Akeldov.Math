@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <summary>
         /// Gets the bounded parameterized curves that form this contour.
         /// </summary>
-        IReadOnlyList<IBoundedParameterizedCurve> Curves { get; }
+        IReadOnlyList<IFinitePath> Curves { get; }
 
         /// <summary>
         /// Determines whether the specified point lies inside or on this closed contour.
@@ -22,8 +22,6 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <exception cref="System.ArgumentOutOfRangeException">
         /// Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
-        bool Encloses(
-            VectorXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon);
+        bool Encloses(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
     }
 }

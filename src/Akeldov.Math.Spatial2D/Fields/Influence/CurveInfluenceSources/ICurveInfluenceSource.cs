@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// Curve influence sources can measure distance, intersect rays, and project sampled points onto
     /// the underlying curve.
     /// </remarks>
-    public interface ICurveInfluenceSource : IInfluenceSource, IParameterizedProjectableCurve
+    public interface ICurveInfluenceSource : IInfluenceSource, IParameterizedCurve
     {
     }
 

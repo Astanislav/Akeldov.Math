@@ -30,7 +30,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
-            IReadOnlyList<IBoundedParameterizedCurve> curves = GetCurves(source);
+            IReadOnlyList<IPath> curves = GetCurves(source);
             var values = new ushort[grid.Resolution.X, grid.Resolution.Y];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
@@ -50,13 +50,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Gray16BitRaster(grid, values);
         }
 
-        private static IReadOnlyList<IBoundedParameterizedCurve> GetCurves(IRegion region)
+        private static IReadOnlyList<IPath> GetCurves(IRegion region)
         {
             IReadOnlyList<IContour> contours = region.Contours;
             if (contours == null || contours.Count == 0)
                 throw new InvalidOperationException("Region must expose at least one contour.");
 
-            var curves = new List<IBoundedParameterizedCurve>();
+            var curves = new List<IPath>();
 
             for (int i = 0; i < contours.Count; i++)
             {
@@ -64,13 +64,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 if (contour == null)
                     throw new InvalidOperationException("Region contours must not contain null values.");
 
-                IReadOnlyList<IBoundedParameterizedCurve> contourCurves = contour.Curves;
+                IReadOnlyList<IPath> contourCurves = contour.Curves;
                 if (contourCurves == null || contourCurves.Count == 0)
                     throw new InvalidOperationException("Region contours must expose at least one bounded parameterized curve.");
 
                 for (int j = 0; j < contourCurves.Count; j++)
                 {
-                    IBoundedParameterizedCurve curve = contourCurves[j];
+                    IPath curve = contourCurves[j];
                     if (curve == null)
                         throw new InvalidOperationException("Region contour curves must not contain null values.");
 
@@ -90,19 +90,19 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
         }
 
-        private static float GetSignedDistanceToRegion(IRegion region, VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
+        private static float GetSignedDistanceToRegion(IRegion region, VectorXY point, IReadOnlyList<IPath> curves)
         {
             float distance = DistanceToRegionBoundary(point, curves);
             return region.Contains(point) ? -distance : distance;
         }
 
-        private static float DistanceToRegionBoundary(VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
+        private static float DistanceToRegionBoundary(VectorXY point, IReadOnlyList<IPath> curves)
         {
             float minDistance = float.MaxValue;
 
             for (int i = 0; i < curves.Count; i++)
             {
-                IBoundedParameterizedCurve curve = curves[i];
+                IPath curve = curves[i];
                 float distance = curve.Distance(point);
                 if (distance < minDistance)
                     minDistance = distance;

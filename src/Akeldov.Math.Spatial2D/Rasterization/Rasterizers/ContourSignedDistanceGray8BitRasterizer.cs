@@ -29,7 +29,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
-            IReadOnlyList<IBoundedParameterizedCurve> curves = GetCurves(source);
+            IReadOnlyList<IPath> curves = GetCurves(source);
             var values = new byte[grid.Resolution.X, grid.Resolution.Y];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
@@ -49,9 +49,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Gray8BitRaster(grid, values);
         }
 
-        private static IReadOnlyList<IBoundedParameterizedCurve> GetCurves(IContour contour)
+        private static IReadOnlyList<IPath> GetCurves(IContour contour)
         {
-            IReadOnlyList<IBoundedParameterizedCurve> curves = contour.Curves;
+            IReadOnlyList<IPath> curves = contour.Curves;
             if (curves == null || curves.Count == 0)
                 throw new InvalidOperationException("Contour must expose at least one bounded parameterized curve.");
 
@@ -67,19 +67,19 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
         }
 
-        private static float GetSignedDistanceToContour(IContour contour, VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
+        private static float GetSignedDistanceToContour(IContour contour, VectorXY point, IReadOnlyList<IPath> curves)
         {
             float distance = DistanceToContour(point, curves);
             return contour.Encloses(point) ? -distance : distance;
         }
 
-        private static float DistanceToContour(VectorXY point, IReadOnlyList<IBoundedParameterizedCurve> curves)
+        private static float DistanceToContour(VectorXY point, IReadOnlyList<IPath> curves)
         {
             float minDistance = float.MaxValue;
 
             for (int i = 0; i < curves.Count; i++)
             {
-                IBoundedParameterizedCurve curve = curves[i];
+                IPath curve = curves[i];
                 if (curve == null)
                     throw new InvalidOperationException("Contour curves must not contain null values.");
 

@@ -5,18 +5,18 @@ using Akeldov.Math.Spatial2D.Curves;
 namespace Akeldov.Math.Spatial2D.Contours
 {
     /// <summary>
-    /// Represents a closed two-dimensional contour made from bounded parameterized curves.
+    /// Represents a closed two-dimensional contour made from finite paths.
     /// </summary>
     public sealed class Contour : IContour
     {
-        private readonly IBoundedParameterizedCurve[] _curves;
-        private readonly IReadOnlyList<IBoundedParameterizedCurve> _readOnlyCurves;
+        private readonly IFinitePath[] _curves;
+        private readonly IReadOnlyList<IFinitePath> _readOnlyCurves;
 
         /// <summary>
-        /// Initializes a new contour from the specified bounded parameterized curves.
+        /// Initializes a new contour from the specified finite paths.
         /// </summary>
-        /// <param name="curves">The bounded parameterized curves that form the contour.</param>
-        public Contour(IReadOnlyList<IBoundedParameterizedCurve> curves)
+        /// <param name="curves">The finite paths that form the contour.</param>
+        public Contour(IReadOnlyList<IFinitePath> curves)
         {
             if (curves == null)
                 throw new ArgumentNullException(nameof(curves));
@@ -24,7 +24,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             if (curves.Count == 0)
                 throw new ArgumentException("A contour must contain at least one curve.", nameof(curves));
 
-            _curves = new IBoundedParameterizedCurve[curves.Count];
+            _curves = new IFinitePath[curves.Count];
 
             for (int i = 0; i < curves.Count; i++)
             {
@@ -37,95 +37,64 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<IBoundedParameterizedCurve> Curves => _readOnlyCurves;
+        public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
-        public bool Encloses(
-            VectorXY point,
-            float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public bool Encloses(VectorXY point, float geometryEpsilon = 1E-06F)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
             if (!point.IsFinite)
                 throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
 
-            List<VectorXY> intersections = new List<VectorXY>();
             var ray = new Ray(point);
-            int segmentCrossings = 0;
+            var intersections = new List<VectorXY>();
 
             for (int i = 0; i < _curves.Length; i++)
             {
-                var curve = _curves[i];
+                IFinitePath curve = _curves[i];
+
                 if (curve.Distance(point) <= geometryEpsilon)
                     return true;
 
-                if (curve is Segment segment)
-                {
-                    if (CrossesPositiveXRay(point, segment, geometryEpsilon))
-                        segmentCrossings++;
-
-                    continue;
-                }
-
-                var newIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
-
-                if (newIntersections == null)
+                List<VectorXY> curveIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
+                if (curveIntersections == null)
                     continue;
 
-                for (int j = 0; j < newIntersections.Count; j++)
+                for (int j = 0; j < curveIntersections.Count; j++)
                 {
-                    var intersection = newIntersections[j];
+                    VectorXY intersection = curveIntersections[j];
                     if (intersection.X <= point.X + geometryEpsilon)
                         continue;
 
-                    if (IsTangentIntersection(curve, ray, geometryEpsilon))
-                        continue;
-
-                    intersections.AddDistinct(intersection, geometryEpsilon);
+                    AddDistinct(intersections, intersection, geometryEpsilon);
                 }
             }
 
-            return (intersections.Count + segmentCrossings) % 2 == 1;
+            return intersections.Count % 2 == 1;
         }
 
-        private static bool CrossesPositiveXRay(VectorXY point, Segment segment, float geometryEpsilon)
-        {
-            VectorXY startPoint = segment.StartPoint;
-            VectorXY endPoint = segment.EndPoint;
-
-            bool straddlesRay = (startPoint.Y > point.Y) != (endPoint.Y > point.Y);
-            if (!straddlesRay)
-                return false;
-
-            float x = startPoint.X + (point.Y - startPoint.Y) * (endPoint.X - startPoint.X) / (endPoint.Y - startPoint.Y);
-            return x > point.X + geometryEpsilon;
-        }
-
-        private static bool IsTangentIntersection(IBoundedParameterizedCurve curve, Ray ray, float geometryEpsilon)
-        {
-            if (curve is Arc arc)
-                return IsTangentToCircle(ray, arc.Center, arc.Radius, geometryEpsilon);
-
-            return false;
-        }
-
-        private static bool IsTangentToCircle(Ray ray, VectorXY center, float radius, float geometryEpsilon)
-        {
-            VectorXY originToCenter = center - ray.Origin;
-            float signedDistance = VectorXY.Cross(ray.Direction, originToCenter);
-            return MathF.Abs(MathF.Abs(signedDistance) - radius) <= geometryEpsilon;
-        }
-
-        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IBoundedParameterizedCurve> curves, string parameterName)
+        private static void ValidateCurvesFormClosedChain(IReadOnlyList<IFinitePath> curves, string parameterName)
         {
             for (int i = 0; i < curves.Count; i++)
             {
-                IBoundedParameterizedCurve currentCurve = curves[i];
-                IBoundedParameterizedCurve nextCurve = curves[(i + 1) % curves.Count];
+                IFinitePath currentCurve = curves[i];
+                IFinitePath nextCurve = curves[(i + 1) % curves.Count];
 
                 if (!currentCurve.EndPoint.AlmostEquals(nextCurve.StartPoint))
                     throw new ArgumentException("Contour curves must form a closed continuous chain.", parameterName);
             }
+        }
+
+        private static void AddDistinct(List<VectorXY> intersections, VectorXY point, float geometryEpsilon)
+        {
+            for (int i = 0; i < intersections.Count; i++)
+            {
+                if (intersections[i].AlmostEquals(point, geometryEpsilon))
+                    return;
+            }
+
+            intersections.Add(point);
         }
     }
 }
