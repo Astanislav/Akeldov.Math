@@ -25,6 +25,20 @@ public class CurveSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCaseSource(nameof(ParameterizedThicknessCurveCases))]
+    public void Rasterize_WhenParameterizedCurveThicknessUsesCurveCoordinate_MatchesApprovedImage(
+        string approvedFileName,
+        Func<IParameterizedCurve> createCurve)
+    {
+        Gray8BitRaster raster = createCurve().Rasterize(
+            SnapshotGrid,
+            new ParameterizedCurveDistanceGray8BitRasterizer(ToGrowingThicknessGray8));
+
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static IEnumerable<TestCaseData> CurveCases()
     {
         yield return new TestCaseData(
@@ -73,7 +87,40 @@ public class CurveSnapshotTests
             .SetName("ParameterizedArc_MatchesApprovedImage");
     }
 
+    private static IEnumerable<TestCaseData> ParameterizedThicknessCurveCases()
+    {
+        yield return new TestCaseData(
+            "parametric-line-growing-thickness.png",
+            ParameterizedCurve(() => new ParametricLine(new VectorXY(-0.4f, -2.65f), new VectorXY(0.45f, 1f))))
+            .SetName("ParametricLine_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "parameterized-arc-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedArc(
+                new VectorXY(0f, 0f),
+                2f,
+                -MathF.PI / 4f,
+                5f * MathF.PI / 4f,
+                AngularDirection.Counterclockwise)))
+            .SetName("ParameterizedArc_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "ray-growing-thickness.png",
+            ParameterizedCurve(() => new Ray(new VectorXY(-2.45f, -2.05f), MathF.PI / 5f)))
+            .SetName("Ray_GrowingThickness_MatchesApprovedImage");
+
+        yield return new TestCaseData(
+            "parameterized-segment-growing-thickness.png",
+            ParameterizedCurve(() => new ParameterizedSegment(new VectorXY(-2.35f, -2.1f), new VectorXY(2.35f, 1.75f))))
+            .SetName("ParameterizedSegment_GrowingThickness_MatchesApprovedImage");
+    }
+
     private static Func<ICurve> Curve(Func<ICurve> createCurve)
+    {
+        return createCurve;
+    }
+
+    private static Func<IParameterizedCurve> ParameterizedCurve(Func<IParameterizedCurve> createCurve)
     {
         return createCurve;
     }
@@ -82,6 +129,20 @@ public class CurveSnapshotTests
     {
         const float falloffDistance = 0.25f;
         float normalized = 1f - System.Math.Clamp(distance / falloffDistance, 0f, 1f);
+        return (byte)MathF.Round(normalized * byte.MaxValue);
+    }
+
+    private static byte ToGrowingThicknessGray8(float distance, float curveCoordinate)
+    {
+        const float baseThickness = 0.05f;
+        const float thicknessPerWorldUnit = 0.065f;
+        const float maxThicknessGrowth = 0.42f;
+        const float edgeFalloff = 0.08f;
+
+        float nonNegativeCoordinate = MathF.Max(0f, curveCoordinate);
+        float thickness = baseThickness + MathF.Min(nonNegativeCoordinate * thicknessPerWorldUnit, maxThicknessGrowth);
+        float normalized = 1f - System.Math.Clamp((distance - thickness) / edgeFalloff, 0f, 1f);
+
         return (byte)MathF.Round(normalized * byte.MaxValue);
     }
 
