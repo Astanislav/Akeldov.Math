@@ -9,7 +9,7 @@ public class FloatCurveInfluenceSourceIntersectionTests
     public void GetRayIntersections_WithCustomGeometryEpsilon_PassesToleranceToUnderlyingCurve()
     {
         const float geometryEpsilon = 0.01f;
-        var curve = new Segment(new VectorXY(4f, 0.005f), new VectorXY(10f, 0.005f));
+        var curve = new ParameterizedSegment(new VectorXY(4f, 0.005f), new VectorXY(10f, 0.005f));
         var source = new FloatCurveInfluenceSource(1f, curve, 0f);
         var ray = new Ray(VectorXY.Zero);
 
@@ -27,7 +27,7 @@ public class FloatCurveInfluenceSourceIntersectionTests
     [TestCase(float.NegativeInfinity)]
     public void GetRayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        var curve = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
+        var curve = new ParameterizedSegment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(1f, curve, 0f);
         var ray = new Ray(VectorXY.Zero);
 

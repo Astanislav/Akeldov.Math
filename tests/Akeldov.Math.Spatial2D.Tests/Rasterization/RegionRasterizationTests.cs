@@ -92,12 +92,12 @@ public class RegionRasterizationTests
 
     private static Contour CreateSquareContour(float left, float bottom, float right, float top)
     {
-        return new Contour(new IBoundedParameterizedCurve[]
+        return new Contour(new IFinitePath[]
         {
-            new Segment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new Segment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new Segment(new VectorXY(right, top), new VectorXY(left, top)),
-            new Segment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
+            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
+            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
+            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
         });
     }
 }

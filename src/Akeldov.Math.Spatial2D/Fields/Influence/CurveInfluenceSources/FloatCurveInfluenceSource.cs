@@ -13,7 +13,7 @@ namespace Akeldov.Math.Spatial2D.Fields
     /// </remarks>
     public class FloatCurveInfluenceSource : ICurveInfluenceSource<float>
     {
-        private readonly IParameterizedProjectableCurve _curve;
+        private readonly IParameterizedCurve _curve;
         private readonly Func<float, float> _weightProvider;
         private readonly Func<float, float> _valueProvider;
 
@@ -23,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="weight">The constant source weight.</param>
         /// <param name="curve">The underlying parameterized projectable curve.</param>
         /// <param name="value">The constant source value.</param>
-        public FloatCurveInfluenceSource(float weight, IParameterizedProjectableCurve curve, float value)
+        public FloatCurveInfluenceSource(float weight, IParameterizedCurve curve, float value)
         {
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
@@ -42,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="weight">The constant source weight.</param>
         /// <param name="curve">The underlying parameterized projectable curve.</param>
         /// <param name="valueProvider">The value provider evaluated with the curve coordinate.</param>
-        public FloatCurveInfluenceSource(float weight, IParameterizedProjectableCurve curve, Func<float, float> valueProvider)
+        public FloatCurveInfluenceSource(float weight, IParameterizedCurve curve, Func<float, float> valueProvider)
         {
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
@@ -58,7 +58,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="weightProvider">The weight provider evaluated with the curve coordinate.</param>
         /// <param name="curve">The underlying parameterized projectable curve.</param>
         /// <param name="value">The constant source value.</param>
-        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IParameterizedProjectableCurve curve, float value)
+        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IParameterizedCurve curve, float value)
         {
             if (float.IsNaN(value))
                 throw new ArgumentOutOfRangeException(nameof(value), "Influence source value must not be NaN.");
@@ -74,7 +74,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="weightProvider">The weight provider evaluated with the curve coordinate.</param>
         /// <param name="curve">The underlying parameterized projectable curve.</param>
         /// <param name="valueProvider">The value provider evaluated with the curve coordinate.</param>
-        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IParameterizedProjectableCurve curve, Func<float, float> valueProvider)
+        public FloatCurveInfluenceSource(Func<float, float> weightProvider, IParameterizedCurve curve, Func<float, float> valueProvider)
         {
             _weightProvider = weightProvider ?? throw new ArgumentNullException(nameof(weightProvider));
             _curve = curve ?? throw new ArgumentNullException(nameof(curve));
@@ -116,6 +116,12 @@ namespace Akeldov.Math.Spatial2D.Fields
                 throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
 
             return _curve.ProjectWithParameter(point);
+        }
+
+        /// <inheritdoc/>
+        public VectorXY GetPoint(float curveCoordinate)
+        {
+            return _curve.GetPoint(curveCoordinate);
         }
 
         /// <inheritdoc/>

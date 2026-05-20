@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     public interface IFiniteCurve : ICurve
     {
         /// <summary>
-        /// Gets the curve length.
+        /// Gets the finite non-negative curve length in world coordinate units.
         /// </summary>
         float Length { get; }
     }

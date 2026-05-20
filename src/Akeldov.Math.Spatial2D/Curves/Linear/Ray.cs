@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value starts at <see cref="VectorXY.Zero"/> and points along the positive X axis.
     /// </remarks>
-    public readonly struct Ray : IParameterizedProjectableCurve
+    public readonly struct Ray : IRayPath, IEquatable<Ray>
     {
         private readonly VectorXY _origin;
         private readonly float _angle;
@@ -67,6 +67,11 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Gets the ray direction angle in radians.
         /// </summary>
         public float Angle => _angle;
+
+        /// <summary>
+        /// Gets the ray endpoint.
+        /// </summary>
+        public VectorXY Endpoint => _origin;
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this ray.
@@ -183,5 +188,53 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             return VectorXY.Cross(toPoint, direction).IsAlmostZero(geometryEpsilon);
         }
+
+        /// <inheritdoc/>
+        public override bool Equals(object? obj) => obj is Ray other && Equals(other);
+
+        /// <summary>
+        /// Indicates whether this ray has the same origin and direction as another ray.
+        /// </summary>
+        /// <param name="other">The ray to compare with this ray.</param>
+        /// <returns><see langword="true"/> if both rays are equal; otherwise, <see langword="false"/>.</returns>
+        public bool Equals(Ray other) => Origin.Equals(other.Origin) && Direction.Equals(other.Direction);
+
+        /// <inheritdoc/>
+        public override int GetHashCode() => HashCode.Combine(Origin, Direction);
+
+        /// <inheritdoc/>
+        public override string ToString() => $"({Origin} + t*{Direction}, t >= 0)";
+
+        /// <summary>
+        /// Returns the point at the specified ray length coordinate.
+        /// </summary>
+        /// <param name="curveCoordinate">The finite non-negative curve coordinate in world coordinate units.</param>
+        /// <returns>The point on this ray.</returns>
+        public VectorXY GetPoint(float curveCoordinate)
+        {
+            if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
+
+            if (curveCoordinate < 0f)
+                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be non-negative.");
+
+            return Origin + curveCoordinate * Direction;
+        }
+
+        /// <summary>
+        /// Indicates whether two rays are equal.
+        /// </summary>
+        /// <param name="left">The first ray.</param>
+        /// <param name="right">The second ray.</param>
+        /// <returns><see langword="true"/> if the rays are equal; otherwise, <see langword="false"/>.</returns>
+        public static bool operator ==(Ray left, Ray right) => left.Equals(right);
+
+        /// <summary>
+        /// Indicates whether two rays are different.
+        /// </summary>
+        /// <param name="left">The first ray.</param>
+        /// <param name="right">The second ray.</param>
+        /// <returns><see langword="true"/> if the rays are different; otherwise, <see langword="false"/>.</returns>
+        public static bool operator !=(Ray left, Ray right) => !(left == right);
     }
 }

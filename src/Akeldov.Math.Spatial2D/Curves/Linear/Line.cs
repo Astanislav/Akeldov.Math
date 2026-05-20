@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <remarks>
     /// The default value represents the horizontal line <c>y = 0</c>.
     /// </remarks>
-    public readonly struct Line : IProjectableCurve, IEquatable<Line>
+    public readonly struct Line : ICurve, IEquatable<Line>
     {
         private readonly float _equationA;
         // Store B shifted so default(Line) represents y = 0 instead of an invalid zero-coefficient equation.

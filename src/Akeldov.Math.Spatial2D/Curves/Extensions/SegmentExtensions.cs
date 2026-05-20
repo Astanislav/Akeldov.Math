@@ -15,23 +15,30 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="amount">The amount removed from each end.</param>
         /// <returns>The shortened segment.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="amount"/> is negative, NaN, or infinite.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the segment is too short.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the segment has equal endpoints or the shorten amount is too large.</exception>
         public static Segment Shorten(this Segment segment, float amount)
         {
             if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
-                throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
 
-            float length = segment.StartPoint.Distance(segment.EndPoint);
+            VectorXY segmentVector = segment.EndpointB - segment.EndpointA;
+            float length = segmentVector.Length;
 
-            if (2 * amount >= length)
-                throw new InvalidOperationException("The segment is too short to shorten by the requested amount.");
+            if (length <= GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment with equal endpoints.");
 
-            VectorXY direction = (segment.EndPoint - segment.StartPoint).Normalize();
+            if (2f * amount > length + GeometryConstants.GeometryEpsilon)
+                throw new InvalidOperationException("Cannot shorten a segment by more than half its length.");
 
-            var startPoint = segment.StartPoint + direction * amount;
-            var endPoint = segment.EndPoint - direction * amount;
+            VectorXY direction = segmentVector / length;
+            VectorXY endpointA = segment.EndpointA + amount * direction;
+            VectorXY endpointB = segment.EndpointB - amount * direction;
 
-            return new Segment(startPoint, endPoint, segment.IncludesStartPoint, segment.IncludesEndPoint);
+            return new Segment(
+                endpointA,
+                endpointB,
+                segment.IncludesEndpointA,
+                segment.IncludesEndpointB);
         }
 
         /// <summary>
@@ -45,17 +52,23 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static Segment Extend(this Segment segment, float amount)
         {
             if (amount < 0f || float.IsNaN(amount) || float.IsInfinity(amount))
-                throw new ArgumentOutOfRangeException(nameof(amount), "Segment extension amount must be finite and non-negative.");
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be finite and non-negative.");
 
-            VectorXY direction = (segment.EndPoint - segment.StartPoint).Normalize();
+            VectorXY segmentVector = segment.EndpointB - segment.EndpointA;
+            float length = segmentVector.Length;
 
-            if (direction == VectorXY.Zero)
+            if (length <= GeometryConstants.GeometryEpsilon)
                 throw new InvalidOperationException("Cannot extend a segment with equal endpoints.");
 
-            var startPoint = segment.StartPoint - direction * amount;
-            var endPoint = segment.EndPoint + direction * amount;
+            VectorXY direction = segmentVector / length;
+            VectorXY endpointA = segment.EndpointA - amount * direction;
+            VectorXY endpointB = segment.EndpointB + amount * direction;
 
-            return new Segment(startPoint, endPoint, segment.IncludesStartPoint, segment.IncludesEndPoint);
+            return new Segment(
+                endpointA,
+                endpointB,
+                segment.IncludesEndpointA,
+                segment.IncludesEndpointB);
         }
     }
 }

@@ -108,22 +108,22 @@ public class ContourRasterizationImageTests
 
     private static Contour CreateTriangleContour()
     {
-        return new Contour(new IBoundedParameterizedCurve[]
+        return new Contour(new IFinitePath[]
         {
-            new Segment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
-            new Segment(new VectorXY(4f, 0f), new VectorXY(2f, 3.5f)),
-            new Segment(new VectorXY(2f, 3.5f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
+            new ParameterizedSegment(new VectorXY(4f, 0f), new VectorXY(2f, 3.5f)),
+            new ParameterizedSegment(new VectorXY(2f, 3.5f), new VectorXY(0f, 0f))
         });
     }
 
     private static Contour CreateSquareContour()
     {
-        return new Contour(new IBoundedParameterizedCurve[]
+        return new Contour(new IFinitePath[]
         {
-            new Segment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
-            new Segment(new VectorXY(4f, 0f), new VectorXY(4f, 4f)),
-            new Segment(new VectorXY(4f, 4f), new VectorXY(0f, 4f)),
-            new Segment(new VectorXY(0f, 4f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
+            new ParameterizedSegment(new VectorXY(4f, 0f), new VectorXY(4f, 4f)),
+            new ParameterizedSegment(new VectorXY(4f, 4f), new VectorXY(0f, 4f)),
+            new ParameterizedSegment(new VectorXY(0f, 4f), new VectorXY(0f, 0f))
         });
     }
 

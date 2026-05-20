@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// <summary>
     /// Represents a circle in two-dimensional space.
     /// </summary>
-    public readonly struct Circle : IFiniteCurve, IProjectableCurve, IEquatable<Circle>
+    public readonly struct Circle : IFiniteCurve, IEquatable<Circle>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
