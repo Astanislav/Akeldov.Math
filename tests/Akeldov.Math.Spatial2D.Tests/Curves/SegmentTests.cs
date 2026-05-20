@@ -94,6 +94,23 @@ public class SegmentTests
     }
 
     [Test]
+    public void ExplicitConversionToSegment_PreservesEndpointsAndEndpointInclusion()
+    {
+        var parameterizedSegment = new ParameterizedSegment(
+            new VectorXY(1f, 2f),
+            new VectorXY(4f, 6f),
+            includesStartPoint: false,
+            includesEndPoint: true);
+
+        Segment segment = (Segment)parameterizedSegment;
+
+        AssertVector(segment.EndpointA, 1f, 2f);
+        AssertVector(segment.EndpointB, 4f, 6f);
+        Assert.That(segment.IncludesEndpointA, Is.False);
+        Assert.That(segment.IncludesEndpointB, Is.True);
+    }
+
+    [Test]
     public void RayIntersections_WhenRayCrossesSegmentInterior_ReturnsIntersection()
     {
         var segment = new Segment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));

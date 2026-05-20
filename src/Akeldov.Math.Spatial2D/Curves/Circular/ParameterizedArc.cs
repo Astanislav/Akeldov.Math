@@ -309,6 +309,20 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns><see langword="true"/> if the arcs are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(ParameterizedArc left, ParameterizedArc right) => !(left == right);
 
+        /// <summary>
+        /// Converts a parameterized arc to its geometric arc.
+        /// </summary>
+        /// <param name="arc">The parameterized arc to convert.</param>
+        public static explicit operator Arc(ParameterizedArc arc)
+        {
+            if (arc.IsFullCircle)
+                return new Arc(arc.Center, arc.Radius, arc.StartAngle, arc.StartAngle + 2f * MathF.PI);
+
+            return arc.AngularDirection == AngularDirection.Counterclockwise
+                ? new Arc(arc.Center, arc.Radius, arc.StartAngle, arc.EndAngle)
+                : new Arc(arc.Center, arc.Radius, arc.EndAngle, arc.StartAngle);
+        }
+
         private float GetCurveCoordinate(float angle)
         {
             if (IsFullCircle)

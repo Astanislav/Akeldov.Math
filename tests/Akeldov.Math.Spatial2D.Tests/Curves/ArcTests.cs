@@ -85,6 +85,38 @@ public class ArcTests
     }
 
     [Test]
+    public void ExplicitConversionToArc_WhenParameterizedArcIsClockwise_ReturnsSameGeometricRegion()
+    {
+        var parameterizedArc = new ParameterizedArc(
+            VectorXY.Zero,
+            1f,
+            0f,
+            MathF.PI / 2f,
+            AngularDirection.Clockwise);
+
+        Arc arc = (Arc)parameterizedArc;
+
+        Assert.That(arc.IsWithinAngularRegion(new VectorXY(-1f, 0f)), Is.True);
+        Assert.That(arc.IsWithinAngularRegion(new VectorXY(1f, 1f)), Is.False);
+    }
+
+    [Test]
+    public void ExplicitConversionToArc_WhenParameterizedArcIsFullCircle_PreservesFullCircle()
+    {
+        var parameterizedArc = new ParameterizedArc(
+            VectorXY.Zero,
+            1f,
+            0f,
+            -2f * MathF.PI,
+            AngularDirection.Clockwise);
+
+        Arc arc = (Arc)parameterizedArc;
+
+        Assert.That(arc.IsFullCircle, Is.True);
+        Assert.That(arc.Length, Is.EqualTo(2f * MathF.PI).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    [Test]
     public void RayIntersections_WhenRayHitsCircleOutsideArc_ReturnsEmpty()
     {
         var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI / 2f);

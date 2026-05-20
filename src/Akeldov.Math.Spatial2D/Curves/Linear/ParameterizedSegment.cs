@@ -349,6 +349,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         public static bool operator !=(ParameterizedSegment left, ParameterizedSegment right) => !(left == right);
 
         /// <summary>
+        /// Converts a parameterized segment to its geometric segment.
+        /// </summary>
+        /// <param name="segment">The parameterized segment to convert.</param>
+        public static explicit operator Segment(ParameterizedSegment segment)
+        {
+            return new Segment(
+                segment.StartPoint,
+                segment.EndPoint,
+                segment.IncludesStartPoint,
+                segment.IncludesEndPoint);
+        }
+
+        /// <summary>
         /// Translates a segment by a vector.
         /// </summary>
         /// <param name="left">The segment to translate.</param>
