@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D
     /// <summary>
     /// Represents a two-dimensional point with single-precision floating-point coordinates.
     /// </summary>
-    public readonly struct PointXY : IEquatable<PointXY>
+    public readonly struct PointXY : IPointDistanceProvider, IEquatable<PointXY>
     {
         /// <summary>
         /// Initializes a new point with the specified coordinates.
@@ -64,6 +64,19 @@ namespace Akeldov.Math.Spatial2D
         {
             x = X;
             y = Y;
+        }
+
+        /// <summary>
+        /// Returns the Euclidean distance from this point to the specified point.
+        /// </summary>
+        /// <param name="point">The point to measure to.</param>
+        /// <returns>The Euclidean distance between this point and <paramref name="point"/>.</returns>
+        public float Distance(PointXY point)
+        {
+            float dx = point.X - X;
+            float dy = point.Y - Y;
+
+            return MathF.Sqrt(dx * dx + dy * dy);
         }
 
         /// <summary>

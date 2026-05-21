@@ -56,7 +56,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         public IReadOnlyList<int> DistinctValues => _distinctValues;
 
         /// <inheritdoc/>
-        public override int Sample(VectorXY point)
+        public override int Sample(PointXY point)
         {
             int value = base.Sample(point);
 

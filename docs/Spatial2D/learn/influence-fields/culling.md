@@ -10,11 +10,11 @@ using Akeldov.Math.Spatial2D.Fields;
 
 var sources = new[]
 {
-    new FloatPointInfluenceSource(1f, new VectorXY(12f, 12f), 0f),
-    new FloatPointInfluenceSource(1f, new VectorXY(88f, 14f), 25f),
-    new FloatPointInfluenceSource(1f, new VectorXY(18f, 58f), 50f),
-    new FloatPointInfluenceSource(1f, new VectorXY(83f, 54f), 75f),
-    new FloatPointInfluenceSource(1f, new VectorXY(50f, 34f), 100f)
+    new FloatPointInfluenceSource(1f, new PointXY(12f, 12f), 0f),
+    new FloatPointInfluenceSource(1f, new PointXY(88f, 14f), 25f),
+    new FloatPointInfluenceSource(1f, new PointXY(18f, 58f), 50f),
+    new FloatPointInfluenceSource(1f, new PointXY(83f, 54f), 75f),
+    new FloatPointInfluenceSource(1f, new PointXY(50f, 34f), 100f)
 };
 ```
 
@@ -29,7 +29,7 @@ var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
 var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
 var field = new FloatPointInfluenceField(sampler, sources, culler);
 
-float value = field.Sample(new VectorXY(40f, 30f));
+float value = field.Sample(new PointXY(40f, 30f));
 ```
 
 ![Delaunay culler output](../../../assets/spatial2d/influence/delaunay-culler.png)

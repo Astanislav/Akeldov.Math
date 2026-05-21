@@ -19,10 +19,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// Thrown when <paramref name="distance"/> is negative, NaN, or infinite, or when
         /// <paramref name="weight"/> is negative or NaN.
         /// </exception>
-        public InfluenceSample(TValue value, VectorXY sourcePoint, float distance, float weight)
+        public InfluenceSample(TValue value, PointXY sourcePoint, float distance, float weight)
         {
-            if (!sourcePoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(sourcePoint), "Influence sample source point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                sourcePoint,
+                nameof(sourcePoint),
+                "Influence sample source point coordinates must be finite.");
 
             if (distance < 0f || float.IsNaN(distance) || float.IsInfinity(distance))
                 throw new ArgumentOutOfRangeException(nameof(distance), "Influence sample distance must be finite and non-negative.");
@@ -44,7 +46,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Gets the point on the influence source used for this sample.
         /// </summary>
-        public VectorXY SourcePoint { get; }
+        public PointXY SourcePoint { get; }
 
         /// <summary>
         /// Gets the distance from the requested point to <see cref="SourcePoint"/>.

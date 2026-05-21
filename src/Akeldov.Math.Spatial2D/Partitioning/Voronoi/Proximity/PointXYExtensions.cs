@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
 {
-    internal static partial class VectorXYExtensions
+    internal static partial class PointXYExtensions
     {
         /// <summary>
         /// Returns the index of the nearest weighted Voronoi site to the specified point.
@@ -11,7 +11,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <param name="point">The point to assign to a site.</param>
         /// <returns>The nearest site index, using site weight for weighted-distance comparison.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int GetNearestWeightedSiteIndex(this Site[] sites, VectorXY point)
+        internal static int GetNearestWeightedSiteIndex(this Site[] sites, PointXY point)
         {
             var px = point.X; var py = point.Y;
             float bestWeightedDistance = float.PositiveInfinity;

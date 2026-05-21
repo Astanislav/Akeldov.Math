@@ -16,10 +16,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="curveCoordinate"/> is NaN, or when <paramref name="distance"/> is negative, NaN, or infinite.
         /// </exception>
-        public ParameterizedCurveProjection(VectorXY projectedPoint, float curveCoordinate, float distance)
+        public ParameterizedCurveProjection(PointXY projectedPoint, float curveCoordinate, float distance)
         {
-            if (!projectedPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(projectedPoint), "Projected point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                projectedPoint,
+                nameof(projectedPoint),
+                "Projected point coordinates must be finite.");
 
             if (float.IsNaN(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must not be NaN.");
@@ -35,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the projected point on the curve.
         /// </summary>
-        public VectorXY ProjectedPoint { get; }
+        public PointXY ProjectedPoint { get; }
 
         /// <summary>
         /// Gets the curve coordinate of the projected point, measured in length units.

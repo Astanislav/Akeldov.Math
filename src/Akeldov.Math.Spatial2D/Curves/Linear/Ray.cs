@@ -8,11 +8,11 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a half-line that starts at an origin and extends in one direction.
     /// </summary>
     /// <remarks>
-    /// The default value starts at <see cref="VectorXY.Zero"/> and points along the positive X axis.
+    /// The default value starts at the coordinate origin and points along the positive X axis.
     /// </remarks>
     public readonly struct Ray : IRayPath, IEquatable<Ray>
     {
-        private readonly VectorXY _origin;
+        private readonly PointXY _origin;
         private readonly float _angle;
         // Store X shifted so default(Ray) points along positive X instead of having a zero direction.
         private readonly float _directionXMinusOne;
@@ -22,10 +22,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Initializes a new ray that starts at the specified origin and points along the positive X axis.
         /// </summary>
         /// <param name="origin">The ray origin.</param>
-        public Ray(VectorXY origin)
+        public Ray(PointXY origin)
         {
-            if (!origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(origin), "Ray origin coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                origin,
+                nameof(origin),
+                "Ray origin coordinates must be finite.");
 
             _origin = origin;
             _angle = 0f;
@@ -39,10 +41,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="origin">The ray origin.</param>
         /// <param name="angle">The ray direction angle in radians.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
-        public Ray(VectorXY origin, float angle)
+        public Ray(PointXY origin, float angle)
         {
-            if (!origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(origin), "Ray origin coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                origin,
+                nameof(origin),
+                "Ray origin coordinates must be finite.");
 
             if (float.IsNaN(angle) || float.IsInfinity(angle))
                 throw new ArgumentOutOfRangeException(nameof(angle), "Ray angle must be finite.");
@@ -56,7 +60,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the ray origin.
         /// </summary>
-        public VectorXY Origin => _origin;
+        public PointXY Origin => _origin;
 
         /// <summary>
         /// Gets the normalized ray direction.
@@ -71,14 +75,14 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the ray endpoint.
         /// </summary>
-        public VectorXY Endpoint => _origin;
+        public PointXY Endpoint => _origin;
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this ray.
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this ray.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return Project(point).Distance;
         }
@@ -88,7 +92,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this ray.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
             var projection = ProjectWithParameter(point);
             return new CurveProjection(projection.ProjectedPoint, projection.Distance);
@@ -99,10 +103,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, ray length coordinate, and distance to this ray.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY toPoint = point - _origin;
             VectorXY direction = Direction;
@@ -111,7 +117,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             if (t < 0f)
                 t = 0f;
 
-            VectorXY projected = _origin + direction * t;
+            PointXY projected = _origin + direction * t;
             return new ParameterizedCurveProjection(projected, t, point.Distance(projected));
         }
 
@@ -122,17 +128,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="other">The other ray to intersect with this ray.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of this ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray other,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            List<VectorXY> intersections = new List<VectorXY>();
+            List<PointXY> intersections = new List<PointXY>();
 
-            VectorXY p = _origin;
+            PointXY p = _origin;
             VectorXY r = Direction;
-            VectorXY q = other._origin;
+            PointXY q = other._origin;
             VectorXY s = other.Direction;
 
             float cross = VectorXY.Cross(r, s);
@@ -150,14 +156,14 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t >= 0 && u >= 0)
             {
-                VectorXY intersectionPoint = p + r * t;
+                PointXY intersectionPoint = p + r * t;
                 intersections.AddDistinct(intersectionPoint, geometryEpsilon);
             }
 
             return intersections;
         }
 
-        private void AddFirstCollinearIntersection(Ray other, List<VectorXY> intersections, float geometryEpsilon)
+        private void AddFirstCollinearIntersection(Ray other, List<PointXY> intersections, float geometryEpsilon)
         {
             VectorXY originDelta = other._origin - _origin;
             VectorXY direction = Direction;
@@ -176,7 +182,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         private static bool IsPointOnRay(
-            VectorXY point,
+            PointXY point,
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
@@ -210,7 +216,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="curveCoordinate">The finite non-negative curve coordinate in world coordinate units.</param>
         /// <returns>The point on this ray.</returns>
-        public VectorXY GetPoint(float curveCoordinate)
+        public PointXY GetPoint(float curveCoordinate)
         {
             if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");

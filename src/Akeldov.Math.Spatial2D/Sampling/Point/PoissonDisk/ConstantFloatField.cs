@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
 
         public IReadOnlyList<float> DistinctValues { get; }
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             return _value;
         }

@@ -71,6 +71,6 @@ public class RGBA16BitRasterTests
 
     private static RasterGrid CreateGrid()
     {
-        return new RasterGrid(VectorXY.Zero, new VectorXY(2f, 3f), new VectorXYInt(2, 3));
+        return new RasterGrid(new PointXY(0f, 0f), new VectorXY(2f, 3f), new VectorXYInt(2, 3));
     }
 }

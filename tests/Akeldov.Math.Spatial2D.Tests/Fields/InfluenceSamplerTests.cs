@@ -9,13 +9,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource("far", new VectorXY(0f, 0f), distance: 5f),
-            FixedSource("near", new VectorXY(10f, 0f), distance: 1f)
+            FixedSource("far", new PointXY(0f, 0f), distance: 5f),
+            FixedSource("near", new PointXY(10f, 0f), distance: 1f)
         };
 
         var sampler = new NearestInfluenceSampler<FixedInfluenceSource<string>, string>();
 
-        string value = sampler.Sample(sources, VectorXY.Zero);
+        string value = sampler.Sample(sources, new PointXY(0f, 0f));
 
         Assert.That(value, Is.EqualTo("near"));
     }
@@ -25,13 +25,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(1f, new VectorXY(0f, 0f), distance: 3f),
-            FixedSource(2f, new VectorXY(10f, 0f), distance: 3f)
+            FixedSource(1f, new PointXY(0f, 0f), distance: 3f),
+            FixedSource(2f, new PointXY(10f, 0f), distance: 3f)
         };
 
         var sampler = new NearestFloatInfluenceSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, VectorXY.Zero);
+        float value = sampler.Sample(sources, new PointXY(0f, 0f));
 
         Assert.That(value, Is.EqualTo(1f));
     }
@@ -41,13 +41,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(10, new VectorXY(0f, 0f), distance: 4f),
-            FixedSource(20, new VectorXY(10f, 0f), distance: 2f)
+            FixedSource(10, new PointXY(0f, 0f), distance: 4f),
+            FixedSource(20, new PointXY(10f, 0f), distance: 2f)
         };
 
         var sampler = new NearestIntInfluenceSampler<FixedInfluenceSource<int>>();
 
-        int value = sampler.Sample(sources, VectorXY.Zero);
+        int value = sampler.Sample(sources, new PointXY(0f, 0f));
 
         Assert.That(value, Is.EqualTo(20));
     }
@@ -57,13 +57,13 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<string>[]
         {
-            FixedSource("valid", new VectorXY(0f, 0f), distance: 1f),
+            FixedSource("valid", new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new NearestInfluenceSampler<FixedInfluenceSource<string>, string>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -71,13 +71,13 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<float>[]
         {
-            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            FixedSource(1f, new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new NearestFloatInfluenceSampler<FixedInfluenceSource<float>>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -85,13 +85,13 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<int>[]
         {
-            FixedSource(1, new VectorXY(0f, 0f), distance: 1f),
+            FixedSource(1, new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new NearestIntInfluenceSampler<FixedInfluenceSource<int>>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -99,13 +99,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 2f),
-            FixedSource(10f, new VectorXY(10f, 0f), distance: 8f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 2f),
+            FixedSource(10f, new PointXY(10f, 0f), distance: 8f)
         };
 
         var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, VectorXY.Zero);
+        float value = sampler.Sample(sources, new PointXY(0f, 0f));
 
         Assert.That(value, Is.EqualTo(2f).Within(0.0001f));
     }
@@ -115,13 +115,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(42f, new VectorXY(0f, 0f), distance: 0f),
-            FixedSource(10f, new VectorXY(10f, 0f), distance: 8f)
+            FixedSource(42f, new PointXY(0f, 0f), distance: 0f),
+            FixedSource(10f, new PointXY(10f, 0f), distance: 8f)
         };
 
         var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, VectorXY.Zero);
+        float value = sampler.Sample(sources, new PointXY(0f, 0f));
 
         Assert.That(value, Is.EqualTo(42f));
     }
@@ -132,14 +132,14 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 2f, weight: weight),
-            FixedSource(10f, new VectorXY(10f, 0f), distance: 8f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 2f, weight: weight),
+            FixedSource(10f, new PointXY(10f, 0f), distance: 8f)
         };
 
         var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
 
         Assert.Throws<InvalidOperationException>(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -147,13 +147,13 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<float>[]
         {
-            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            FixedSource(1f, new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new InverseDistanceWeightedFloatSampler<FixedInfluenceSource<float>>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -161,12 +161,12 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(7f, new VectorXY(0f, 0f), distance: 1f)
+            FixedSource(7f, new PointXY(0f, 0f), distance: 1f)
         };
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(100f, 100f));
+        float value = sampler.Sample(sources, new PointXY(100f, 100f));
 
         Assert.That(value, Is.EqualTo(7f));
     }
@@ -176,13 +176,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 1f),
-            FixedSource(100f, new VectorXY(10f, 0f), distance: 1f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 1f),
+            FixedSource(100f, new PointXY(10f, 0f), distance: 1f)
         };
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(2.5f, 0f));
+        float value = sampler.Sample(sources, new PointXY(2.5f, 0f));
 
         Assert.That(value, Is.EqualTo(25f).Within(0.0001f));
     }
@@ -192,13 +192,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 1f),
-            FixedSource(100f, new VectorXY(10f, 0f), distance: 1f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 1f),
+            FixedSource(100f, new PointXY(10f, 0f), distance: 1f)
         };
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(15f, 0f));
+        float value = sampler.Sample(sources, new PointXY(15f, 0f));
 
         Assert.That(value, Is.EqualTo(150f).Within(0.0001f));
     }
@@ -208,14 +208,14 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 1f),
-            FixedSource(10f, new VectorXY(10f, 0f), distance: 1f),
-            FixedSource(20f, new VectorXY(0f, 10f), distance: 1f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 1f),
+            FixedSource(10f, new PointXY(10f, 0f), distance: 1f),
+            FixedSource(20f, new PointXY(0f, 10f), distance: 1f)
         };
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(2f, 3f));
+        float value = sampler.Sample(sources, new PointXY(2f, 3f));
 
         Assert.That(value, Is.EqualTo(8f).Within(0.0001f));
     }
@@ -225,14 +225,14 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0f, new VectorXY(0f, 0f), distance: 1f),
-            FixedSource(100f, new VectorXY(10f, 0f), distance: 1f),
-            FixedSource(200f, new VectorXY(20f, 0f), distance: 1f)
+            FixedSource(0f, new PointXY(0f, 0f), distance: 1f),
+            FixedSource(100f, new PointXY(10f, 0f), distance: 1f),
+            FixedSource(200f, new PointXY(20f, 0f), distance: 1f)
         };
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(5f, 0f));
+        float value = sampler.Sample(sources, new PointXY(5f, 0f));
 
         Assert.That(value, Is.EqualTo(50f).Within(0.0001f));
     }
@@ -243,13 +243,13 @@ public class InfluenceSamplerTests
         var sources = new FixedInfluenceSource<float>[11];
 
         for (int i = 0; i < 10; i++)
-            sources[i] = FixedSource(i * 10f, new VectorXY(i * 10f, 0f), distance: i + 1f);
+            sources[i] = FixedSource(i * 10f, new PointXY(i * 10f, 0f), distance: i + 1f);
 
-        sources[10] = FixedSource(1000f, new VectorXY(0f, 10f), distance: 11f);
+        sources[10] = FixedSource(1000f, new PointXY(0f, 10f), distance: 11f);
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
-        float value = sampler.Sample(sources, new VectorXY(5f, 5f));
+        float value = sampler.Sample(sources, new PointXY(5f, 5f));
 
         Assert.That(value, Is.EqualTo(5f).Within(0.0001f));
     }
@@ -260,13 +260,13 @@ public class InfluenceSamplerTests
         var sources = new FixedInfluenceSource<float>[11];
 
         for (int i = 0; i < 10; i++)
-            sources[i] = FixedSource(i * 10f, new VectorXY(i * 10f, 0f), distance: i + 1f);
+            sources[i] = FixedSource(i * 10f, new PointXY(i * 10f, 0f), distance: i + 1f);
 
-        sources[10] = FixedSource(1000f, new VectorXY(0f, 10f), distance: 11f);
+        sources[10] = FixedSource(1000f, new PointXY(0f, 10f), distance: 11f);
 
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>(11);
 
-        float value = sampler.Sample(sources, new VectorXY(5f, 5f));
+        float value = sampler.Sample(sources, new PointXY(5f, 5f));
 
         Assert.That(value, Is.EqualTo(505f).Within(0.0001f));
     }
@@ -283,13 +283,13 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<float>[]
         {
-            FixedSource(1f, new VectorXY(0f, 0f), distance: 1f),
+            FixedSource(1f, new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new BarycentricFloatSampler<FixedInfluenceSource<float>>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -297,13 +297,13 @@ public class InfluenceSamplerTests
     {
         var sources = new[]
         {
-            FixedSource(0, new VectorXY(0f, 0f), distance: 1f),
-            FixedSource(10, new VectorXY(10f, 0f), distance: 1f)
+            FixedSource(0, new PointXY(0f, 0f), distance: 1f),
+            FixedSource(10, new PointXY(10f, 0f), distance: 1f)
         };
 
         var sampler = new BarycentricIntSampler<FixedInfluenceSource<int>>();
 
-        int value = sampler.Sample(sources, new VectorXY(2.6f, 0f));
+        int value = sampler.Sample(sources, new PointXY(2.6f, 0f));
 
         Assert.That(value, Is.EqualTo(3));
     }
@@ -314,13 +314,13 @@ public class InfluenceSamplerTests
         var sources = new FixedInfluenceSource<int>[11];
 
         for (int i = 0; i < 10; i++)
-            sources[i] = FixedSource(i * 10, new VectorXY(i * 10f, 0f), distance: i + 1f);
+            sources[i] = FixedSource(i * 10, new PointXY(i * 10f, 0f), distance: i + 1f);
 
-        sources[10] = FixedSource(1000, new VectorXY(0f, 10f), distance: 11f);
+        sources[10] = FixedSource(1000, new PointXY(0f, 10f), distance: 11f);
 
         var sampler = new BarycentricIntSampler<FixedInfluenceSource<int>>(11);
 
-        int value = sampler.Sample(sources, new VectorXY(5f, 5f));
+        int value = sampler.Sample(sources, new PointXY(5f, 5f));
 
         Assert.That(value, Is.EqualTo(505));
     }
@@ -337,22 +337,22 @@ public class InfluenceSamplerTests
     {
         var sources = new FixedInfluenceSource<int>[]
         {
-            FixedSource(1, new VectorXY(0f, 0f), distance: 1f),
+            FixedSource(1, new PointXY(0f, 0f), distance: 1f),
             null!
         };
         var sampler = new BarycentricIntSampler<FixedInfluenceSource<int>>();
 
         AssertThrowsForNullSource(() =>
-            sampler.Sample(sources, VectorXY.Zero));
+            sampler.Sample(sources, new PointXY(0f, 0f)));
     }
 
     [Test]
     public void BuiltInSamplers_WhenPointCoordinateIsInvalid_ThrowArgumentOutOfRangeException()
     {
-        var stringSources = new[] { FixedSource("value", VectorXY.Zero, distance: 1f) };
-        var floatSources = new[] { FixedSource(1f, VectorXY.Zero, distance: 1f) };
-        var intSources = new[] { FixedSource(1, VectorXY.Zero, distance: 1f) };
-        var invalidPoint = new VectorXY(float.NaN, 0f);
+        var stringSources = new[] { FixedSource("value", new PointXY(0f, 0f), distance: 1f) };
+        var floatSources = new[] { FixedSource(1f, new PointXY(0f, 0f), distance: 1f) };
+        var intSources = new[] { FixedSource(1, new PointXY(0f, 0f), distance: 1f) };
+        var invalidPoint = new PointXY(float.PositiveInfinity, 0f);
 
         AssertThrowsForInvalidPoint(() =>
             new NearestInfluenceSampler<FixedInfluenceSource<string>, string>().Sample(stringSources, invalidPoint));
@@ -384,7 +384,7 @@ public class InfluenceSamplerTests
 
     private static FixedInfluenceSource<TValue> FixedSource<TValue>(
         TValue value,
-        VectorXY sourcePoint,
+        PointXY sourcePoint,
         float distance,
         float weight = 1f)
     {
@@ -401,12 +401,12 @@ public class InfluenceSamplerTests
             _influence = influence;
         }
 
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return _influence.Distance;
         }
 
-        public InfluenceSample<TValue> GetInfluence(VectorXY point)
+        public InfluenceSample<TValue> GetInfluence(PointXY point)
         {
             return _influence;
         }

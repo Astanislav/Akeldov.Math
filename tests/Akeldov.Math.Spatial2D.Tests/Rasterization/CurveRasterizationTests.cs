@@ -9,7 +9,7 @@ public class CurveRasterizationTests
     [Test]
     public void Rasterize_WhenCurveIsLine_MapsDistanceToGray8()
     {
-        ICurve curve = new Line(VectorXY.Zero, new VectorXY(1f, 0f));
+        ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         RasterGrid grid = CreateThreeByThreeGrid();
 
         Gray8BitRaster raster = curve.Rasterize(grid, new CurveDistanceGray8BitRasterizer(ToGray8));
@@ -24,8 +24,8 @@ public class CurveRasterizationTests
     {
         IReadOnlyList<ICurve> curves = new ICurve[]
         {
-            new Line(new VectorXY(0f, -1f), new VectorXY(1f, -1f)),
-            new Line(new VectorXY(0f, 1f), new VectorXY(1f, 1f))
+            new Line(new PointXY(0f, -1f), new PointXY(1f, -1f)),
+            new Line(new PointXY(0f, 1f), new PointXY(1f, 1f))
         };
         RasterGrid grid = CreateThreeByThreeGrid();
 
@@ -39,7 +39,7 @@ public class CurveRasterizationTests
     [Test]
     public void Rasterize_WhenParameterizedCurveIsProvided_MapsDistanceAndCurveCoordinateToGray8()
     {
-        IParameterizedCurve curve = new ParameterizedSegment(new VectorXY(-1f, 0f), new VectorXY(1f, 0f));
+        IParameterizedCurve curve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
         RasterGrid grid = CreateThreeByThreeGrid();
 
         Gray8BitRaster raster = curve.Rasterize(
@@ -57,8 +57,8 @@ public class CurveRasterizationTests
     {
         IReadOnlyList<IParameterizedCurve> curves = new IParameterizedCurve[]
         {
-            new ParameterizedSegment(new VectorXY(-1f, -1f), new VectorXY(1f, -1f)),
-            new ParameterizedSegment(new VectorXY(-1f, 1f), new VectorXY(1f, 1f))
+            new ParameterizedSegment(new PointXY(-1f, -1f), new PointXY(1f, -1f)),
+            new ParameterizedSegment(new PointXY(-1f, 1f), new PointXY(1f, 1f))
         };
         RasterGrid grid = CreateThreeByThreeGrid();
 
@@ -74,9 +74,9 @@ public class CurveRasterizationTests
     [Test]
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
-        ICurve curve = new Line(VectorXY.Zero, new VectorXY(1f, 0f));
+        ICurve curve = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
         IReadOnlyList<ICurve> curves = new ICurve[] { curve };
-        IParameterizedCurve parameterizedCurve = new ParameterizedSegment(new VectorXY(-1f, 0f), new VectorXY(1f, 0f));
+        IParameterizedCurve parameterizedCurve = new ParameterizedSegment(new PointXY(-1f, 0f), new PointXY(1f, 0f));
         IReadOnlyList<IParameterizedCurve> parameterizedCurves = new IParameterizedCurve[] { parameterizedCurve };
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -140,7 +140,7 @@ public class CurveRasterizationTests
     private static RasterGrid CreateThreeByThreeGrid()
     {
         return new RasterGrid(
-            origin: new VectorXY(-1.5f, -1.5f),
+            origin: new PointXY(-1.5f, -1.5f),
             size: new VectorXY(3f, 3f),
             resolution: new VectorXYInt(3, 3));
     }

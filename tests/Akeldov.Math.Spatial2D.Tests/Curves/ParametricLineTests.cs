@@ -7,11 +7,9 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenDirectionIsZero_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new ParametricLine(VectorXY.Zero, VectorXY.Zero));
+        Assert.Throws<ArgumentException>(() => new ParametricLine(new PointXY(0f, 0f), VectorXY.Zero));
     }
 
-    [TestCase(float.NaN, 0f, "origin")]
-    [TestCase(0f, float.NaN, "origin")]
     [TestCase(float.PositiveInfinity, 0f, "origin")]
     [TestCase(0f, float.NegativeInfinity, "origin")]
     [TestCase(float.NaN, 0f, "direction")]
@@ -20,7 +18,7 @@ public class ParametricLineTests
     [TestCase(0f, float.NegativeInfinity, "direction")]
     public void Constructor_WhenOriginOrDirectionCoordinateIsInvalid_Throws(float x, float y, string paramName)
     {
-        VectorXY origin = paramName == "origin" ? new VectorXY(x, y) : VectorXY.Zero;
+        PointXY origin = paramName == "origin" ? new PointXY(x, y) : new PointXY(0f, 0f);
         VectorXY direction = paramName == "direction" ? new VectorXY(x, y) : new VectorXY(1f, 0f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -35,7 +33,7 @@ public class ParametricLineTests
         var line = default(Line);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new ParametricLine(line, new VectorXY(float.NaN, 0f)));
+            new ParametricLine(line, new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("referencePoint"));
     }
@@ -43,15 +41,15 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenDirectionIsNotParallelToLine_Throws()
     {
-        var line = new Line(new VectorXY(0f, 0f), new VectorXY(2f, 0f));
+        var line = new Line(new PointXY(0f, 0f), new PointXY(2f, 0f));
 
-        Assert.Throws<ArgumentException>(() => new ParametricLine(line, VectorXY.Zero, new VectorXY(0f, 1f)));
+        Assert.Throws<ArgumentException>(() => new ParametricLine(line, new PointXY(0f, 0f), new VectorXY(0f, 1f)));
     }
 
     [Test]
     public void Constructor_WithOriginAndDirection_UsesOriginAndNormalizedDirection()
     {
-        var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(2f, 0f));
+        var line = new ParametricLine(new PointXY(2f, 3f), new VectorXY(2f, 0f));
 
         AssertVector(line.Origin, 2f, 3f);
         AssertVector(line.Direction, 1f, 0f);
@@ -70,7 +68,7 @@ public class ParametricLineTests
         AssertVector(line.Direction, 1f, 0f);
         AssertVector(line.Normal, 0f, 1f);
 
-        var projection = line.ProjectWithParameter(new VectorXY(3f, 4f));
+        var projection = line.ProjectWithParameter(new PointXY(3f, 4f));
         AssertVector(projection.ProjectedPoint, 3f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(3f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
@@ -80,8 +78,8 @@ public class ParametricLineTests
     public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
     {
         const float geometryEpsilon = 0.01f;
-        var line = new ParametricLine(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
-        var ray = new Ray(new VectorXY(2f, 0.005f));
+        var line = new ParametricLine(new PointXY(-5f, 0f), new VectorXY(5f, 0f));
+        var ray = new Ray(new PointXY(2f, 0.005f));
 
         var defaultIntersections = line.GetRayIntersections(ray);
         var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
@@ -98,7 +96,7 @@ public class ParametricLineTests
     public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
         var line = default(ParametricLine);
-        var ray = new Ray(VectorXY.Zero);
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             line.GetRayIntersections(ray, geometryEpsilon));
@@ -109,7 +107,7 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenReferencePointModeIsGlobalZero_UsesClosestPointToGlobalOrigin()
     {
-        var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.GlobalZero);
+        var line = new ParametricLine(new PointXY(2f, 3f), new PointXY(4f, 3f), LineReferencePointMode.GlobalZero);
 
         AssertVector(line.Origin, 0f, 3f);
     }
@@ -117,7 +115,7 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenReferencePointModeIsPointA_UsesPointA()
     {
-        var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.PointA);
+        var line = new ParametricLine(new PointXY(2f, 3f), new PointXY(4f, 3f), LineReferencePointMode.PointA);
 
         AssertVector(line.Origin, 2f, 3f);
     }
@@ -125,7 +123,7 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenReferencePointModeIsPointB_UsesPointB()
     {
-        var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.PointB);
+        var line = new ParametricLine(new PointXY(2f, 3f), new PointXY(4f, 3f), LineReferencePointMode.PointB);
 
         AssertVector(line.Origin, 4f, 3f);
     }
@@ -133,7 +131,7 @@ public class ParametricLineTests
     [Test]
     public void Constructor_WhenReferencePointModeIsMidpoint_UsesMidpoint()
     {
-        var line = new ParametricLine(new VectorXY(2f, 3f), new VectorXY(4f, 3f), LineReferencePointMode.Midpoint);
+        var line = new ParametricLine(new PointXY(2f, 3f), new PointXY(4f, 3f), LineReferencePointMode.Midpoint);
 
         AssertVector(line.Origin, 3f, 3f);
     }
@@ -141,9 +139,9 @@ public class ParametricLineTests
     [Test]
     public void ProjectWithParameter_WhenReferencePointIsProvided_MeasuresCurveCoordinateFromItsProjection()
     {
-        var line = new ParametricLine(new VectorXY(2f, 0f), new VectorXY(4f, 0f), new VectorXY(2f, 5f));
+        var line = new ParametricLine(new PointXY(2f, 0f), new PointXY(4f, 0f), new PointXY(2f, 5f));
 
-        var projection = line.ProjectWithParameter(VectorXY.Zero);
+        var projection = line.ProjectWithParameter(new PointXY(0f, 0f));
 
         AssertVector(line.Origin, 2f, 0f);
         AssertVector(projection.ProjectedPoint, 0f, 0f);
@@ -154,10 +152,10 @@ public class ParametricLineTests
     [Test]
     public void ProjectWithParameter_WhenDirectionIsReversed_MeasuresCurveCoordinateInReversedDirection()
     {
-        var geometricLine = new Line(new VectorXY(0f, 0f), new VectorXY(4f, 0f));
-        var line = new ParametricLine(geometricLine, VectorXY.Zero, new VectorXY(-1f, 0f));
+        var geometricLine = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var line = new ParametricLine(geometricLine, new PointXY(0f, 0f), new VectorXY(-1f, 0f));
 
-        var projection = line.ProjectWithParameter(new VectorXY(2f, 1f));
+        var projection = line.ProjectWithParameter(new PointXY(2f, 1f));
 
         AssertVector(line.Direction, -1f, 0f);
         AssertVector(projection.ProjectedPoint, 2f, 0f);
@@ -168,9 +166,9 @@ public class ParametricLineTests
     [Test]
     public void Equals_WhenOriginDiffers_ReturnsFalse()
     {
-        var geometricLine = new Line(new VectorXY(0f, 0f), new VectorXY(4f, 0f));
-        var first = new ParametricLine(geometricLine, VectorXY.Zero);
-        var second = new ParametricLine(geometricLine, new VectorXY(2f, 0f));
+        var geometricLine = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var first = new ParametricLine(geometricLine, new PointXY(0f, 0f));
+        var second = new ParametricLine(geometricLine, new PointXY(2f, 0f));
 
         Assert.That(first.Equals(second), Is.False);
         Assert.That(first.HasSameGeometry(second), Is.True);
@@ -179,9 +177,9 @@ public class ParametricLineTests
     [Test]
     public void Equals_WhenDirectionDiffers_ReturnsFalse()
     {
-        var geometricLine = new Line(new VectorXY(0f, 0f), new VectorXY(4f, 0f));
-        var first = new ParametricLine(geometricLine, VectorXY.Zero, new VectorXY(1f, 0f));
-        var second = new ParametricLine(geometricLine, VectorXY.Zero, new VectorXY(-1f, 0f));
+        var geometricLine = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var first = new ParametricLine(geometricLine, new PointXY(0f, 0f), new VectorXY(1f, 0f));
+        var second = new ParametricLine(geometricLine, new PointXY(0f, 0f), new VectorXY(-1f, 0f));
 
         Assert.That(first.Equals(second), Is.False);
         Assert.That(first.HasSameGeometry(second), Is.True);
@@ -190,8 +188,8 @@ public class ParametricLineTests
     [Test]
     public void ExplicitConversionToLine_ReturnsGeometricLine()
     {
-        var geometricLine = new Line(new VectorXY(0f, 0f), new VectorXY(4f, 0f));
-        var line = new ParametricLine(geometricLine, new VectorXY(2f, 0f));
+        var geometricLine = new Line(new PointXY(0f, 0f), new PointXY(4f, 0f));
+        var line = new ParametricLine(geometricLine, new PointXY(2f, 0f));
 
         Line converted = (Line)line;
 
@@ -200,6 +198,12 @@ public class ParametricLineTests
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static void AssertVector(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

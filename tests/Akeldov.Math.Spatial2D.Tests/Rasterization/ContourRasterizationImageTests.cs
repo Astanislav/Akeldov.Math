@@ -88,7 +88,7 @@ public class ContourRasterizationImageTests
     {
         Contour contour = CreateSquareContour().FilletCorners(0.35f);
         var grid = new RasterGrid(
-            origin: new VectorXY(-0.5f, -0.5f),
+            origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),
             resolution: new VectorXYInt(160, 160));
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "rounded-square-gray16.png");
@@ -110,9 +110,9 @@ public class ContourRasterizationImageTests
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
-            new ParameterizedSegment(new VectorXY(4f, 0f), new VectorXY(2f, 3.5f)),
-            new ParameterizedSegment(new VectorXY(2f, 3.5f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
+            new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(2f, 3.5f)),
+            new ParameterizedSegment(new PointXY(2f, 3.5f), new PointXY(0f, 0f))
         });
     }
 
@@ -120,17 +120,17 @@ public class ContourRasterizationImageTests
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(4f, 0f)),
-            new ParameterizedSegment(new VectorXY(4f, 0f), new VectorXY(4f, 4f)),
-            new ParameterizedSegment(new VectorXY(4f, 4f), new VectorXY(0f, 4f)),
-            new ParameterizedSegment(new VectorXY(0f, 4f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(4f, 0f)),
+            new ParameterizedSegment(new PointXY(4f, 0f), new PointXY(4f, 4f)),
+            new ParameterizedSegment(new PointXY(4f, 4f), new PointXY(0f, 4f)),
+            new ParameterizedSegment(new PointXY(0f, 4f), new PointXY(0f, 0f))
         });
     }
 
     private static RasterGrid CreateTriangleGrid()
     {
         return new RasterGrid(
-            origin: new VectorXY(-0.5f, -0.5f),
+            origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 4.5f),
             resolution: new VectorXYInt(128, 128));
     }

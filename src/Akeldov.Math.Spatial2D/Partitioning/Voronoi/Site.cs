@@ -17,10 +17,12 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when <paramref name="weight"/> is negative or NaN.
         /// </exception>
-        public Site(VectorXY position, float weight)
+        public Site(PointXY position, float weight)
         {
-            if (!position.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(position), "Site position coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                position,
+                nameof(position),
+                "Site position coordinates must be finite.");
 
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Site weight must be non-negative and not NaN.");
@@ -32,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Partitioning.Voronoi
         /// <summary>
         /// Gets the site position.
         /// </summary>
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
 
         /// <summary>
         /// Gets the site weight used by weighted-distance comparison.

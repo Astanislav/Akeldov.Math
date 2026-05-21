@@ -73,6 +73,6 @@ public class GrayRasterTests
 
     private static RasterGrid CreateGrid()
     {
-        return new RasterGrid(VectorXY.Zero, VectorXY.One, new VectorXYInt(2, 2));
+        return new RasterGrid(new PointXY(0f, 0f), VectorXY.One, new VectorXYInt(2, 2));
     }
 }

@@ -21,7 +21,7 @@
         /// Thrown when <paramref name="curveCoordinate"/> is NaN, infinite, or outside the valid
         /// coordinate domain defined by the implementation.
         /// </exception>
-        VectorXY GetPoint(float curveCoordinate);
+        PointXY GetPoint(float curveCoordinate);
 
         /// <summary>
         /// Projects the specified point onto this curve and reports the curve coordinate of the projected point.
@@ -32,6 +32,6 @@
         /// and the distance to this curve.
         /// </returns>
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
-        ParameterizedCurveProjection ProjectWithParameter(VectorXY point);
+        ParameterizedCurveProjection ProjectWithParameter(PointXY point);
     }
 }

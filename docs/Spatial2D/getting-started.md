@@ -29,15 +29,16 @@ using Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk;
 
 ## Coordinates
 
-The library uses `float` for `VectorXY` and `int` for `VectorXYInt`.
+The library uses `PointXY` for positions, `VectorXY` for offsets and directions, and `VectorXYInt` for integer grid coordinates.
 
 ```csharp
-var position = new VectorXY(3.5f, 8f);
+var position = new PointXY(3.5f, 8f);
+var offset = new VectorXY(1f, 2f);
 var cell = new VectorXYInt(3, 8);
 
 VectorXY asFloat = cell;
-VectorXYInt truncated = (VectorXYInt)position;
-VectorXYInt rounded = position.RoundToInt();
+VectorXYInt truncated = (VectorXYInt)offset;
+VectorXYInt rounded = offset.RoundToInt();
 ```
 
 ## Floating-Point Comparisons

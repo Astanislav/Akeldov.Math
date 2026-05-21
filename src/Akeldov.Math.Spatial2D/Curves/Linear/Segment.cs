@@ -9,8 +9,8 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public readonly struct Segment : IFiniteTwoEndpointCurve, IEquatable<Segment>
     {
-        private readonly VectorXY _endpointA;
-        private readonly VectorXY _endpointB;
+        private readonly PointXY _endpointA;
+        private readonly PointXY _endpointB;
 
         private readonly bool _includesEndpointA;
         private readonly bool _includesEndpointB;
@@ -20,13 +20,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="startPoint">The first endpoint.</param>
         /// <param name="endPoint">The second endpoint.</param>
-        public Segment(VectorXY startPoint, VectorXY endPoint)
+        public Segment(PointXY startPoint, PointXY endPoint)
         {
-            if (!startPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                startPoint,
+                nameof(startPoint),
+                "Segment endpoint coordinates must be finite.");
 
-            if (!endPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                endPoint,
+                nameof(endPoint),
+                "Segment endpoint coordinates must be finite.");
 
             _endpointA = startPoint;
             _endpointB = endPoint;
@@ -41,13 +45,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="endPoint">The second endpoint.</param>
         /// <param name="includesEndpointA">Whether the first endpoint belongs to the segment.</param>
         /// <param name="includesEndpointB">Whether the second endpoint belongs to the segment.</param>
-        public Segment(VectorXY startPoint, VectorXY endPoint, bool includesEndpointA, bool includesEndpointB)
+        public Segment(PointXY startPoint, PointXY endPoint, bool includesEndpointA, bool includesEndpointB)
         {
-            if (!startPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                startPoint,
+                nameof(startPoint),
+                "Segment endpoint coordinates must be finite.");
 
-            if (!endPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                endPoint,
+                nameof(endPoint),
+                "Segment endpoint coordinates must be finite.");
 
             _endpointA = startPoint;
             _endpointB = endPoint;
@@ -73,12 +81,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the first endpoint.
         /// </summary>
-        public VectorXY EndpointA => _endpointA;
+        public PointXY EndpointA => _endpointA;
 
         /// <summary>
         /// Gets the second endpoint.
         /// </summary>
-        public VectorXY EndpointB => _endpointB;
+        public PointXY EndpointB => _endpointB;
 
         /// <summary>
         /// Returns point intersections with the specified ray. If the ray is collinear with the segment
@@ -88,13 +96,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this segment.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            List<VectorXY> intersections = new List<VectorXY>();
+            List<PointXY> intersections = new List<PointXY>();
 
             VectorXY rayDir = ray.Direction;
             VectorXY segDir = EndpointB - EndpointA;
@@ -113,7 +121,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t >= 0f && u >= 0f && u <= 1f)
             {
-                VectorXY intersection = ray.Origin + t * rayDir;
+                PointXY intersection = ray.Origin + t * rayDir;
 
                 if (intersection.AlmostEquals(EndpointA, geometryEpsilon))
                 {
@@ -134,7 +142,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
-        private void AddFirstCollinearIntersection(Ray ray, List<VectorXY> intersections, float geometryEpsilon)
+        private void AddFirstCollinearIntersection(Ray ray, List<PointXY> intersections, float geometryEpsilon)
         {
             VectorXY segDir = EndpointB - EndpointA;
             VectorXY originToStart = EndpointA - ray.Origin;
@@ -153,7 +161,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             float tStart = VectorXY.Dot(EndpointA - ray.Origin, ray.Direction);
             float tEnd = VectorXY.Dot(EndpointB - ray.Origin, ray.Direction);
 
-            VectorXY startPoint;
+            PointXY startPoint;
             bool startIncluded;
             float startT;
             float endT;
@@ -192,7 +200,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 intersections.AddDistinct(startPoint, geometryEpsilon);
         }
 
-        private bool IncludesPoint(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        private bool IncludesPoint(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             VectorXY segmentVector = EndpointB - EndpointA;
             VectorXY startToPoint = point - EndpointA;
@@ -217,7 +225,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         private static bool IsPointOnRay(
-            VectorXY point,
+            PointXY point,
             Ray ray,
             out float t,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
@@ -262,7 +270,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this segment.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return Project(point).Distance;
         }
@@ -272,10 +280,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this segment.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY segmentVector = EndpointB - EndpointA;
             VectorXY startToPoint = point - EndpointA;
@@ -291,7 +301,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             else if (normalizedParameter > 1f)
                 normalizedParameter = 1f;
 
-            VectorXY projection = EndpointA + normalizedParameter * segmentVector;
+            PointXY projection = EndpointA + normalizedParameter * segmentVector;
             return new CurveProjection(projection, point.Distance(projection));
         }
 

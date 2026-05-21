@@ -20,6 +20,6 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <returns>
         /// The value, closest/source point, distance, and weight used by influence samplers.
         /// </returns>
-        InfluenceSample<TValue> GetInfluence(VectorXY point);
+        InfluenceSample<TValue> GetInfluence(PointXY point);
     }
 }

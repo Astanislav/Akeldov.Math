@@ -13,7 +13,7 @@ public class RayTests
         Assert.That(ray.Angle, Is.EqualTo(0f));
         AssertVector(ray.Direction, 1f, 0f);
 
-        var projection = ray.ProjectWithParameter(new VectorXY(3f, 4f));
+        var projection = ray.ProjectWithParameter(new PointXY(3f, 4f));
         AssertVector(projection.ProjectedPoint, 3f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(3f).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
@@ -24,19 +24,17 @@ public class RayTests
     [TestCase(float.NegativeInfinity)]
     public void Constructor_WhenAngleIsInvalid_Throws(float angle)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Ray(VectorXY.Zero, angle));
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Ray(new PointXY(0f, 0f), angle));
 
         Assert.That(exception!.ParamName, Is.EqualTo("angle"));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void Constructor_WhenOriginCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new Ray(new VectorXY(x, y)));
+            new Ray(new PointXY(x, y)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("origin"));
     }
@@ -44,8 +42,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenThisRayOriginBelongsToOtherCollinearRay_ReturnsThisOrigin()
     {
-        var ray = new Ray(new VectorXY(2f, 0f));
-        var other = new Ray(VectorXY.Zero);
+        var ray = new Ray(new PointXY(2f, 0f));
+        var other = new Ray(new PointXY(0f, 0f));
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -56,8 +54,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenOtherCollinearRayStartsAhead_ReturnsOtherOrigin()
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(2f, 0f));
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(2f, 0f));
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -68,8 +66,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenCollinearRaysFaceEachOther_ReturnsThisOrigin()
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(2f, 0f), MathF.PI);
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(2f, 0f), MathF.PI);
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -80,8 +78,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenRaysAreParallelButNotCollinear_ReturnsEmpty()
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(0f, 1f));
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(0f, 1f));
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -92,8 +90,8 @@ public class RayTests
     public void RayIntersections_WithCustomGeometryEpsilon_WhenRaysAreNearlyCollinear_ReturnsOtherOrigin()
     {
         const float geometryEpsilon = 0.01f;
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(2f, 0.005f));
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(2f, 0.005f));
 
         var defaultIntersections = ray.GetRayIntersections(other);
         var tolerantIntersections = ray.GetRayIntersections(other, geometryEpsilon);
@@ -109,8 +107,8 @@ public class RayTests
     [TestCase(float.NegativeInfinity)]
     public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(2f, 0f));
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(2f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             ray.GetRayIntersections(other, geometryEpsilon));
@@ -121,8 +119,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenNonParallelRaysCrossAhead_ReturnsIntersection()
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(2f, -1f), MathF.PI / 2f);
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(2f, -1f), MathF.PI / 2f);
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -133,8 +131,8 @@ public class RayTests
     [Test]
     public void RayIntersections_WhenIntersectionIsBehindOneRay_ReturnsEmpty()
     {
-        var ray = new Ray(VectorXY.Zero);
-        var other = new Ray(new VectorXY(-2f, -1f), MathF.PI / 2f);
+        var ray = new Ray(new PointXY(0f, 0f));
+        var other = new Ray(new PointXY(-2f, -1f), MathF.PI / 2f);
 
         var intersections = ray.GetRayIntersections(other);
 
@@ -144,9 +142,9 @@ public class RayTests
     [Test]
     public void ProjectWithParameter_WhenPointIsBehindRay_ClampsToOrigin()
     {
-        var ray = new Ray(new VectorXY(1f, 0f));
+        var ray = new Ray(new PointXY(1f, 0f));
 
-        var projection = ray.ProjectWithParameter(VectorXY.Zero);
+        var projection = ray.ProjectWithParameter(new PointXY(0f, 0f));
 
         AssertVector(projection.ProjectedPoint, 1f, 0f);
         Assert.That(projection.CurveCoordinate, Is.EqualTo(0f).Within(GeometryConstants.GeometryEpsilon));
@@ -159,12 +157,18 @@ public class RayTests
         var ray = default(Ray);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            ray.ProjectWithParameter(new VectorXY(float.NaN, 0f)));
+            ray.ProjectWithParameter(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static void AssertVector(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

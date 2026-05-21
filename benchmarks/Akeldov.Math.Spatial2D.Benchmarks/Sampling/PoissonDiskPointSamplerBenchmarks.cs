@@ -41,22 +41,22 @@ public class PoissonDiskPointSamplerBenchmarks
 
     private sealed class RadialDistanceField : IFloatField
     {
-        private readonly VectorXY _center;
+        private readonly PointXY _center;
         private readonly float _maxDistanceToCorner;
 
         public RadialDistanceField(VectorXY fieldSize, float min, float max)
         {
             Min = min;
             Max = max;
-            _center = fieldSize * 0.5f;
-            _maxDistanceToCorner = _center.Length;
+            _center = new PointXY(fieldSize.X * 0.5f, fieldSize.Y * 0.5f);
+            _maxDistanceToCorner = _center.Distance(new PointXY(0f, 0f));
         }
 
         public float Min { get; }
 
         public float Max { get; }
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             float t = point.Distance(_center) / _maxDistanceToCorner;
             return Min + (Max - Min) * t;

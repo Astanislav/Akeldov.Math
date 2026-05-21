@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Contours;
 public class ContourBenchmarks
 {
     private Contour _contour = null!;
-    private VectorXY[] _queries = null!;
+    private PointXY[] _queries = null!;
 
     [Params(8, 64)]
     public int SegmentCount { get; set; }
@@ -51,29 +51,29 @@ public class ContourBenchmarks
 
         for (int i = 0; i < curves.Length; i++)
         {
-            VectorXY start = GetRegularPolygonVertex(i, segmentCount, radius);
-            VectorXY end = GetRegularPolygonVertex((i + 1) % segmentCount, segmentCount, radius);
+            PointXY start = GetRegularPolygonVertex(i, segmentCount, radius);
+            PointXY end = GetRegularPolygonVertex((i + 1) % segmentCount, segmentCount, radius);
             curves[i] = new ParameterizedSegment(start, end);
         }
 
         return new Contour(curves);
     }
 
-    private static VectorXY GetRegularPolygonVertex(int index, int segmentCount, float radius)
+    private static PointXY GetRegularPolygonVertex(int index, int segmentCount, float radius)
     {
         float angle = index * 2f * MathF.PI / segmentCount;
-        return new VectorXY(MathF.Cos(angle) * radius, MathF.Sin(angle) * radius);
+        return new PointXY(MathF.Cos(angle) * radius, MathF.Sin(angle) * radius);
     }
 
-    private static VectorXY[] CreateQueries(int queryCount, float range)
+    private static PointXY[] CreateQueries(int queryCount, float range)
     {
         var random = new Random(45678);
-        var queries = new VectorXY[queryCount];
+        var queries = new PointXY[queryCount];
         float offset = range * 0.5f;
 
         for (int i = 0; i < queries.Length; i++)
         {
-            queries[i] = new VectorXY(
+            queries[i] = new PointXY(
                 random.NextSingle() * range - offset,
                 random.NextSingle() * range - offset);
         }

@@ -8,6 +8,6 @@ namespace Akeldov.Math.Spatial2D
         /// <summary>
         /// Gets the object's position.
         /// </summary>
-        VectorXY Position { get; }
+        PointXY Position { get; }
     }
 }

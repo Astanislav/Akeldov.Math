@@ -23,7 +23,7 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
@@ -35,7 +35,7 @@ public class PositionedCollectionExtensionsTests
     {
         var items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
@@ -63,7 +63,7 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
@@ -75,7 +75,7 @@ public class PositionedCollectionExtensionsTests
     {
         var items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
@@ -87,7 +87,7 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+        AssertItemsArgumentException(() => items.GetClosestTo(new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class PositionedCollectionExtensionsTests
     {
         var items = Array.Empty<PositionedItem>();
 
-        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+        AssertItemsArgumentException(() => items.GetClosestTo(new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -103,11 +103,11 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
-        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+        AssertItemsArgumentException(() => items.GetClosestTo(new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -115,11 +115,11 @@ public class PositionedCollectionExtensionsTests
     {
         var items = new PositionedItem[]
         {
-            new PositionedItem("center", VectorXY.Zero),
+            new PositionedItem("center", new PointXY(0f, 0f)),
             null!
         };
 
-        AssertItemsArgumentException(() => items.GetClosestTo(VectorXY.Zero));
+        AssertItemsArgumentException(() => items.GetClosestTo(new PointXY(0f, 0f)));
     }
 
     [Test]
@@ -127,9 +127,9 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = new[]
         {
-            new PositionedItem("center", VectorXY.Zero),
-            new PositionedItem("right", new VectorXY(10f, 0f)),
-            new PositionedItem("left", new VectorXY(-10f, 0f))
+            new PositionedItem("center", new PointXY(0f, 0f)),
+            new PositionedItem("right", new PointXY(10f, 0f)),
+            new PositionedItem("left", new PointXY(-10f, 0f))
         };
 
         var closest = items.GetClosestToCentroid();
@@ -142,9 +142,9 @@ public class PositionedCollectionExtensionsTests
     {
         var items = new[]
         {
-            new PositionedItem("center", VectorXY.Zero),
-            new PositionedItem("right", new VectorXY(10f, 0f)),
-            new PositionedItem("left", new VectorXY(-10f, 0f))
+            new PositionedItem("center", new PointXY(0f, 0f)),
+            new PositionedItem("right", new PointXY(10f, 0f)),
+            new PositionedItem("left", new PointXY(-10f, 0f))
         };
 
         var closest = items.GetClosestToCentroid();
@@ -157,12 +157,12 @@ public class PositionedCollectionExtensionsTests
     {
         IReadOnlyList<PositionedItem> items = new[]
         {
-            new PositionedItem("center", VectorXY.Zero),
-            new PositionedItem("right", new VectorXY(10f, 0f)),
-            new PositionedItem("left", new VectorXY(-10f, 0f))
+            new PositionedItem("center", new PointXY(0f, 0f)),
+            new PositionedItem("right", new PointXY(10f, 0f)),
+            new PositionedItem("left", new PointXY(-10f, 0f))
         };
 
-        var closest = items.GetClosestTo(VectorXY.Zero);
+        var closest = items.GetClosestTo(new PointXY(0f, 0f));
 
         Assert.That(closest.Name, Is.EqualTo("center"));
     }
@@ -172,12 +172,12 @@ public class PositionedCollectionExtensionsTests
     {
         var items = new[]
         {
-            new PositionedItem("center", VectorXY.Zero),
-            new PositionedItem("right", new VectorXY(10f, 0f)),
-            new PositionedItem("left", new VectorXY(-10f, 0f))
+            new PositionedItem("center", new PointXY(0f, 0f)),
+            new PositionedItem("right", new PointXY(10f, 0f)),
+            new PositionedItem("left", new PointXY(-10f, 0f))
         };
 
-        var closest = items.GetClosestTo(VectorXY.Zero);
+        var closest = items.GetClosestTo(new PointXY(0f, 0f));
 
         Assert.That(closest.Name, Is.EqualTo("center"));
     }
@@ -191,7 +191,7 @@ public class PositionedCollectionExtensionsTests
 
     private sealed class PositionedItem : IHasPosition2D
     {
-        public PositionedItem(string name, VectorXY position)
+        public PositionedItem(string name, PointXY position)
         {
             Name = name;
             Position = position;
@@ -199,6 +199,6 @@ public class PositionedCollectionExtensionsTests
 
         public string Name { get; }
 
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
     }
 }

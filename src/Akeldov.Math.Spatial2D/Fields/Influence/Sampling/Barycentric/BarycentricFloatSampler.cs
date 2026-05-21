@@ -84,7 +84,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sources">The influence sources used for interpolation. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated floating-point value.</returns>
-        public float Sample(IReadOnlyList<TSource> sources, VectorXY point)
+        public float Sample(IReadOnlyList<TSource> sources, PointXY point)
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));
 
@@ -92,8 +92,10 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n <= 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             var sourceA = sources[0];
             if (sourceA is null)
@@ -195,7 +197,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             InfluenceSample<float> a,
             InfluenceSample<float> b,
             InfluenceSample<float> c,
-            VectorXY p)
+            PointXY p)
         {
             if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, p,
                 out float lA, out float lB, out float lC))
@@ -209,7 +211,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         private static bool TryBarycentric(
-            VectorXY a, VectorXY b, VectorXY c, VectorXY p,
+            PointXY a, PointXY b, PointXY c, PointXY p,
             out float lA, out float lB, out float lC)
         {
             float denom = Cross(b - a, c - a);
@@ -228,7 +230,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         private static float LerpOnSegment(
             InfluenceSample<float> a,
             InfluenceSample<float> b,
-            VectorXY p)
+            PointXY p)
         {
             var pa = a.SourcePoint;
             var pb = b.SourcePoint;
@@ -254,7 +256,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static InfluenceSample<float>[] GetNearestSamples(
             IReadOnlyList<TSource> sources,
-            VectorXY point,
+            PointXY point,
             int count,
             InfluenceSample<float> sampleA,
             InfluenceSample<float> sampleB,

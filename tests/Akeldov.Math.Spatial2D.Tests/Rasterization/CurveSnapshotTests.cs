@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class CurveSnapshotTests
 {
     private static readonly RasterGrid SnapshotGrid = new RasterGrid(
-        origin: new VectorXY(-3f, -3f),
+        origin: new PointXY(-3f, -3f),
         size: new VectorXY(6f, 6f),
         resolution: new VectorXYInt(96, 96));
 
@@ -43,43 +43,43 @@ public class CurveSnapshotTests
     {
         yield return new TestCaseData(
             "line-distance.png",
-            Curve(() => new Line(new VectorXY(-2.5f, -1.5f), new VectorXY(2.5f, 1.75f))))
+            Curve(() => new Line(new PointXY(-2.5f, -1.5f), new PointXY(2.5f, 1.75f))))
             .SetName("Line_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parametric-line-distance.png",
-            Curve(() => new ParametricLine(new VectorXY(0.9f, -2.5f), new VectorXY(-0.25f, 1f))))
+            Curve(() => new ParametricLine(new PointXY(0.9f, -2.5f), new VectorXY(-0.25f, 1f))))
             .SetName("ParametricLine_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "ray-distance.png",
-            Curve(() => new Ray(new VectorXY(-2.2f, -1.6f), MathF.PI / 5f)))
+            Curve(() => new Ray(new PointXY(-2.2f, -1.6f), MathF.PI / 5f)))
             .SetName("Ray_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "segment-distance.png",
-            Curve(() => new Segment(new VectorXY(-2.2f, 1.6f), new VectorXY(2.2f, -1.3f))))
+            Curve(() => new Segment(new PointXY(-2.2f, 1.6f), new PointXY(2.2f, -1.3f))))
             .SetName("Segment_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parameterized-segment-distance.png",
-            Curve(() => new ParameterizedSegment(new VectorXY(-1.7f, -2.2f), new VectorXY(1.8f, 1.8f))))
+            Curve(() => new ParameterizedSegment(new PointXY(-1.7f, -2.2f), new PointXY(1.8f, 1.8f))))
             .SetName("ParameterizedSegment_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "circle-distance.png",
-            Curve(() => new Circle(new VectorXY(0.1f, -0.15f), 1.75f)))
+            Curve(() => new Circle(new PointXY(0.1f, -0.15f), 1.75f)))
             .SetName("Circle_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "arc-distance.png",
-            Curve(() => new Arc(new VectorXY(-0.2f, -0.25f), 2f, MathF.PI / 8f, 5f * MathF.PI / 4f)))
+            Curve(() => new Arc(new PointXY(-0.2f, -0.25f), 2f, MathF.PI / 8f, 5f * MathF.PI / 4f)))
             .SetName("Arc_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parameterized-arc-distance.png",
             Curve(() => new ParameterizedArc(
-                new VectorXY(0.15f, 0.1f),
+                new PointXY(0.15f, 0.1f),
                 2.1f,
                 MathF.PI / 6f,
                 3f * MathF.PI / 2f,
@@ -91,13 +91,13 @@ public class CurveSnapshotTests
     {
         yield return new TestCaseData(
             "parametric-line-growing-thickness.png",
-            ParameterizedCurve(() => new ParametricLine(new VectorXY(-0.4f, -2.65f), new VectorXY(0.45f, 1f))))
+            ParameterizedCurve(() => new ParametricLine(new PointXY(-0.4f, -2.65f), new VectorXY(0.45f, 1f))))
             .SetName("ParametricLine_GrowingThickness_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parameterized-arc-growing-thickness.png",
             ParameterizedCurve(() => new ParameterizedArc(
-                new VectorXY(0f, 0f),
+                new PointXY(0f, 0f),
                 2f,
                 -MathF.PI / 4f,
                 5f * MathF.PI / 4f,
@@ -106,12 +106,12 @@ public class CurveSnapshotTests
 
         yield return new TestCaseData(
             "ray-growing-thickness.png",
-            ParameterizedCurve(() => new Ray(new VectorXY(-2.45f, -2.05f), MathF.PI / 5f)))
+            ParameterizedCurve(() => new Ray(new PointXY(-2.45f, -2.05f), MathF.PI / 5f)))
             .SetName("Ray_GrowingThickness_MatchesApprovedImage");
 
         yield return new TestCaseData(
             "parameterized-segment-growing-thickness.png",
-            ParameterizedCurve(() => new ParameterizedSegment(new VectorXY(-2.35f, -2.1f), new VectorXY(2.35f, 1.75f))))
+            ParameterizedCurve(() => new ParameterizedSegment(new PointXY(-2.35f, -2.1f), new PointXY(2.35f, 1.75f))))
             .SetName("ParameterizedSegment_GrowingThickness_MatchesApprovedImage");
     }
 

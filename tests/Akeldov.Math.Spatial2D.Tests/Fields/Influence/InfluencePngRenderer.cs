@@ -37,7 +37,7 @@ internal static class InfluencePngRenderer
             for (int x = 0; x < width; x++)
             {
                 float sampleX = (x + 0.5f) * fieldSize.X / width;
-                var point = new VectorXY(sampleX, sampleY);
+                var point = new PointXY(sampleX, sampleY);
                 var color = new Rgba(
                     ToSrgbByte(sampler.Sample(redSources, point)),
                     ToSrgbByte(sampler.Sample(greenSources, point)),
@@ -72,7 +72,7 @@ internal static class InfluencePngRenderer
             for (int x = 0; x < width; x++)
             {
                 float sampleX = (x + 0.5f) * fieldSize.X / width;
-                var point = new VectorXY(sampleX, sampleY);
+                var point = new PointXY(sampleX, sampleY);
                 List<FloatPointInfluenceSource> selectedSources = culler.Cull(point);
                 Rgba color = SelectionColor(sources, selectedSources);
 
@@ -138,8 +138,8 @@ internal static class InfluencePngRenderer
 
         for (int i = 0; i < hullIndices.Count; i++)
         {
-            VectorXY start = sources[hullIndices[i]].Position;
-            VectorXY end = sources[hullIndices[(i + 1) % hullIndices.Count]].Position;
+            PointXY start = sources[hullIndices[i]].Position;
+            PointXY end = sources[hullIndices[(i + 1) % hullIndices.Count]].Position;
 
             DrawLine(
                 pixels,
@@ -306,8 +306,8 @@ internal static class InfluencePngRenderer
         int start = 0;
         for (int i = 1; i < sources.Count; i++)
         {
-            VectorXY candidate = sources[i].Position;
-            VectorXY current = sources[start].Position;
+            PointXY candidate = sources[i].Position;
+            PointXY current = sources[start].Position;
             if (candidate.X < current.X || (candidate.X == current.X && candidate.Y < current.Y))
                 start = i;
         }
@@ -325,9 +325,9 @@ internal static class InfluencePngRenderer
                 if (i == currentIndex)
                     continue;
 
-                VectorXY current = sources[currentIndex].Position;
-                VectorXY next = sources[nextIndex].Position;
-                VectorXY candidate = sources[i].Position;
+                PointXY current = sources[currentIndex].Position;
+                PointXY next = sources[nextIndex].Position;
+                PointXY candidate = sources[i].Position;
                 float cross = Cross(next - current, candidate - current);
 
                 if (cross < -GeometryConstants.GeometryEpsilon ||
@@ -345,7 +345,7 @@ internal static class InfluencePngRenderer
     }
 
     private static bool PointInPolygon(
-        VectorXY point,
+        PointXY point,
         IReadOnlyList<FloatPointInfluenceSource> sources,
         IReadOnlyList<int> hullIndices)
     {
@@ -354,8 +354,8 @@ internal static class InfluencePngRenderer
 
         for (int i = 0; i < hullIndices.Count; i++)
         {
-            VectorXY a = sources[hullIndices[i]].Position;
-            VectorXY b = sources[hullIndices[j]].Position;
+            PointXY a = sources[hullIndices[i]].Position;
+            PointXY b = sources[hullIndices[j]].Position;
 
             if (PointOnSegment(point, a, b))
                 return true;
@@ -374,7 +374,7 @@ internal static class InfluencePngRenderer
         return isInside;
     }
 
-    private static bool PointOnSegment(VectorXY point, VectorXY a, VectorXY b)
+    private static bool PointOnSegment(PointXY point, PointXY a, PointXY b)
     {
         if (!Cross(b - a, point - a).IsAlmostZero())
             return false;
@@ -404,19 +404,19 @@ internal static class InfluencePngRenderer
         return left.X * right.Y - left.Y * right.X;
     }
 
-    private static float DistanceSquared(VectorXY left, VectorXY right)
+    private static float DistanceSquared(PointXY left, PointXY right)
     {
         float dx = left.X - right.X;
         float dy = left.Y - right.Y;
         return dx * dx + dy * dy;
     }
 
-    private static int ToPixelX(VectorXY point, int width, VectorXY fieldSize)
+    private static int ToPixelX(PointXY point, int width, VectorXY fieldSize)
     {
         return (int)MathF.Round(point.X * (width - 1) / fieldSize.X);
     }
 
-    private static int ToPixelY(VectorXY point, int height, VectorXY fieldSize)
+    private static int ToPixelY(PointXY point, int height, VectorXY fieldSize)
     {
         return (int)MathF.Round(point.Y * (height - 1) / fieldSize.Y);
     }

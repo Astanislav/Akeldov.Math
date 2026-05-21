@@ -9,9 +9,9 @@ public class FloatCurveInfluenceSourceIntersectionTests
     public void GetRayIntersections_WithCustomGeometryEpsilon_PassesToleranceToUnderlyingCurve()
     {
         const float geometryEpsilon = 0.01f;
-        var curve = new ParameterizedSegment(new VectorXY(4f, 0.005f), new VectorXY(10f, 0.005f));
+        var curve = new ParameterizedSegment(new PointXY(4f, 0.005f), new PointXY(10f, 0.005f));
         var source = new FloatCurveInfluenceSource(1f, curve, 0f);
-        var ray = new Ray(VectorXY.Zero);
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var defaultIntersections = source.GetRayIntersections(ray);
         var tolerantIntersections = source.GetRayIntersections(ray, geometryEpsilon);
@@ -27,9 +27,9 @@ public class FloatCurveInfluenceSourceIntersectionTests
     [TestCase(float.NegativeInfinity)]
     public void GetRayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
-        var curve = new ParameterizedSegment(new VectorXY(1f, -1f), new VectorXY(1f, 1f));
+        var curve = new ParameterizedSegment(new PointXY(1f, -1f), new PointXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(1f, curve, 0f);
-        var ray = new Ray(VectorXY.Zero);
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             source.GetRayIntersections(ray, geometryEpsilon));
@@ -37,7 +37,7 @@ public class FloatCurveInfluenceSourceIntersectionTests
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
 
-    private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    private static void AssertVector(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

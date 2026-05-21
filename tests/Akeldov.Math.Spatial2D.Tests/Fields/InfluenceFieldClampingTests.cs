@@ -10,20 +10,20 @@ public class InfluenceFieldClampingTests
     {
         var sources = new List<FloatPointInfluenceSource>
         {
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
-            new FloatPointInfluenceSource(1f, new VectorXY(10f, 0f), 10f)
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(10f, 0f), 10f)
         };
         var field = new FloatPointInfluenceField(
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             sources);
 
         sources.Clear();
-        sources.Add(new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
+        sources.Add(new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 100f));
 
         Assert.That(field.InfluenceSources, Has.Count.EqualTo(2));
         Assert.That(field.Min, Is.EqualTo(0f));
         Assert.That(field.Max, Is.EqualTo(10f));
-        Assert.That(field.Sample(new VectorXY(10f, 0f)), Is.EqualTo(10f));
+        Assert.That(field.Sample(new PointXY(10f, 0f)), Is.EqualTo(10f));
     }
 
     [Test]
@@ -33,14 +33,14 @@ public class InfluenceFieldClampingTests
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             new[]
             {
-                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
-                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+                new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+                new FloatPointInfluenceSource(1f, new PointXY(1f, 1f), 5f)
             });
 
         Assert.That(field.InfluenceSources, Is.Not.InstanceOf<FloatPointInfluenceSource[]>());
         Assert.Throws<NotSupportedException>(() =>
             ((IList<FloatPointInfluenceSource>)field.InfluenceSources)[0] =
-                new FloatPointInfluenceSource(1f, VectorXY.Zero, 100f));
+                new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 100f));
     }
 
     [Test]
@@ -50,8 +50,8 @@ public class InfluenceFieldClampingTests
             new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
             new[]
             {
-                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
-                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+                new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+                new FloatPointInfluenceSource(1f, new PointXY(1f, 1f), 5f)
             });
 
         Assert.That(field.DistinctValues, Is.Not.InstanceOf<List<float>>());
@@ -65,8 +65,8 @@ public class InfluenceFieldClampingTests
             new NearestIntInfluenceSampler<IntPointInfluenceSource>(),
             new[]
             {
-                new IntPointInfluenceSource(1f, VectorXY.Zero, 2),
-                new IntPointInfluenceSource(1f, VectorXY.One, 7)
+                new IntPointInfluenceSource(1f, new PointXY(0f, 0f), 2),
+                new IntPointInfluenceSource(1f, new PointXY(1f, 1f), 7)
             });
 
         Assert.That(field.DistinctValues, Is.Not.InstanceOf<List<int>>());
@@ -80,11 +80,11 @@ public class InfluenceFieldClampingTests
             new ConstantSampler<FloatPointInfluenceSource, float>(-10f),
             new[]
             {
-                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
-                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+                new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+                new FloatPointInfluenceSource(1f, new PointXY(1f, 1f), 5f)
             });
 
-        float value = field.Sample(new VectorXY(10f, 10f));
+        float value = field.Sample(new PointXY(10f, 10f));
 
         Assert.That(value, Is.EqualTo(0f));
     }
@@ -96,11 +96,11 @@ public class InfluenceFieldClampingTests
             new ConstantSampler<FloatPointInfluenceSource, float>(float.NaN),
             new[]
             {
-                new FloatPointInfluenceSource(1f, VectorXY.Zero, 0f),
-                new FloatPointInfluenceSource(1f, VectorXY.One, 5f)
+                new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 0f),
+                new FloatPointInfluenceSource(1f, new PointXY(1f, 1f), 5f)
             });
 
-        Assert.Throws<InvalidOperationException>(() => field.Sample(new VectorXY(10f, 10f)));
+        Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(10f, 10f)));
     }
 
     [Test]
@@ -110,11 +110,11 @@ public class InfluenceFieldClampingTests
             new ConstantSampler<IntPointInfluenceSource, int>(30),
             new[]
             {
-                new IntPointInfluenceSource(1f, VectorXY.Zero, 2),
-                new IntPointInfluenceSource(1f, VectorXY.One, 7)
+                new IntPointInfluenceSource(1f, new PointXY(0f, 0f), 2),
+                new IntPointInfluenceSource(1f, new PointXY(1f, 1f), 7)
             });
 
-        int value = field.Sample(new VectorXY(10f, 10f));
+        int value = field.Sample(new PointXY(10f, 10f));
 
         Assert.That(value, Is.EqualTo(7));
     }
@@ -128,7 +128,7 @@ public class InfluenceFieldClampingTests
             min: -2f,
             max: 3f);
 
-        float value = field.Sample(new VectorXY(10f, 10f));
+        float value = field.Sample(new PointXY(10f, 10f));
 
         Assert.That(value, Is.EqualTo(3f));
     }
@@ -142,7 +142,7 @@ public class InfluenceFieldClampingTests
             min: -2f,
             max: 3f);
 
-        Assert.Throws<InvalidOperationException>(() => field.Sample(new VectorXY(10f, 10f)));
+        Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(10f, 10f)));
     }
 
     [TestCase(3f, 2f, "min")]
@@ -180,7 +180,7 @@ public class InfluenceFieldClampingTests
 
     private static ICurveInfluenceSource<float>[] CreateCurveSources()
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, new VectorXY(10f, 0f));
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(10f, 0f));
 
         return new ICurveInfluenceSource<float>[]
         {
@@ -198,7 +198,7 @@ public class InfluenceFieldClampingTests
             _value = value;
         }
 
-        public TValue Sample(IReadOnlyList<TSource> influenceSources, VectorXY point)
+        public TValue Sample(IReadOnlyList<TSource> influenceSources, PointXY point)
         {
             return _value;
         }
@@ -213,7 +213,7 @@ public class InfluenceFieldClampingTests
             _sources = new List<ICurveInfluenceSource<float>>(sources);
         }
 
-        public List<ICurveInfluenceSource<float>> Cull(VectorXY point)
+        public List<ICurveInfluenceSource<float>> Cull(PointXY point)
         {
             return _sources;
         }

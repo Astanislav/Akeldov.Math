@@ -37,7 +37,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 float pointY = firstY + y * cellSize.Y;
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
-                    VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
+                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float signedDistance = source.SignedDistance(point);
                     values[x, y] = _signedDistanceToGrayLevel(signedDistance);
                 }

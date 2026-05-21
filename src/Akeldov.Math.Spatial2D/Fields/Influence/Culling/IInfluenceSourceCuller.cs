@@ -24,6 +24,6 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// The selected influence sources. The returned list must be non-null, mutable, owned by
         /// the caller, and contain at least one source.
         /// </returns>
-        List<TInfluenceSource> Cull(VectorXY point);
+        List<TInfluenceSource> Cull(PointXY point);
     }
 }

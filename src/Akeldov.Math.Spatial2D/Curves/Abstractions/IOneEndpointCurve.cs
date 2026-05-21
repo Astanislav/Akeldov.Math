@@ -8,6 +8,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the endpoint.
         /// </summary>
-        VectorXY Endpoint { get; }
+        PointXY Endpoint { get; }
     }
 }

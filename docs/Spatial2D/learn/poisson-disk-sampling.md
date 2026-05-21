@@ -40,7 +40,7 @@ public sealed class HorizontalDistanceField : IFloatField
     public float Min => 6f;
     public float Max => 14f;
 
-    public float Sample(VectorXY point)
+    public float Sample(PointXY point)
     {
         float t = point.X / 120f;
         return Min + (Max - Min) * t;

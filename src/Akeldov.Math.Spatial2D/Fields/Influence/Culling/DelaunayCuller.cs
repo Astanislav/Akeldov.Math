@@ -19,7 +19,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         private const float Epsilon = GeometryConstants.GeometryEpsilon;
 
         private readonly TPointSource[] _sources;
-        private readonly VectorXY[] _positions;
+        private readonly PointXY[] _positions;
         private readonly Triangle[] _triangles;
         private readonly TriangleSpatialIndex? _triangleIndex;
         private readonly int[] _convexHull;
@@ -59,10 +59,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// A new mutable list owned by the caller containing the selected triangle sources,
         /// nearest hull feature sources, or fallback sources.
         /// </returns>
-        public List<TPointSource> Cull(VectorXY point)
+        public List<TPointSource> Cull(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             if (_triangleIndex != null &&
                 _triangleIndex.TryFindContainingTriangle(point, out Triangle triangle))
@@ -78,7 +80,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static TPointSource[] CopySources(
             IReadOnlyList<TPointSource> pointSources,
-            out VectorXY[] positions)
+            out PointXY[] positions)
         {
             if (pointSources == null)
                 throw new ArgumentNullException(nameof(pointSources));
@@ -87,7 +89,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 throw new ArgumentException("At least three influence points are required.", nameof(pointSources));
 
             var sources = new TPointSource[pointSources.Count];
-            positions = new VectorXY[pointSources.Count];
+            positions = new PointXY[pointSources.Count];
 
             for (int i = 0; i < pointSources.Count; i++)
             {
@@ -95,7 +97,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 if (source is null)
                     throw new ArgumentException("Influence source collection cannot contain null elements.", nameof(pointSources));
 
-                if (!source.Position.IsFinite)
+                if (!PointXYValidation.IsFinite(source.Position))
                     throw new ArgumentException("Influence source positions must be finite.", nameof(pointSources));
 
                 sources[i] = source;
@@ -115,7 +117,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             };
         }
 
-        private List<TPointSource> CullToNearestHullFeature(VectorXY point)
+        private List<TPointSource> CullToNearestHullFeature(PointXY point)
         {
             HullEdge nearestEdge = FindNearestHullEdge(point);
 
@@ -132,7 +134,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             };
         }
 
-        private HullEdge FindNearestHullEdge(VectorXY point)
+        private HullEdge FindNearestHullEdge(PointXY point)
         {
             HullEdge nearestEdge = MeasureHullEdge(0, point);
 
@@ -146,7 +148,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             return nearestEdge;
         }
 
-        private HullEdge MeasureHullEdge(int hullStartIndex, VectorXY point)
+        private HullEdge MeasureHullEdge(int hullStartIndex, PointXY point)
         {
             int startIndex = _convexHull[hullStartIndex];
             int endIndex = _convexHull[(hullStartIndex + 1) % _convexHull.Length];
@@ -159,13 +161,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             return new HullEdge(startIndex, endIndex, projectionParameter, distanceSquared);
         }
 
-        private List<TPointSource> CullCollinearFallback(VectorXY point)
+        private List<TPointSource> CullCollinearFallback(PointXY point)
         {
             List<TPointSource> selectedSources = _fallbackCuller.Cull(point);
             return KeepNearestFallbackSegment(selectedSources, point);
         }
 
-        private static List<TPointSource> KeepNearestFallbackSegment(List<TPointSource> sources, VectorXY point)
+        private static List<TPointSource> KeepNearestFallbackSegment(List<TPointSource> sources, PointXY point)
         {
             if (sources.Count <= 2)
                 return sources;
@@ -199,10 +201,10 @@ namespace Akeldov.Math.Spatial2D.Fields
             };
         }
 
-        private static Triangle[] BuildDelaunayTriangulation(VectorXY[] sourcePositions)
+        private static Triangle[] BuildDelaunayTriangulation(PointXY[] sourcePositions)
         {
             int sourceCount = sourcePositions.Length;
-            VectorXY[] triangulationPoints = CreatePointSetWithSuperTriangle(sourcePositions);
+            PointXY[] triangulationPoints = CreatePointSetWithSuperTriangle(sourcePositions);
 
             var triangles = new List<Triangle>();
             if (Triangle.TryCreate(
@@ -239,13 +241,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             return triangles.ToArray();
         }
 
-        private static VectorXY[] CreatePointSetWithSuperTriangle(VectorXY[] sourcePositions)
+        private static PointXY[] CreatePointSetWithSuperTriangle(PointXY[] sourcePositions)
         {
             int sourceCount = sourcePositions.Length;
-            var points = new VectorXY[sourceCount + 3];
+            var points = new PointXY[sourceCount + 3];
             Array.Copy(sourcePositions, points, sourceCount);
 
-            (VectorXY first, VectorXY second, VectorXY third) = CreateSuperTriangle(sourcePositions);
+            (PointXY first, PointXY second, PointXY third) = CreateSuperTriangle(sourcePositions);
             points[sourceCount] = first;
             points[sourceCount + 1] = second;
             points[sourceCount + 2] = third;
@@ -255,7 +257,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private static void InsertPointIntoTriangulation(
             int pointIndex,
-            VectorXY[] points,
+            PointXY[] points,
             ref List<Triangle> triangles,
             ref List<Triangle> keptTriangles,
             Dictionary<Edge, int> cavityEdgeCounts)
@@ -302,7 +304,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 edgeCounts.Add(edge, 1);
         }
 
-        private static int[] BuildConvexHull(VectorXY[] points)
+        private static int[] BuildConvexHull(PointXY[] points)
         {
             int startIndex = FindLeftmostLowestPointIndex(points);
             var hull = new List<int>();
@@ -318,14 +320,14 @@ namespace Akeldov.Math.Spatial2D.Fields
             return hull.ToArray();
         }
 
-        private static int FindLeftmostLowestPointIndex(VectorXY[] points)
+        private static int FindLeftmostLowestPointIndex(PointXY[] points)
         {
             int leftmostLowestIndex = 0;
 
             for (int i = 1; i < points.Length; i++)
             {
-                VectorXY candidate = points[i];
-                VectorXY current = points[leftmostLowestIndex];
+                PointXY candidate = points[i];
+                PointXY current = points[leftmostLowestIndex];
                 if (candidate.X < current.X || (candidate.X == current.X && candidate.Y < current.Y))
                     leftmostLowestIndex = i;
             }
@@ -333,7 +335,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             return leftmostLowestIndex;
         }
 
-        private static int FindNextHullPointIndex(VectorXY[] points, int currentIndex)
+        private static int FindNextHullPointIndex(PointXY[] points, int currentIndex)
         {
             int nextIndex = currentIndex == 0 ? 1 : 0;
 
@@ -342,9 +344,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 if (candidateIndex == currentIndex)
                     continue;
 
-                VectorXY current = points[currentIndex];
-                VectorXY next = points[nextIndex];
-                VectorXY candidate = points[candidateIndex];
+                PointXY current = points[currentIndex];
+                PointXY next = points[nextIndex];
+                PointXY candidate = points[candidateIndex];
                 float orientation = Cross(next - current, candidate - current);
 
                 if (orientation < -Epsilon ||
@@ -357,7 +359,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             return nextIndex;
         }
 
-        private static (VectorXY first, VectorXY second, VectorXY third) CreateSuperTriangle(VectorXY[] points)
+        private static (PointXY first, PointXY second, PointXY third) CreateSuperTriangle(PointXY[] points)
         {
             GetPointBounds(points, out float minX, out float minY, out float maxX, out float maxY);
 
@@ -366,13 +368,13 @@ namespace Akeldov.Math.Spatial2D.Fields
             float centerY = (minY + maxY) * 0.5f;
 
             return (
-                new VectorXY(centerX - 20f * largestExtent, centerY - 10f * largestExtent),
-                new VectorXY(centerX, centerY + 20f * largestExtent),
-                new VectorXY(centerX + 20f * largestExtent, centerY - 10f * largestExtent)
+                new PointXY(centerX - 20f * largestExtent, centerY - 10f * largestExtent),
+                new PointXY(centerX, centerY + 20f * largestExtent),
+                new PointXY(centerX + 20f * largestExtent, centerY - 10f * largestExtent)
             );
         }
 
-        private static void ThrowIfAnyDuplicatePoint(VectorXY[] points, string paramName)
+        private static void ThrowIfAnyDuplicatePoint(PointXY[] points, string paramName)
         {
             for (int i = 0; i < points.Length; i++)
             {
@@ -384,10 +386,10 @@ namespace Akeldov.Math.Spatial2D.Fields
             }
         }
 
-        private static bool HasNonCollinearTriple(VectorXY[] points)
+        private static bool HasNonCollinearTriple(PointXY[] points)
         {
-            VectorXY first = points[0];
-            VectorXY second = points[1];
+            PointXY first = points[0];
+            PointXY second = points[1];
 
             for (int i = 2; i < points.Length; i++)
             {
@@ -398,11 +400,11 @@ namespace Akeldov.Math.Spatial2D.Fields
             return false;
         }
 
-        private static bool PointInTriangle(VectorXY point, Triangle triangle, VectorXY[] points)
+        private static bool PointInTriangle(PointXY point, Triangle triangle, PointXY[] points)
         {
-            VectorXY a = points[triangle.A];
-            VectorXY b = points[triangle.B];
-            VectorXY c = points[triangle.C];
+            PointXY a = points[triangle.A];
+            PointXY b = points[triangle.B];
+            PointXY c = points[triangle.C];
 
             float abSide = Cross(b - a, point - a);
             float bcSide = Cross(c - b, point - b);
@@ -419,22 +421,22 @@ namespace Akeldov.Math.Spatial2D.Fields
             return left.X * right.Y - left.Y * right.X;
         }
 
-        private static float SquaredDistance(VectorXY a, VectorXY b)
+        private static float SquaredDistance(PointXY a, PointXY b)
         {
             float dx = a.X - b.X;
             float dy = a.Y - b.Y;
             return dx * dx + dy * dy;
         }
 
-        private static float DistanceToSegmentSquared(VectorXY start, VectorXY end, VectorXY point)
+        private static float DistanceToSegmentSquared(PointXY start, PointXY end, PointXY point)
         {
             return DistanceToSegmentSquared(start, end, point, out _);
         }
 
         private static float DistanceToSegmentSquared(
-            VectorXY start,
-            VectorXY end,
-            VectorXY point,
+            PointXY start,
+            PointXY end,
+            PointXY point,
             out float projectionParameter)
         {
             VectorXY segment = end - start;
@@ -451,15 +453,15 @@ namespace Akeldov.Math.Spatial2D.Fields
             else if (projectionParameter > 1f)
                 projectionParameter = 1f;
 
-            VectorXY projection = start + projectionParameter * segment;
+            PointXY projection = start + projectionParameter * segment;
             return SquaredDistance(projection, point);
         }
 
         private static bool TryCreateCircumcircle(
-            VectorXY a,
-            VectorXY b,
-            VectorXY c,
-            out VectorXY center,
+            PointXY a,
+            PointXY b,
+            PointXY c,
+            out PointXY center,
             out float radiusSquared)
         {
             float ax = a.X;
@@ -489,13 +491,13 @@ namespace Akeldov.Math.Spatial2D.Fields
                              bLengthSquared * (ax - cx) +
                              cLengthSquared * (bx - ax)) / denominator;
 
-            center = new VectorXY(centerX, centerY);
+            center = new PointXY(centerX, centerY);
             radiusSquared = SquaredDistance(center, a);
             return true;
         }
 
         private static void GetPointBounds(
-            VectorXY[] points,
+            PointXY[] points,
             out float minX,
             out float minY,
             out float maxX,
@@ -508,7 +510,7 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             for (int i = 1; i < points.Length; i++)
             {
-                VectorXY point = points[i];
+                PointXY point = points[i];
                 if (point.X < minX) minX = point.X;
                 if (point.Y < minY) minY = point.Y;
                 if (point.X > maxX) maxX = point.X;
@@ -537,10 +539,10 @@ namespace Akeldov.Math.Spatial2D.Fields
 
         private readonly struct Triangle
         {
-            private readonly VectorXY _circumcenter;
+            private readonly PointXY _circumcenter;
             private readonly float _circumradiusSquared;
 
-            private Triangle(int a, int b, int c, VectorXY circumcenter, float circumradiusSquared)
+            private Triangle(int a, int b, int c, PointXY circumcenter, float circumradiusSquared)
             {
                 A = a;
                 B = b;
@@ -555,9 +557,9 @@ namespace Akeldov.Math.Spatial2D.Fields
 
             public int C { get; }
 
-            public static bool TryCreate(int a, int b, int c, VectorXY[] points, out Triangle triangle)
+            public static bool TryCreate(int a, int b, int c, PointXY[] points, out Triangle triangle)
             {
-                if (!TryCreateCircumcircle(points[a], points[b], points[c], out VectorXY center, out float radiusSquared))
+                if (!TryCreateCircumcircle(points[a], points[b], points[c], out PointXY center, out float radiusSquared))
                 {
                     triangle = default;
                     return false;
@@ -567,7 +569,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 return true;
             }
 
-            public bool ContainsInCircumcircle(VectorXY point)
+            public bool ContainsInCircumcircle(PointXY point)
             {
                 return SquaredDistance(point, _circumcenter) <= _circumradiusSquared + GeometryConstants.GeometryEpsilon;
             }
@@ -613,7 +615,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         {
             // Candidate lists preserve triangle array order, matching the old linear scan on shared edges.
             private readonly Triangle[] _triangles;
-            private readonly VectorXY[] _points;
+            private readonly PointXY[] _points;
             private readonly int[][] _cells;
             private readonly int _cellCountX;
             private readonly int _cellCountY;
@@ -624,7 +626,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             private readonly float _inverseCellWidth;
             private readonly float _inverseCellHeight;
 
-            public TriangleSpatialIndex(Triangle[] triangles, VectorXY[] points)
+            public TriangleSpatialIndex(Triangle[] triangles, PointXY[] points)
             {
                 _triangles = triangles;
                 _points = points;
@@ -640,7 +642,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 _cells = BuildCells(triangles);
             }
 
-            public bool TryFindContainingTriangle(VectorXY point, out Triangle triangle)
+            public bool TryFindContainingTriangle(PointXY point, out Triangle triangle)
             {
                 if (!TryGetCellIndex(point, out int cellIndex))
                 {
@@ -707,7 +709,7 @@ namespace Akeldov.Math.Spatial2D.Fields
                 }
             }
 
-            private bool TryGetCellIndex(VectorXY point, out int cellIndex)
+            private bool TryGetCellIndex(PointXY point, out int cellIndex)
             {
                 if (point.X < _minX || point.X > _maxX ||
                     point.Y < _minY || point.Y > _maxY)
@@ -741,9 +743,9 @@ namespace Akeldov.Math.Spatial2D.Fields
                 out float maxX,
                 out float maxY)
             {
-                VectorXY a = _points[triangle.A];
-                VectorXY b = _points[triangle.B];
-                VectorXY c = _points[triangle.C];
+                PointXY a = _points[triangle.A];
+                PointXY b = _points[triangle.B];
+                PointXY c = _points[triangle.C];
 
                 minX = MathF.Min(a.X, MathF.Min(b.X, c.X));
                 minY = MathF.Min(a.Y, MathF.Min(b.Y, c.Y));

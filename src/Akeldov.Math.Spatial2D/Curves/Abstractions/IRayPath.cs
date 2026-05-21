@@ -8,6 +8,6 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the endpoint at the start of the traversal direction.
         /// </summary>
-        VectorXY Origin { get; }
+        PointXY Origin { get; }
     }
 }

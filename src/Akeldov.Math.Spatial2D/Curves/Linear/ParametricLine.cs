@@ -8,13 +8,13 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents an infinite two-dimensional line with an explicit curve-coordinate origin and direction.
     /// </summary>
     /// <remarks>
-    /// The default value represents the horizontal line <c>y = 0</c>, with origin at <see cref="VectorXY.Zero"/>
+    /// The default value represents the horizontal line <c>y = 0</c>, with origin at the coordinate origin
     /// and direction along the positive X axis.
     /// </remarks>
     public readonly struct ParametricLine : IParameterizedCurve, IEquatable<ParametricLine>
     {
         private readonly Line _line;
-        private readonly VectorXY _origin;
+        private readonly PointXY _origin;
         private readonly bool _isDirectionReversed;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="line">The geometric line.</param>
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
-        public ParametricLine(Line line, VectorXY referencePoint)
+        public ParametricLine(Line line, PointXY referencePoint)
             : this(line, referencePoint, line.Direction)
         {
         }
@@ -45,10 +45,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <exception cref="ArgumentException">
         /// Thrown when <paramref name="direction"/> has zero length or is not parallel to <paramref name="line"/>.
         /// </exception>
-        public ParametricLine(Line line, VectorXY referencePoint, VectorXY direction)
+        public ParametricLine(Line line, PointXY referencePoint, VectorXY direction)
         {
-            if (!referencePoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(referencePoint), "Parametric line reference point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                referencePoint,
+                nameof(referencePoint),
+                "Parametric line reference point coordinates must be finite.");
 
             VectorXY normalizedDirection = NormalizeDirection(direction);
             if (!VectorXY.Cross(normalizedDirection, line.Direction).IsAlmostZero())
@@ -65,10 +67,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="origin">The curve-coordinate origin.</param>
         /// <param name="direction">The parametric direction.</param>
         /// <exception cref="ArgumentException">Thrown when <paramref name="direction"/> has zero length.</exception>
-        public ParametricLine(VectorXY origin, VectorXY direction)
+        public ParametricLine(PointXY origin, VectorXY direction)
         {
-            if (!origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(origin), "Parametric line origin coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                origin,
+                nameof(origin),
+                "Parametric line origin coordinates must be finite.");
 
             VectorXY normalizedDirection = NormalizeDirection(direction);
             var line = new Line(origin, origin + normalizedDirection);
@@ -86,7 +90,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="b">The second point defining the line.</param>
         /// <param name="referencePointMode">The mode used to select the reference point.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
-        public ParametricLine(VectorXY a, VectorXY b, LineReferencePointMode referencePointMode)
+        public ParametricLine(PointXY a, PointXY b, LineReferencePointMode referencePointMode)
             : this(new Line(a, b), SelectReferencePoint(a, b, referencePointMode))
         {
         }
@@ -98,7 +102,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="b">The second point defining the line.</param>
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
-        public ParametricLine(VectorXY a, VectorXY b, VectorXY referencePoint)
+        public ParametricLine(PointXY a, PointXY b, PointXY referencePoint)
             : this(new Line(a, b), referencePoint)
         {
         }
@@ -112,7 +116,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="referencePoint">The point whose projection becomes the curve-coordinate origin.</param>
         /// <exception cref="ArgumentException">Thrown when both linear coefficients are zero.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when an equation coefficient is NaN or infinite.</exception>
-        public ParametricLine(float a, float b, float c, VectorXY referencePoint)
+        public ParametricLine(float a, float b, float c, PointXY referencePoint)
             : this(new Line(a, b, c), referencePoint)
         {
         }
@@ -152,19 +156,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the point on this line from which curve coordinates are measured.
         /// </summary>
-        public VectorXY Origin => _origin;
+        public PointXY Origin => _origin;
 
         /// <summary>
         /// Gets the closest point on this line to the global coordinate origin.
         /// </summary>
-        public VectorXY ClosestPointToOrigin => _line.ClosestPointToOrigin;
+        public PointXY ClosestPointToOrigin => _line.ClosestPointToOrigin;
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this line.
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this line.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return _line.Distance(point);
         }
@@ -206,7 +210,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this line.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
@@ -220,7 +224,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this line.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
             return _line.Project(point);
         }
@@ -230,7 +234,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, signed parametric line coordinate, and distance to this line.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
             CurveProjection projection = Project(point);
             float curveCoordinate = VectorXY.Dot(projection.ProjectedPoint - _origin, Direction);
@@ -243,7 +247,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="curveCoordinate">The finite signed curve coordinate in world coordinate units.</param>
         /// <returns>The point on this parametric line.</returns>
-        public VectorXY GetPoint(float curveCoordinate)
+        public PointXY GetPoint(float curveCoordinate)
         {
             if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
@@ -290,7 +294,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             return direction.Normalize();
         }
 
-        private static VectorXY SelectReferencePoint(VectorXY a, VectorXY b, LineReferencePointMode referencePointMode)
+        private static PointXY SelectReferencePoint(PointXY a, PointXY b, LineReferencePointMode referencePointMode)
         {
             switch (referencePointMode)
             {
@@ -299,9 +303,9 @@ namespace Akeldov.Math.Spatial2D.Curves
                 case LineReferencePointMode.PointB:
                     return b;
                 case LineReferencePointMode.Midpoint:
-                    return (a + b) * 0.5f;
+                    return a + (b - a) * 0.5f;
                 default:
-                    return VectorXY.Zero;
+                    return new PointXY(0f, 0f);
             }
         }
 

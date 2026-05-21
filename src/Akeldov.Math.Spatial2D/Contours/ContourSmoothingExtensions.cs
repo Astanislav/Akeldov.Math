@@ -86,12 +86,12 @@ namespace Akeldov.Math.Spatial2D.Contours
                     nextSegment.EndPoint,
                     radius);
 
-                VectorXY startPoint = GetCircleTangentPointOnSegmentLine(
+                PointXY startPoint = GetCircleTangentPointOnSegmentLine(
                     tangentArc.Center,
                     previousSegment,
                     previousSegment.EndPoint);
 
-                VectorXY endPoint = GetCircleTangentPointOnSegmentLine(
+                PointXY endPoint = GetCircleTangentPointOnSegmentLine(
                     tangentArc.Center,
                     nextSegment,
                     nextSegment.StartPoint);
@@ -121,8 +121,8 @@ namespace Akeldov.Math.Spatial2D.Contours
             ParameterizedArc? startArc,
             ParameterizedArc? endArc)
         {
-            VectorXY startPoint = segment.StartPoint;
-            VectorXY endPoint = segment.EndPoint;
+            PointXY startPoint = segment.StartPoint;
+            PointXY endPoint = segment.EndPoint;
             bool includesStartPoint = segment.IncludesStartPoint;
             bool includesEndPoint = segment.IncludesEndPoint;
 
@@ -141,10 +141,10 @@ namespace Akeldov.Math.Spatial2D.Contours
             return new ParameterizedSegment(startPoint, endPoint, includesStartPoint, includesEndPoint);
         }
 
-        private static VectorXY GetCircleTangentPointOnSegmentLine(
-            VectorXY circleCenter,
+        private static PointXY GetCircleTangentPointOnSegmentLine(
+            PointXY circleCenter,
             ParameterizedSegment segment,
-            VectorXY fallbackPoint)
+            PointXY fallbackPoint)
         {
             if (segment.Length <= GeometryConstants.GeometryEpsilon)
                 return fallbackPoint;
@@ -153,7 +153,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             return line.Project(circleCenter).ProjectedPoint;
         }
 
-        private static float GetAngle(VectorXY center, VectorXY point)
+        private static float GetAngle(PointXY center, PointXY point)
         {
             return MathF.Atan2((point - center).Y, (point - center).X).NormalizeAngleRad();
         }

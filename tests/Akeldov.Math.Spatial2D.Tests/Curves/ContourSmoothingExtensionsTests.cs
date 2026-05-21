@@ -10,10 +10,10 @@ public class ContourSmoothingExtensionsTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
-            new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(2f, 2f)),
-            new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
-            new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
+            new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
+            new ParameterizedSegment(new PointXY(2f, 2f), new PointXY(0f, 2f)),
+            new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
 
         Contour smoothed = contour.FilletCorners(0.25f);
@@ -32,7 +32,7 @@ public class ContourSmoothingExtensionsTests
     public void FilletCorners_WhenOnlySomeAdjacentCurvesAreSegments_InsertsArcsOnlyAtSegmentSegmentCorners()
     {
         var originalArc = new ParameterizedArc(
-            new VectorXY(2f, 1f),
+            new PointXY(2f, 1f),
             1f,
             -0.5f * MathF.PI,
             0.5f * MathF.PI,
@@ -40,10 +40,10 @@ public class ContourSmoothingExtensionsTests
 
         var contour = new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
             originalArc,
-            new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
-            new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(2f, 2f), new PointXY(0f, 2f)),
+            new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
 
         Contour smoothed = contour.FilletCorners(0.25f);
@@ -62,9 +62,9 @@ public class ContourSmoothingExtensionsTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(1f, 0f)),
-            new ParameterizedSegment(new VectorXY(1f, 0f), new VectorXY(0f, 1f)),
-            new ParameterizedSegment(new VectorXY(0f, 1f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
+            new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(0f, 1f)),
+            new ParameterizedSegment(new PointXY(0f, 1f), new PointXY(0f, 0f))
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => contour.FilletCorners(radius));
@@ -72,7 +72,7 @@ public class ContourSmoothingExtensionsTests
         Assert.That(exception!.ParamName, Is.EqualTo("radius"));
     }
 
-    private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    private static void AssertVector(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

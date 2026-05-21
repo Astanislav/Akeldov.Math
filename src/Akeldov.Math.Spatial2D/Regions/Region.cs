@@ -47,12 +47,14 @@ namespace Akeldov.Math.Spatial2D.Regions
         public FillRule FillRule => _fillRule;
 
         /// <inheritdoc/>
-        public bool Contains(VectorXY point, float geometryEpsilon = 1E-06F)
+        public bool Contains(PointXY point, float geometryEpsilon = 1E-06F)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             int enclosingContourCount = 0;
 

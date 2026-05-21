@@ -50,18 +50,18 @@ public class VoronoiItemPartitionerBenchmarks
         return _partitioner.Partition(_items);
     }
 
-    private static VectorXY NextPoint(Random random, float size)
+    private static PointXY NextPoint(Random random, float size)
     {
-        return new VectorXY(random.NextSingle() * size, random.NextSingle() * size);
+        return new PointXY(random.NextSingle() * size, random.NextSingle() * size);
     }
 
     public sealed class PointItem : IHasPosition2D
     {
-        public PointItem(VectorXY position)
+        public PointItem(PointXY position)
         {
             Position = position;
         }
 
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
     }
 }

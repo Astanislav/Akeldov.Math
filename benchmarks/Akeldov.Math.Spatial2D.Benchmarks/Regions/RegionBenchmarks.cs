@@ -12,7 +12,7 @@ public class RegionBenchmarks
 {
     private IContour[] _contours = null!;
     private Region _region = null!;
-    private VectorXY[] _queries = null!;
+    private PointXY[] _queries = null!;
 
     [Params(1, 4)]
     public int ContourCount { get; set; }
@@ -65,21 +65,21 @@ public class RegionBenchmarks
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
-            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
+            new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
+            new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
+            new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
         });
     }
 
-    private static VectorXY[] CreateQueries(int queryCount, float range, float offset)
+    private static PointXY[] CreateQueries(int queryCount, float range, float offset)
     {
         var random = new Random(56789);
-        var queries = new VectorXY[queryCount];
+        var queries = new PointXY[queryCount];
 
         for (int i = 0; i < queries.Length; i++)
         {
-            queries[i] = new VectorXY(
+            queries[i] = new PointXY(
                 offset + random.NextSingle() * range,
                 offset + random.NextSingle() * range);
         }

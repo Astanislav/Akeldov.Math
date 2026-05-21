@@ -67,7 +67,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             // wider search radius to preserve the variable-distance invariant.
             float cellSize = minimalDistanceMax;
 
-            var processList = new List<VectorXY>();
+            var processList = new List<PointXY>();
             var samples = new List<PoissonDiskPointSample>();
             var grid = new Grid(fieldSize, cellSize);
 
@@ -112,7 +112,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             return samples;
         }
 
-        private static float SampleMinimalDistance(IFloatField minimalDistanceField, VectorXY point)
+        private static float SampleMinimalDistance(IFloatField minimalDistanceField, PointXY point)
         {
             float minimalDistance = minimalDistanceField.Sample(point);
             if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))

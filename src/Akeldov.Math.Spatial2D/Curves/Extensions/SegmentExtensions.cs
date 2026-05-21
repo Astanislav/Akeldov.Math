@@ -31,8 +31,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new InvalidOperationException("Cannot shorten a segment by more than half its length.");
 
             VectorXY direction = segmentVector / length;
-            VectorXY endpointA = segment.EndpointA + amount * direction;
-            VectorXY endpointB = segment.EndpointB - amount * direction;
+            PointXY endpointA = segment.EndpointA + amount * direction;
+            PointXY endpointB = segment.EndpointB - amount * direction;
 
             return new Segment(
                 endpointA,
@@ -61,8 +61,8 @@ namespace Akeldov.Math.Spatial2D.Curves
                 throw new InvalidOperationException("Cannot extend a segment with equal endpoints.");
 
             VectorXY direction = segmentVector / length;
-            VectorXY endpointA = segment.EndpointA - amount * direction;
-            VectorXY endpointB = segment.EndpointB + amount * direction;
+            PointXY endpointA = segment.EndpointA - amount * direction;
+            PointXY endpointB = segment.EndpointB + amount * direction;
 
             return new Segment(
                 endpointA,

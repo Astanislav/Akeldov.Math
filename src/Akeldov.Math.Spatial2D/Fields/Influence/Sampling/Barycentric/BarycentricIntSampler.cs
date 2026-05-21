@@ -59,7 +59,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sources">The influence sources used for interpolation. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The interpolated or extrapolated value, rounded to the nearest integer.</returns>
-        public int Sample(IReadOnlyList<TSource> sources, VectorXY point)
+        public int Sample(IReadOnlyList<TSource> sources, PointXY point)
         {
             if (sources == null) throw new ArgumentNullException(nameof(sources));
 
@@ -67,8 +67,10 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (n <= 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             var samples = new InfluenceSample<int>[n];
             for (var i = 0; i < n; i++)
@@ -154,7 +156,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             InfluenceSample<int> a,
             InfluenceSample<int> b,
             InfluenceSample<int> c,
-            VectorXY p)
+            PointXY p)
         {
             if (!TryBarycentric(a.SourcePoint, b.SourcePoint, c.SourcePoint, p, out float lA, out float lB, out float lC))
                 return LerpOnSegment(a, b, p);
@@ -162,7 +164,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             return a.Value * lA + b.Value * lB + c.Value * lC;
         }
 
-        private static bool TryBarycentric(VectorXY a, VectorXY b, VectorXY c, VectorXY p,
+        private static bool TryBarycentric(PointXY a, PointXY b, PointXY c, PointXY p,
             out float lA, out float lB, out float lC)
         {
             float denom = Cross(b - a, c - a);
@@ -178,7 +180,7 @@ namespace Akeldov.Math.Spatial2D.Fields
             return true;
         }
 
-        private static float LerpOnSegment(InfluenceSample<int> a, InfluenceSample<int> b, VectorXY p)
+        private static float LerpOnSegment(InfluenceSample<int> a, InfluenceSample<int> b, PointXY p)
         {
             var pa = a.SourcePoint;
             var pb = b.SourcePoint;

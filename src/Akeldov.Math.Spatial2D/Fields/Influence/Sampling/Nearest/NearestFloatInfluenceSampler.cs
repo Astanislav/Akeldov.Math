@@ -22,7 +22,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="sources">The influence sources to search. Must be non-null, non-empty, and contain no null elements.</param>
         /// <param name="point">The point to sample.</param>
         /// <returns>The floating-point value contributed by the nearest source.</returns>
-        public float Sample(IReadOnlyList<TSource> sources, VectorXY point)
+        public float Sample(IReadOnlyList<TSource> sources, PointXY point)
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
@@ -30,8 +30,10 @@ namespace Akeldov.Math.Spatial2D.Fields
             if (sources.Count == 0)
                 throw new ArgumentException("Influence sources collection must not be empty.", nameof(sources));
 
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             var nearestSource = sources[0];
             if (nearestSource is null)

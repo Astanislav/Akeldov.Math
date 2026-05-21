@@ -17,7 +17,7 @@ public class RegionRasterizationTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
         var grid = new RasterGrid(
-            origin: VectorXY.Zero,
+            origin: new PointXY(0f, 0f),
             size: new VectorXY(4f, 4f),
             resolution: new VectorXYInt(4, 4));
 
@@ -52,7 +52,7 @@ public class RegionRasterizationTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
         var grid = new RasterGrid(
-            origin: new VectorXY(-0.5f, -0.5f),
+            origin: new PointXY(-0.5f, -0.5f),
             size: new VectorXY(5f, 5f),
             resolution: new VectorXYInt(160, 160));
         var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "square-with-square-hole-gray16.png");
@@ -94,10 +94,10 @@ public class RegionRasterizationTests
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
-            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
+            new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
+            new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
+            new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
         });
     }
 }

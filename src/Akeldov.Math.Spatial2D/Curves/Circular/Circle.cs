@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public readonly struct Circle : IFiniteCurve, IEquatable<Circle>
     {
-        private readonly VectorXY _center;
+        private readonly PointXY _center;
         private readonly float _radius;
 
         /// <summary>
@@ -18,10 +18,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The circle radius.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="radius"/> is negative, NaN, or infinite.</exception>
-        public Circle(VectorXY center, float radius)
+        public Circle(PointXY center, float radius)
         {
-            if (!center.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(center), "Circle center coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                center,
+                nameof(center),
+                "Circle center coordinates must be finite.");
 
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Circle radius must be finite and non-negative.");
@@ -33,7 +35,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the center of the circle.
         /// </summary>
-        public VectorXY Center => _center;
+        public PointXY Center => _center;
 
         /// <summary>
         /// Gets the circle radius.
@@ -50,7 +52,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The absolute distance to the circle circumference.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return Project(point).Distance;
         }
@@ -60,17 +62,19 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this circle.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY toPoint = point - _center;
 
             if (_radius <= GeometryConstants.GeometryEpsilon)
                 return new CurveProjection(_center, point.Distance(_center));
 
-            VectorXY projected = toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared
+            PointXY projected = toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared
                 ? _center + new VectorXY(_radius, 0f)
                 : _center + toPoint.Normalize() * _radius;
 
@@ -83,13 +87,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with the circle.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            List<VectorXY> intersections = new List<VectorXY>();
+            List<PointXY> intersections = new List<PointXY>();
 
             VectorXY d = ray.Direction;
             VectorXY f = ray.Origin - _center;

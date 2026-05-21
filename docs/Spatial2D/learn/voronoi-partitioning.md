@@ -9,14 +9,14 @@ using Akeldov.Math.Spatial2D;
 
 public sealed class MapCell : IHasPosition2D
 {
-    public MapCell(string id, VectorXY position)
+    public MapCell(string id, PointXY position)
     {
         Id = id;
         Position = position;
     }
 
     public string Id { get; }
-    public VectorXY Position { get; }
+    public PointXY Position { get; }
 }
 ```
 
@@ -30,8 +30,8 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 var sites = new[]
 {
-    new Site(new VectorXY(25f, 30f), weight: 1f),
-    new Site(new VectorXY(95f, 30f), weight: 1f)
+    new Site(new PointXY(25f, 30f), weight: 1f),
+    new Site(new PointXY(95f, 30f), weight: 1f)
 };
 
 var partitioner = new VoronoiItemPartitioner<MapCell>(
@@ -53,8 +53,8 @@ using Akeldov.Math.Spatial2D.Partitioning.Voronoi;
 
 var sites = new[]
 {
-    new Site(new VectorXY(25f, 30f), weight: 1f),
-    new Site(new VectorXY(95f, 30f), weight: 2f)
+    new Site(new PointXY(25f, 30f), weight: 1f),
+    new Site(new PointXY(95f, 30f), weight: 2f)
 };
 
 var partitioner = new VoronoiItemPartitioner<MapCell>(

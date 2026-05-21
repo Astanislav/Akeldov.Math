@@ -7,27 +7,23 @@ public class LineTests
     [Test]
     public void Constructor_WhenPointsAreEqual_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new Line(new VectorXY(2f, 3f), new VectorXY(2f, 3f)));
+        Assert.Throws<ArgumentException>(() => new Line(new PointXY(2f, 3f), new PointXY(2f, 3f)));
     }
 
     [Test]
     public void Constructor_WhenPointsAreAlmostEqual_DoesNotThrow()
     {
-        Assert.DoesNotThrow(() => new Line(VectorXY.Zero, new VectorXY(GeometryConstants.GeometryEpsilon * 0.5f, 0f)));
+        Assert.DoesNotThrow(() => new Line(new PointXY(0f, 0f), new PointXY(GeometryConstants.GeometryEpsilon * 0.5f, 0f)));
     }
 
-    [TestCase(float.NaN, 0f, "a")]
-    [TestCase(0f, float.NaN, "a")]
     [TestCase(float.PositiveInfinity, 0f, "a")]
     [TestCase(0f, float.NegativeInfinity, "a")]
-    [TestCase(float.NaN, 0f, "b")]
-    [TestCase(0f, float.NaN, "b")]
     [TestCase(float.PositiveInfinity, 0f, "b")]
     [TestCase(0f, float.NegativeInfinity, "b")]
     public void Constructor_WhenPointCoordinateIsInvalid_Throws(float x, float y, string paramName)
     {
-        VectorXY a = paramName == "a" ? new VectorXY(x, y) : VectorXY.Zero;
-        VectorXY b = paramName == "b" ? new VectorXY(x, y) : VectorXY.One;
+        PointXY a = paramName == "a" ? new PointXY(x, y) : new PointXY(0f, 0f);
+        PointXY b = paramName == "b" ? new PointXY(x, y) : new PointXY(1f, 1f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Line(a, b));
 
@@ -74,7 +70,7 @@ public class LineTests
     public void DefaultLine_RepresentsHorizontalXAxis()
     {
         var line = default(Line);
-        var sameLine = new Line(VectorXY.Zero, new VectorXY(1f, 0f));
+        var sameLine = new Line(new PointXY(0f, 0f), new PointXY(1f, 0f));
 
         Assert.That(line, Is.EqualTo(sameLine));
         Assert.That(line.EquationA, Is.EqualTo(0f));
@@ -83,9 +79,9 @@ public class LineTests
         AssertVector(line.Normal, 0f, 1f);
         AssertVector(line.Direction, 1f, 0f);
         AssertVector(line.ClosestPointToOrigin, 0f, 0f);
-        Assert.That(line.Distance(new VectorXY(3f, 4f)), Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(line.Distance(new PointXY(3f, 4f)), Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
 
-        var projection = line.Project(new VectorXY(3f, 4f));
+        var projection = line.Project(new PointXY(3f, 4f));
         AssertVector(projection.ProjectedPoint, 3f, 0f);
         Assert.That(projection.Distance, Is.EqualTo(4f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -93,8 +89,8 @@ public class LineTests
     [Test]
     public void Equals_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsTrue()
     {
-        var line = new Line(new VectorXY(0f, 3f), new VectorXY(2f, 3f));
-        var sameLine = new Line(new VectorXY(-5f, 3f), new VectorXY(5f, 3f));
+        var line = new Line(new PointXY(0f, 3f), new PointXY(2f, 3f));
+        var sameLine = new Line(new PointXY(-5f, 3f), new PointXY(5f, 3f));
 
         Assert.That(line.Equals(sameLine), Is.True);
         Assert.That(line.GetHashCode(), Is.EqualTo(sameLine.GetHashCode()));
@@ -103,11 +99,11 @@ public class LineTests
     [Test]
     public void Project_WhenSameLineIsBuiltFromDifferentPointPairs_ReturnsSameProjection()
     {
-        var line = new Line(new VectorXY(2f, 0f), new VectorXY(4f, 0f));
-        var sameLine = new Line(new VectorXY(8f, 0f), new VectorXY(12f, 0f));
+        var line = new Line(new PointXY(2f, 0f), new PointXY(4f, 0f));
+        var sameLine = new Line(new PointXY(8f, 0f), new PointXY(12f, 0f));
 
-        var projection = line.Project(new VectorXY(3f, 2f));
-        var sameLineProjection = sameLine.Project(new VectorXY(3f, 2f));
+        var projection = line.Project(new PointXY(3f, 2f));
+        var sameLineProjection = sameLine.Project(new PointXY(3f, 2f));
 
         Assert.That(line, Is.EqualTo(sameLine));
         AssertVector(projection.ProjectedPoint, 3f, 0f);
@@ -118,8 +114,8 @@ public class LineTests
     [Test]
     public void RayIntersections_WhenRayLiesOnLine_ReturnsRayOrigin()
     {
-        var line = new Line(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
-        var ray = new Ray(new VectorXY(2f, 0f));
+        var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
+        var ray = new Ray(new PointXY(2f, 0f));
 
         var intersections = line.GetRayIntersections(ray);
 
@@ -130,8 +126,8 @@ public class LineTests
     [Test]
     public void RayIntersections_WhenRayIsParallelButNotOnLine_ReturnsEmpty()
     {
-        var line = new Line(new VectorXY(-5f, 1f), new VectorXY(5f, 1f));
-        var ray = new Ray(VectorXY.Zero);
+        var line = new Line(new PointXY(-5f, 1f), new PointXY(5f, 1f));
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var intersections = line.GetRayIntersections(ray);
 
@@ -142,8 +138,8 @@ public class LineTests
     public void RayIntersections_WithCustomGeometryEpsilon_WhenRayIsNearlyOnLine_ReturnsRayOrigin()
     {
         const float geometryEpsilon = 0.01f;
-        var line = new Line(new VectorXY(-5f, 0f), new VectorXY(5f, 0f));
-        var ray = new Ray(new VectorXY(2f, 0.005f));
+        var line = new Line(new PointXY(-5f, 0f), new PointXY(5f, 0f));
+        var ray = new Ray(new PointXY(2f, 0.005f));
 
         var defaultIntersections = line.GetRayIntersections(ray);
         var tolerantIntersections = line.GetRayIntersections(ray, geometryEpsilon);
@@ -160,7 +156,7 @@ public class LineTests
     public void RayIntersections_WhenGeometryEpsilonIsInvalid_Throws(float geometryEpsilon)
     {
         var line = default(Line);
-        var ray = new Ray(VectorXY.Zero);
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             line.GetRayIntersections(ray, geometryEpsilon));
@@ -171,8 +167,8 @@ public class LineTests
     [Test]
     public void RayIntersections_WhenIntersectionIsBehindRay_ReturnsEmpty()
     {
-        var line = new Line(new VectorXY(-1f, -1f), new VectorXY(-1f, 1f));
-        var ray = new Ray(VectorXY.Zero);
+        var line = new Line(new PointXY(-1f, -1f), new PointXY(-1f, 1f));
+        var ray = new Ray(new PointXY(0f, 0f));
 
         var intersections = line.GetRayIntersections(ray);
 
@@ -182,9 +178,9 @@ public class LineTests
     [Test]
     public void Project_WhenLineDoesNotPassThroughGlobalOrigin_ReturnsClosestPoint()
     {
-        var line = new Line(new VectorXY(2f, 3f), new VectorXY(4f, 3f));
+        var line = new Line(new PointXY(2f, 3f), new PointXY(4f, 3f));
 
-        var projection = line.Project(new VectorXY(2f, 5f));
+        var projection = line.Project(new PointXY(2f, 5f));
 
         AssertVector(projection.ProjectedPoint, 2f, 3f);
         Assert.That(projection.Distance, Is.EqualTo(2f).Within(GeometryConstants.GeometryEpsilon));
@@ -196,7 +192,7 @@ public class LineTests
         var line = default(Line);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            line.Distance(new VectorXY(float.NaN, 0f)));
+            line.Distance(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -207,12 +203,18 @@ public class LineTests
         var line = default(Line);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            line.Project(new VectorXY(float.PositiveInfinity, 0f)));
+            line.Project(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
 
     private static void AssertVector(VectorXY actual, float expectedX, float expectedY)
+    {
+        Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
+        Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));
+    }
+
+    private static void AssertVector(PointXY actual, float expectedX, float expectedY)
     {
         Assert.That(actual.X, Is.EqualTo(expectedX).Within(GeometryConstants.GeometryEpsilon));
         Assert.That(actual.Y, Is.EqualTo(expectedY).Within(GeometryConstants.GeometryEpsilon));

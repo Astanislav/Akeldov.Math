@@ -8,7 +8,7 @@ The library is organized around a few practical geometry workflows.
 
 ### Core Geometry
 
-- Float and integer vector types: `VectorXY` and `VectorXYInt`.
+- Point and vector types: `PointXY`, `VectorXY`, and `VectorXYInt`.
 - Curve primitives: `Line`, `Ray`, `Segment`, `Circle`, and `Arc`.
 - Projection, distance, intersection, angle, and centroid helpers.
 
@@ -51,13 +51,13 @@ dotnet add package Akeldov.Math.Spatial2D
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Curves;
 
-var segment = new Segment(
-    new VectorXY(0f, 0f),
-    new VectorXY(10f, 0f));
+var segment = new ParameterizedSegment(
+    new PointXY(0f, 0f),
+    new PointXY(10f, 0f));
 
-var projection = segment.ProjectWithParameter(new VectorXY(4f, 3f));
+var projection = segment.ProjectWithParameter(new PointXY(4f, 3f));
 
-VectorXY closestPoint = projection.ProjectedPoint;
+PointXY closestPoint = projection.ProjectedPoint;
 float curveCoordinate = projection.CurveCoordinate;
 float distance = projection.Distance;
 ```

@@ -9,8 +9,8 @@ public class InfluenceFieldCullingTests
     {
         var sources = new[]
         {
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f),
-            new FloatPointInfluenceSource(1f, VectorXY.One, 20f)
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f),
+            new FloatPointInfluenceSource(1f, new PointXY(1f, 1f), 20f)
         };
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
@@ -18,7 +18,7 @@ public class InfluenceFieldCullingTests
             sources,
             new FixedCuller(new List<FloatPointInfluenceSource> { sources[0] }));
 
-        float value = field.Sample(new VectorXY(3f, 4f));
+        float value = field.Sample(new PointXY(3f, 4f));
 
         Assert.That(value, Is.EqualTo(1f));
     }
@@ -41,7 +41,7 @@ public class InfluenceFieldCullingTests
     {
         var sources = new[]
         {
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f)
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f)
         };
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
@@ -49,7 +49,7 @@ public class InfluenceFieldCullingTests
             sources,
             new FixedCuller(null));
 
-        var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(VectorXY.Zero));
+        var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(0f, 0f)));
 
         Assert.That(exception!.Message, Does.Contain("returned null"));
     }
@@ -59,7 +59,7 @@ public class InfluenceFieldCullingTests
     {
         var sources = new[]
         {
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f)
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f)
         };
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
@@ -67,7 +67,7 @@ public class InfluenceFieldCullingTests
             sources,
             new FixedCuller(new List<FloatPointInfluenceSource>()));
 
-        var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(VectorXY.Zero));
+        var exception = Assert.Throws<InvalidOperationException>(() => field.Sample(new PointXY(0f, 0f)));
 
         Assert.That(exception!.Message, Does.Contain("empty source list"));
     }
@@ -77,7 +77,7 @@ public class InfluenceFieldCullingTests
     {
         var sources = new[]
         {
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, 10f)
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 10f)
         };
 
         var field = new InfluenceField<FloatPointInfluenceSource, float>(
@@ -85,7 +85,7 @@ public class InfluenceFieldCullingTests
             sources);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            field.Sample(new VectorXY(float.NaN, 0f)));
+            field.Sample(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -101,7 +101,7 @@ public class InfluenceFieldCullingTests
 
     private sealed class SourceCountSampler : IInfluenceSampler<FloatPointInfluenceSource, float>
     {
-        public float Sample(IReadOnlyList<FloatPointInfluenceSource> influenceSources, VectorXY point)
+        public float Sample(IReadOnlyList<FloatPointInfluenceSource> influenceSources, PointXY point)
         {
             return influenceSources.Count;
         }
@@ -116,7 +116,7 @@ public class InfluenceFieldCullingTests
             _sources = sources;
         }
 
-        public List<FloatPointInfluenceSource> Cull(VectorXY point)
+        public List<FloatPointInfluenceSource> Cull(PointXY point)
         {
             return _sources!;
         }

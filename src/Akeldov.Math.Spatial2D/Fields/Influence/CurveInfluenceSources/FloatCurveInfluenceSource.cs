@@ -82,7 +82,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
@@ -92,40 +92,46 @@ namespace Akeldov.Math.Spatial2D.Fields
         }
 
         /// <inheritdoc/>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             return _curve.Distance(point);
         }
 
         /// <inheritdoc/>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             return _curve.Project(point);
         }
 
         /// <inheritdoc/>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             return _curve.ProjectWithParameter(point);
         }
 
         /// <inheritdoc/>
-        public VectorXY GetPoint(float curveCoordinate)
+        public PointXY GetPoint(float curveCoordinate)
         {
             return _curve.GetPoint(curveCoordinate);
         }
 
         /// <inheritdoc/>
-        public InfluenceSample<float> GetInfluence(VectorXY point)
+        public InfluenceSample<float> GetInfluence(PointXY point)
         {
             var projection = ProjectWithParameter(point);
             float weight = _weightProvider(projection.CurveCoordinate);
