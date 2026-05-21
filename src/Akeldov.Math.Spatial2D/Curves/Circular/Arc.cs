@@ -8,7 +8,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// Represents a circular arc in two-dimensional space.
     /// </summary>
     [Serializable]
-    public readonly struct Arc : IFinitePath, IEquatable<Arc>
+    public readonly struct Arc : IFiniteTwoEndpointCurve, IEquatable<Arc>
     {
         private readonly VectorXY _center;
         private readonly float _radius;
@@ -211,46 +211,6 @@ namespace Akeldov.Math.Spatial2D.Curves
             return new CurveProjection(arcEnd, distEnd);
         }
 
-        /// <summary>
-        /// Projects the specified point onto this arc and reports the arc length coordinate.
-        /// </summary>
-        /// <param name="point">The point to project.</param>
-        /// <returns>The projection point, arc length coordinate, and distance to this arc.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
-        {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
-
-            CurveProjection projection = Project(point);
-            float curveCoordinate = GetCurveCoordinate(projection.ProjectedPoint);
-
-            return new ParameterizedCurveProjection(
-                projection.ProjectedPoint,
-                curveCoordinate,
-                projection.Distance);
-        }
-
-        /// <summary>
-        /// Returns the point at the specified arc length coordinate.
-        /// </summary>
-        /// <param name="curveCoordinate">The finite curve coordinate in world coordinate units.</param>
-        /// <returns>The point on this arc.</returns>
-        public VectorXY GetPoint(float curveCoordinate)
-        {
-            if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
-                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
-
-            float length = Length;
-            if (curveCoordinate < 0f || curveCoordinate > length)
-                throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must lie within the arc length.");
-
-            if (_radius <= GeometryConstants.GeometryEpsilon)
-                return StartPoint;
-
-            float angle = (_startAngle + curveCoordinate / _radius).NormalizeAngleRad();
-            return GetPointAtAngle(angle);
-        }
-
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is Arc other && Equals(other);
 
@@ -322,23 +282,6 @@ namespace Akeldov.Math.Spatial2D.Curves
                 return 2f * MathF.PI * _radius;
 
             return PositiveAngleDelta(_startAngle, _endAngle) * _radius;
-        }
-
-        private float GetCurveCoordinate(VectorXY point)
-        {
-            if (_radius <= GeometryConstants.GeometryEpsilon)
-                return 0f;
-
-            VectorXY toPoint = point - _center;
-            if (toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
-                return 0f;
-
-            float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
-
-            if (!ContainsAngle(angle))
-                return point.Distance(StartPoint) <= point.Distance(EndPoint) ? 0f : Length;
-
-            return PositiveAngleDelta(_startAngle, angle) * _radius;
         }
 
         private bool ContainsAngle(float angle)

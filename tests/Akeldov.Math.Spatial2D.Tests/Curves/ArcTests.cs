@@ -5,9 +5,14 @@ namespace Akeldov.Math.Spatial2D.Tests.Curves;
 public class ArcTests
 {
     [Test]
-    public void ProjectWithParameter_WhenPointAngleIsWithinWrappedArc_ProjectsToCircle()
+    public void ProjectWithParameter_WhenParameterizedArcPointAngleIsWithinWrappedArc_ProjectsToCircle()
     {
-        var arc = new Arc(VectorXY.Zero, 2f, 3f * MathF.PI / 2f, MathF.PI / 2f);
+        var arc = new ParameterizedArc(
+            VectorXY.Zero,
+            2f,
+            3f * MathF.PI / 2f,
+            MathF.PI / 2f,
+            AngularDirection.Counterclockwise);
         var point = new VectorXY(3f, 0f);
 
         var projection = arc.ProjectWithParameter(point);
@@ -75,12 +80,12 @@ public class ArcTests
     }
 
     [Test]
-    public void BoundedParameterizedCurveContract_WhenArcIsUsed_ExposesEndpointsAndLength()
+    public void FiniteTwoEndpointCurveContract_WhenArcIsUsed_ExposesEndpointsAndLength()
     {
-        IFinitePath curve = new Arc(VectorXY.Zero, 2f, 0f, MathF.PI / 2f);
+        IFiniteTwoEndpointCurve curve = new Arc(VectorXY.Zero, 2f, 0f, MathF.PI / 2f);
 
-        AssertVector(curve.StartPoint, 2f, 0f);
-        AssertVector(curve.EndPoint, 0f, 2f);
+        AssertVector(curve.EndpointA, 2f, 0f);
+        AssertVector(curve.EndpointB, 0f, 2f);
         Assert.That(curve.Length, Is.EqualTo(MathF.PI).Within(GeometryConstants.GeometryEpsilon));
     }
 
@@ -189,9 +194,9 @@ public class ArcTests
     }
 
     [Test]
-    public void ProjectWithParameter_WhenStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
+    public void ProjectWithParameter_WhenParameterizedArcStartAndEndAnglesAreEqual_TreatsArcAsZeroLength()
     {
-        var arc = new Arc(VectorXY.Zero, 1f, 0f, 0f);
+        var arc = new ParameterizedArc(VectorXY.Zero, 1f, 0f, 0f, AngularDirection.Counterclockwise);
 
         Assert.That(arc.IsFullCircle, Is.False);
 
@@ -226,9 +231,9 @@ public class ArcTests
     }
 
     [Test]
-    public void ProjectWithParameter_WhenStopAngleIsOneFullTurnAfterStart_TreatsArcAsFullCircle()
+    public void ProjectWithParameter_WhenParameterizedArcStopAngleIsOneFullTurnAfterStart_TreatsArcAsFullCircle()
     {
-        var arc = new Arc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI);
+        var arc = new ParameterizedArc(VectorXY.Zero, 1f, 0f, 2f * MathF.PI, AngularDirection.Counterclockwise);
 
         Assert.That(arc.IsFullCircle, Is.True);
 
@@ -240,9 +245,14 @@ public class ArcTests
     }
 
     [Test]
-    public void ProjectWithParameter_WhenPointIsAtArcCenter_ReturnsStartPoint()
+    public void ProjectWithParameter_WhenParameterizedArcPointIsAtArcCenter_ReturnsStartPoint()
     {
-        var arc = new Arc(new VectorXY(1f, 1f), 2f, MathF.PI / 2f, MathF.PI);
+        var arc = new ParameterizedArc(
+            new VectorXY(1f, 1f),
+            2f,
+            MathF.PI / 2f,
+            MathF.PI,
+            AngularDirection.Counterclockwise);
 
         var projection = arc.ProjectWithParameter(new VectorXY(1f, 1f));
 
@@ -274,9 +284,9 @@ public class ArcTests
     }
 
     [Test]
-    public void ProjectWithParameter_WhenPointCoordinateIsInvalid_Throws()
+    public void ProjectWithParameter_WhenParameterizedArcPointCoordinateIsInvalid_Throws()
     {
-        var arc = new Arc(VectorXY.Zero, 1f, 0f, MathF.PI);
+        var arc = new ParameterizedArc(VectorXY.Zero, 1f, 0f, MathF.PI, AngularDirection.Counterclockwise);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             arc.ProjectWithParameter(new VectorXY(float.PositiveInfinity, 0f)));

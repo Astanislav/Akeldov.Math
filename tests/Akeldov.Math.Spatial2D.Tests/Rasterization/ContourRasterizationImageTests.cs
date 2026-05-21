@@ -137,8 +137,7 @@ public class ContourRasterizationImageTests
 
     private static byte ToGray8(float signedDistance)
     {
-        if (signedDistance <= 0f)
-            return byte.MaxValue;
+        signedDistance = MathF.Abs(signedDistance);
 
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);
@@ -147,8 +146,7 @@ public class ContourRasterizationImageTests
 
     private static ushort ToGray16(float signedDistance)
     {
-        if (signedDistance <= 0f)
-            return ushort.MaxValue;
+        signedDistance = MathF.Abs(signedDistance);
 
         const float falloffDistance = 0.2f;
         float normalized = 1f - System.Math.Clamp(signedDistance / falloffDistance, 0f, 1f);

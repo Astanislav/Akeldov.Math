@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using Akeldov.Math.Spatial2D.Contours;
-using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
@@ -29,7 +27,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentNullException(nameof(source));
 
             ValidateGrid(grid);
-            IReadOnlyList<IPath> curves = GetCurves(source);
             var values = new ushort[grid.Resolution.X, grid.Resolution.Y];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
@@ -41,21 +38,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
                     VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
-                    float signedDistance = GetSignedDistanceToContour(source, point, curves);
+                    float signedDistance = source.SignedDistance(point);
                     values[x, y] = _signedDistanceToGrayLevel(signedDistance);
                 }
             }
 
             return new Gray16BitRaster(grid, values);
-        }
-
-        private static IReadOnlyList<IPath> GetCurves(IContour contour)
-        {
-            IReadOnlyList<IPath> curves = contour.Curves;
-            if (curves == null || curves.Count == 0)
-                throw new InvalidOperationException("Contour must expose at least one bounded parameterized curve.");
-
-            return curves;
         }
 
         private static void ValidateGrid(RasterGrid grid)
@@ -65,30 +53,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             if (grid.Resolution.X <= 0 || grid.Resolution.Y <= 0)
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
-        }
-
-        private static float GetSignedDistanceToContour(IContour contour, VectorXY point, IReadOnlyList<IPath> curves)
-        {
-            float distance = DistanceToContour(point, curves);
-            return contour.Encloses(point) ? -distance : distance;
-        }
-
-        private static float DistanceToContour(VectorXY point, IReadOnlyList<IPath> curves)
-        {
-            float minDistance = float.MaxValue;
-
-            for (int i = 0; i < curves.Count; i++)
-            {
-                IPath curve = curves[i];
-                if (curve == null)
-                    throw new InvalidOperationException("Contour curves must not contain null values.");
-
-                float distance = curve.Distance(point);
-                if (distance < minDistance)
-                    minDistance = distance;
-            }
-
-            return minDistance;
         }
     }
 }

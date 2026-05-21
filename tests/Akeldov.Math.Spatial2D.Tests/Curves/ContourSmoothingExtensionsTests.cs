@@ -31,10 +31,17 @@ public class ContourSmoothingExtensionsTests
     [Test]
     public void FilletCorners_WhenOnlySomeAdjacentCurvesAreSegments_InsertsArcsOnlyAtSegmentSegmentCorners()
     {
+        var originalArc = new ParameterizedArc(
+            new VectorXY(2f, 1f),
+            1f,
+            -0.5f * MathF.PI,
+            0.5f * MathF.PI,
+            AngularDirection.Counterclockwise);
+
         var contour = new Contour(new IFinitePath[]
         {
             new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
-            new Arc(new VectorXY(2f, 1f), 1f, -0.5f * MathF.PI, 0.5f * MathF.PI),
+            originalArc,
             new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
             new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
         });
@@ -42,10 +49,9 @@ public class ContourSmoothingExtensionsTests
         Contour smoothed = contour.FilletCorners(0.25f);
 
         Assert.That(smoothed.Curves, Has.Count.EqualTo(6));
-        Assert.That(smoothed.Curves.OfType<Arc>().Count(), Is.EqualTo(1));
-        Assert.That(smoothed.Curves.OfType<ParameterizedArc>().Count(), Is.EqualTo(2));
+        Assert.That(smoothed.Curves.OfType<ParameterizedArc>().Count(), Is.EqualTo(3));
         Assert.That(smoothed.Curves.OfType<ParameterizedArc>().Count(arc => arc.Radius.Equals(0.25f)), Is.EqualTo(2));
-        Assert.That(smoothed.Curves[1], Is.TypeOf<Arc>());
+        Assert.That(smoothed.Curves[1], Is.EqualTo(originalArc));
     }
 
     [TestCase(0f)]

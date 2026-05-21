@@ -74,6 +74,34 @@ namespace Akeldov.Math.Spatial2D.Contours
             return intersections.Count % 2 == 1;
         }
 
+        /// <inheritdoc/>
+        /// <inheritdoc/>
+        public float Distance(VectorXY point)
+        {
+            if (!point.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+
+            float minDistance = float.MaxValue;
+
+            for (int i = 0; i < _curves.Length; i++)
+            {
+                float distance = _curves[i].Distance(point);
+                if (distance < minDistance)
+                    minDistance = distance;
+            }
+
+            return minDistance;
+        }
+
+        /// <inheritdoc/>
+        public float SignedDistance(VectorXY point, float geometryEpsilon = 1E-06F)
+        {
+            GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
+
+            float distance = Distance(point);
+            return Encloses(point, geometryEpsilon) ? -distance : distance;
+        }
+
         private static void ValidateCurvesFormClosedChain(IReadOnlyList<IFinitePath> curves, string parameterName)
         {
             for (int i = 0; i < curves.Count; i++)

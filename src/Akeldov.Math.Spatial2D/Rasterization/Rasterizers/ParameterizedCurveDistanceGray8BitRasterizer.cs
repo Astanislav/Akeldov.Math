@@ -1,27 +1,30 @@
 using System;
-using Akeldov.Math.Spatial2D.Contours;
+using Akeldov.Math.Spatial2D.Curves;
 using Akeldov.Math.Spatial2D.Imaging;
 
 namespace Akeldov.Math.Spatial2D.Rasterization
 {
     /// <summary>
-    /// Rasterizes contours into 8-bit grayscale rasters using signed distance-to-contour mapping.
+    /// Rasterizes parameterized curves into 8-bit grayscale rasters using projection-to-curve mapping.
     /// </summary>
-    public sealed class ContourSignedDistanceGray8BitRasterizer : IRasterizer<IContour, Gray8BitRaster>
+    public sealed class ParameterizedCurveDistanceGray8BitRasterizer : IRasterizer<IParameterizedCurve, Gray8BitRaster>
     {
-        private readonly Func<float, byte> _signedDistanceToGrayLevel;
+        private readonly Func<float, float, byte> _projectionToGrayLevel;
 
         /// <summary>
-        /// Initializes a new contour rasterizer.
+        /// Initializes a new parameterized curve rasterizer.
         /// </summary>
-        /// <param name="signedDistanceToGrayLevel">The function that maps signed distance to the contour to an 8-bit grayscale value. Negative distances are inside the contour; positive distances are outside.</param>
-        public ContourSignedDistanceGray8BitRasterizer(Func<float, byte> signedDistanceToGrayLevel)
+        /// <param name="projectionToGrayLevel">
+        /// The function that maps distance to the curve and curve coordinate to an 8-bit grayscale value.
+        /// The first argument is distance in world coordinate units; the second argument is curve coordinate.
+        /// </param>
+        public ParameterizedCurveDistanceGray8BitRasterizer(Func<float, float, byte> projectionToGrayLevel)
         {
-            _signedDistanceToGrayLevel = signedDistanceToGrayLevel ?? throw new ArgumentNullException(nameof(signedDistanceToGrayLevel));
+            _projectionToGrayLevel = projectionToGrayLevel ?? throw new ArgumentNullException(nameof(projectionToGrayLevel));
         }
 
         /// <inheritdoc/>
-        public Gray8BitRaster Rasterize(IContour source, RasterGrid grid)
+        public Gray8BitRaster Rasterize(IParameterizedCurve source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -38,8 +41,8 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
                     VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
-                    float signedDistance = source.SignedDistance(point);
-                    values[x, y] = _signedDistanceToGrayLevel(signedDistance);
+                    ParameterizedCurveProjection projection = source.ProjectWithParameter(point);
+                    values[x, y] = _projectionToGrayLevel(projection.Distance, projection.CurveCoordinate);
                 }
             }
 
