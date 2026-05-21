@@ -77,10 +77,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <exception cref="InvalidOperationException">
         /// The configured culler returned a null or empty source list.
         /// </exception>
-        public virtual TValue Sample(VectorXY point)
+        public virtual TValue Sample(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             if (_influenceSourceCuller == null)
                 return _sampler.Sample(_influenceSources, point);

@@ -23,13 +23,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="a">The first point defining the line.</param>
         /// <param name="b">The second point defining the line.</param>
         /// <exception cref="ArgumentException">Thrown when the points are equal.</exception>
-        public Line(VectorXY a, VectorXY b)
+        public Line(PointXY a, PointXY b)
         {
-            if (!a.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(a), "Line point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                a,
+                nameof(a),
+                "Line point coordinates must be finite.");
 
-            if (!b.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(b), "Line point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                b,
+                nameof(b),
+                "Line point coordinates must be finite.");
 
             if (a.Equals(b))
                 throw new ArgumentException("Line endpoints must be distinct.", nameof(b));
@@ -97,17 +101,21 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the closest point on this line to the global coordinate origin.
         /// </summary>
-        public VectorXY ClosestPointToOrigin => -_equationC * Normal;
+        public PointXY ClosestPointToOrigin => new PointXY(
+            -_equationC * Normal.X,
+            -_equationC * Normal.Y);
 
         /// <summary>
         /// Returns the shortest distance from the specified point to this line.
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this line.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             return MathF.Abs(GetSignedDistance(point));
         }
@@ -135,17 +143,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this line.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            List<VectorXY> intersections = new List<VectorXY>();
+            List<PointXY> intersections = new List<PointXY>();
 
-            VectorXY p = ray.Origin;
+            PointXY p = ray.Origin;
             VectorXY r = ray.Direction;
-            VectorXY q = ClosestPointToOrigin;
+            PointXY q = ClosestPointToOrigin;
             VectorXY s = Direction;
 
             float cross = VectorXY.Cross(r, s);
@@ -170,7 +178,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t >= 0)
             {
-                VectorXY intersection = p + r * t;
+                PointXY intersection = p + r * t;
                 intersections.AddDistinct(intersection, geometryEpsilon);
             }
 
@@ -178,7 +186,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         private static bool IsPointOnRay(
-            VectorXY point,
+            PointXY point,
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
@@ -195,13 +203,15 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this line.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             float signedDistance = GetSignedDistance(point);
-            VectorXY projection = point - Normal * signedDistance;
+            PointXY projection = point - Normal * signedDistance;
 
             return new CurveProjection(projection, MathF.Abs(signedDistance));
         }
@@ -225,7 +235,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <returns><see langword="true"/> if the lines are different; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Line left, Line right) => !(left == right);
 
-        private float GetSignedDistance(VectorXY point)
+        private float GetSignedDistance(PointXY point)
         {
             return EquationA * point.X + EquationB * point.Y + EquationC;
         }

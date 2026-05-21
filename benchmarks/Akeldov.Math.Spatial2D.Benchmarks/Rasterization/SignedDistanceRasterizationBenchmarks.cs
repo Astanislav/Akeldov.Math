@@ -33,7 +33,7 @@ public class SignedDistanceRasterizationBenchmarks
             CreateSquareContour(35f, 35f, 65f, 65f)
         });
         _grid = new RasterGrid(
-            origin: new VectorXY(-10f, -10f),
+            origin: new PointXY(-10f, -10f),
             size: new VectorXY(120f, 120f),
             resolution: new VectorXYInt(Resolution, Resolution));
         _contourGray8Rasterizer = new ContourSignedDistanceGray8BitRasterizer(ToGray8);
@@ -70,10 +70,10 @@ public class SignedDistanceRasterizationBenchmarks
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
-            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
+            new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
+            new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
+            new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
         });
     }
 

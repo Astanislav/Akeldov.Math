@@ -16,18 +16,20 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The centroid of item positions.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static VectorXY GetCentroid<TItem>(this IReadOnlyList<TItem> items)
+        public static PointXY GetCentroid<TItem>(this IReadOnlyList<TItem> items)
             where TItem : IHasPosition2D
         {
             ValidateItems(items);
 
-            var sum = VectorXY.Zero;
+            float sumX = 0f;
+            float sumY = 0f;
             for (int k = 0; k < items.Count; k++)
             {
-                sum = sum + items[k].Position;
+                sumX += items[k].Position.X;
+                sumY += items[k].Position.Y;
             }
-            var res = sum / items.Count;
-            return res;
+
+            return new PointXY(sumX / items.Count, sumY / items.Count);
         }
 
         /// <summary>
@@ -38,18 +40,20 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The centroid of item positions.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static VectorXY GetCentroid<TItem>(this TItem[] items)
+        public static PointXY GetCentroid<TItem>(this TItem[] items)
             where TItem : IHasPosition2D
         {
             ValidateItems(items);
 
-            var sum = VectorXY.Zero;
+            float sumX = 0f;
+            float sumY = 0f;
             for (int k = 0; k < items.Length; k++)
             {
-                sum = sum + items[k].Position;
+                sumX += items[k].Position.X;
+                sumY += items[k].Position.Y;
             }
-            var res = sum / items.Length;
-            return res;
+
+            return new PointXY(sumX / items.Length, sumY / items.Length);
         }
 
         /// <summary>
@@ -119,7 +123,7 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The item closest to the target point.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static TItem GetClosestTo<TItem>(this TItem[] items, VectorXY point)
+        public static TItem GetClosestTo<TItem>(this TItem[] items, PointXY point)
             where TItem : IHasPosition2D
         {
             ValidateItems(items);
@@ -149,7 +153,7 @@ namespace Akeldov.Math.Spatial2D
         /// <returns>The item closest to the target point.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="items"/> is empty or contains null elements.</exception>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="items"/> is null.</exception>
-        public static TItem GetClosestTo<TItem>(this IReadOnlyList<TItem> items, VectorXY point)
+        public static TItem GetClosestTo<TItem>(this IReadOnlyList<TItem> items, PointXY point)
             where TItem : IHasPosition2D
         {
             ValidateItems(items);

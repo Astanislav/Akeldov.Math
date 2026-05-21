@@ -75,7 +75,7 @@ public class PoissonDiskSnapshotTests
 
         public IReadOnlyList<float> DistinctValues { get; }
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             float t = point.X / _width;
             t = MathF.Max(0f, MathF.Min(1f, t));

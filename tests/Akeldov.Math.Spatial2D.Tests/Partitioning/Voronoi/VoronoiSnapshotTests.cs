@@ -11,8 +11,8 @@ public class VoronoiSnapshotTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(25f, 30f), 1f),
-            new Site(new VectorXY(95f, 30f), 1f)
+            new Site(new PointXY(25f, 30f), 1f),
+            new Site(new PointXY(95f, 30f), 1f)
         };
         var texels = CreateGridTexels(FieldSize, 5f);
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
@@ -29,8 +29,8 @@ public class VoronoiSnapshotTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(25f, 30f), 1f),
-            new Site(new VectorXY(95f, 30f), 2f)
+            new Site(new PointXY(25f, 30f), 1f),
+            new Site(new PointXY(95f, 30f), 2f)
         };
         var texels = CreateGridTexels(FieldSize, 5f);
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
@@ -50,7 +50,7 @@ public class VoronoiSnapshotTests
         {
             for (float x = step * 0.5f; x < fieldSize.X; x += step)
             {
-                items.Add(new TestItem(new VectorXY(x, y)));
+                items.Add(new TestItem(new PointXY(x, y)));
             }
         }
 
@@ -86,11 +86,11 @@ public class VoronoiSnapshotTests
 
     public sealed class TestItem : IHasPosition2D
     {
-        public TestItem(VectorXY position)
+        public TestItem(PointXY position)
         {
             Position = position;
         }
 
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
     }
 }

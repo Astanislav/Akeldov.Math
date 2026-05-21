@@ -20,7 +20,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             _points = new List<GridPoint>[gridWidth, gridHeight];
         }
 
-        public bool TryAdd(VectorXY point, float minimalDistance)
+        public bool TryAdd(PointXY point, float minimalDistance)
         {
             if (IsValidPoint(point, minimalDistance))
             {
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             }
         }
 
-        public bool IsValidPoint(VectorXY point, float minimalDistance)
+        public bool IsValidPoint(PointXY point, float minimalDistance)
         {
             if (!Contains(point))
                 return false;
@@ -65,12 +65,12 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
             return true;
         }
 
-        public bool Contains(VectorXY point)
+        public bool Contains(PointXY point)
         {
             return point.X >= 0 && point.X < _fieldSize.X && point.Y >= 0 && point.Y < _fieldSize.Y;
         }
 
-        private void Add(VectorXY point, float minimalDistance)
+        private void Add(PointXY point, float minimalDistance)
         {
             if (!Contains(point))
                 throw new ArgumentOutOfRangeException(nameof(point));

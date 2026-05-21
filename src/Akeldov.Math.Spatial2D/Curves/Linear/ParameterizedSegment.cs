@@ -9,8 +9,8 @@ namespace Akeldov.Math.Spatial2D.Curves
     /// </summary>
     public readonly struct ParameterizedSegment : IFinitePath, IEquatable<ParameterizedSegment>
     {
-        private readonly VectorXY _startPoint;
-        private readonly VectorXY _endPoint;
+        private readonly PointXY _startPoint;
+        private readonly PointXY _endPoint;
 
         private readonly bool _includesStartPoint;
         private readonly bool _includesEndPoint;
@@ -20,13 +20,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="startPoint">The start point.</param>
         /// <param name="endPoint">The end point.</param>
-        public ParameterizedSegment(VectorXY startPoint, VectorXY endPoint)
+        public ParameterizedSegment(PointXY startPoint, PointXY endPoint)
         {
-            if (!startPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                startPoint,
+                nameof(startPoint),
+                "Segment endpoint coordinates must be finite.");
 
-            if (!endPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                endPoint,
+                nameof(endPoint),
+                "Segment endpoint coordinates must be finite.");
 
             _startPoint = startPoint;
             _endPoint = endPoint;
@@ -41,13 +45,17 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="endPoint">The end point.</param>
         /// <param name="includesStartPoint">Whether the start point belongs to the segment.</param>
         /// <param name="includesEndPoint">Whether the end point belongs to the segment.</param>
-        public ParameterizedSegment(VectorXY startPoint, VectorXY endPoint, bool includesStartPoint, bool includesEndPoint)
+        public ParameterizedSegment(PointXY startPoint, PointXY endPoint, bool includesStartPoint, bool includesEndPoint)
         {
-            if (!startPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(startPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                startPoint,
+                nameof(startPoint),
+                "Segment endpoint coordinates must be finite.");
 
-            if (!endPoint.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(endPoint), "Segment endpoint coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                endPoint,
+                nameof(endPoint),
+                "Segment endpoint coordinates must be finite.");
 
             _startPoint = startPoint;
             _endPoint = endPoint;
@@ -58,22 +66,22 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the start point.
         /// </summary>
-        public VectorXY StartPoint => _startPoint;
+        public PointXY StartPoint => _startPoint;
 
         /// <summary>
         /// Gets the end point.
         /// </summary>
-        public VectorXY EndPoint => _endPoint;
+        public PointXY EndPoint => _endPoint;
 
         /// <summary>
         /// Gets the endpoint at the start of the traversal direction.
         /// </summary>
-        public VectorXY EndpointA => StartPoint;
+        public PointXY EndpointA => StartPoint;
 
         /// <summary>
         /// Gets the endpoint at the end of the traversal direction.
         /// </summary>
-        public VectorXY EndpointB => EndPoint;
+        public PointXY EndpointB => EndPoint;
 
         /// <summary>
         /// Gets the segment length.
@@ -98,13 +106,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this segment.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            List<VectorXY> intersections = new List<VectorXY>();
+            List<PointXY> intersections = new List<PointXY>();
 
             VectorXY rayDir = ray.Direction;
             VectorXY segDir = EndPoint - StartPoint;
@@ -123,7 +131,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t >= 0f && u >= 0f && u <= 1f)
             {
-                VectorXY intersection = ray.Origin + t * rayDir;
+                PointXY intersection = ray.Origin + t * rayDir;
 
                 if (intersection.AlmostEquals(StartPoint, geometryEpsilon))
                 {
@@ -144,7 +152,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             return intersections;
         }
 
-        private void AddFirstCollinearIntersection(Ray ray, List<VectorXY> intersections, float geometryEpsilon)
+        private void AddFirstCollinearIntersection(Ray ray, List<PointXY> intersections, float geometryEpsilon)
         {
             VectorXY segDir = EndPoint - StartPoint;
             VectorXY originToStart = StartPoint - ray.Origin;
@@ -163,7 +171,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             float tStart = VectorXY.Dot(StartPoint - ray.Origin, ray.Direction);
             float tEnd = VectorXY.Dot(EndPoint - ray.Origin, ray.Direction);
 
-            VectorXY startPoint;
+            PointXY startPoint;
             bool startIncluded;
             float startT;
             float endT;
@@ -202,7 +210,7 @@ namespace Akeldov.Math.Spatial2D.Curves
                 intersections.AddDistinct(startPoint, geometryEpsilon);
         }
 
-        private bool IncludesPoint(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        private bool IncludesPoint(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             VectorXY segmentVector = EndPoint - StartPoint;
             VectorXY startToPoint = point - StartPoint;
@@ -227,7 +235,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         }
 
         private static bool IsPointOnRay(
-            VectorXY point,
+            PointXY point,
             Ray ray,
             out float t,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
@@ -266,7 +274,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this segment.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return Project(point).Distance;
         }
@@ -276,7 +284,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this segment.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
             var projection = ProjectWithParameter(point);
             return new CurveProjection(projection.ProjectedPoint, projection.Distance);
@@ -287,7 +295,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="curveCoordinate">The finite curve coordinate in world coordinate units.</param>
         /// <returns>The point on this segment.</returns>
-        public VectorXY GetPoint(float curveCoordinate)
+        public PointXY GetPoint(float curveCoordinate)
         {
             if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
@@ -308,10 +316,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, segment length coordinate, and distance to this segment.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY segmentVector = EndPoint - StartPoint;
             VectorXY startToPoint = point - StartPoint;
@@ -327,7 +337,7 @@ namespace Akeldov.Math.Spatial2D.Curves
             else if (normalizedParameter > 1f)
                 normalizedParameter = 1f;
 
-            VectorXY projection = StartPoint + normalizedParameter * segmentVector;
+            PointXY projection = StartPoint + normalizedParameter * segmentVector;
             float curveCoordinate = normalizedParameter * MathF.Sqrt(segmentLengthSquared);
             return new ParameterizedCurveProjection(projection, curveCoordinate, point.Distance(projection));
         }

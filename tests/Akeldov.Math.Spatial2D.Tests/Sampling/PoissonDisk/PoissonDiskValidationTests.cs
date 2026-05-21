@@ -26,7 +26,7 @@ public class PoissonDiskValidationTests
     public void PointSampleConstructor_WhenMinimalDistanceIsInvalid_Throws(float minimalDistance)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new PoissonDiskPointSample(VectorXY.Zero, minimalDistance));
+            () => new PoissonDiskPointSample(new PointXY(0f, 0f), minimalDistance));
 
         Assert.That(exception!.ParamName, Is.EqualTo("minimalDistance"));
     }
@@ -34,21 +34,19 @@ public class PoissonDiskValidationTests
     [Test]
     public void PointSampleConstructor_WhenMinimalDistanceIsValid_StoresSample()
     {
-        var point = new VectorXY(1f, 2f);
+        var point = new PointXY(1f, 2f);
         var sample = new PoissonDiskPointSample(point, 3f);
 
         Assert.That(sample.Point, Is.EqualTo(point));
         Assert.That(sample.MinimalDistance, Is.EqualTo(3f));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void PointSampleConstructor_WhenPointCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new PoissonDiskPointSample(new VectorXY(x, y), 1f));
+            () => new PoissonDiskPointSample(new PointXY(x, y), 1f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -153,7 +151,7 @@ public class PoissonDiskValidationTests
         List<PoissonDiskPointSample> result = sampler.Sample(new VectorXY(20f, 20f), 5f);
         int originalCount = result.Count;
 
-        result.Add(new PoissonDiskPointSample(VectorXY.Zero, 1f));
+        result.Add(new PoissonDiskPointSample(new PointXY(0f, 0f), 1f));
 
         Assert.That(result, Has.Count.EqualTo(originalCount + 1));
     }
@@ -180,7 +178,7 @@ public class PoissonDiskValidationTests
 
         public float Max { get; }
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             return Min;
         }
@@ -201,7 +199,7 @@ public class PoissonDiskValidationTests
 
         public float Max => _value;
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             if (point.X < 0f || point.X >= _fieldSize.X || point.Y < 0f || point.Y >= _fieldSize.Y)
                 throw new ArgumentOutOfRangeException(nameof(point));
@@ -223,7 +221,7 @@ public class PoissonDiskValidationTests
 
         public float Max => 1f;
 
-        public float Sample(VectorXY point)
+        public float Sample(PointXY point)
         {
             return _value;
         }

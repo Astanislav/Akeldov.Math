@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Fields;
 public class BarycentricFloatSamplerBenchmarks
 {
     private FloatPointInfluenceSource[] _sources = null!;
-    private VectorXY[] _queries = null!;
+    private PointXY[] _queries = null!;
     private BarycentricFloatSampler<FloatPointInfluenceSource> _sampler = null!;
 
     [Params(16, 128, 512)]
@@ -32,7 +32,7 @@ public class BarycentricFloatSamplerBenchmarks
                 value: random.NextSingle() * 100f);
         }
 
-        _queries = new VectorXY[QueryCount];
+        _queries = new PointXY[QueryCount];
         for (int i = 0; i < _queries.Length; i++)
             _queries[i] = NextPoint(random, 1000f);
 
@@ -50,8 +50,8 @@ public class BarycentricFloatSamplerBenchmarks
         return sum;
     }
 
-    private static VectorXY NextPoint(Random random, float size)
+    private static PointXY NextPoint(Random random, float size)
     {
-        return new VectorXY(random.NextSingle() * size, random.NextSingle() * size);
+        return new PointXY(random.NextSingle() * size, random.NextSingle() * size);
     }
 }

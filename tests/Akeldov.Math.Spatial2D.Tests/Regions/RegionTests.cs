@@ -79,7 +79,7 @@ public class RegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new VectorXY(0.5f, 0.5f)), Is.True);
+        Assert.That(region.Contains(new PointXY(0.5f, 0.5f)), Is.True);
     }
 
     [Test]
@@ -91,7 +91,7 @@ public class RegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new VectorXY(2f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(2f, 2f)), Is.False);
     }
 
     [Test]
@@ -103,7 +103,7 @@ public class RegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.False);
     }
 
     [Test]
@@ -114,7 +114,7 @@ public class RegionTests
             CreateSquareContour(0f, 0f, 1f, 1f)
         });
 
-        var point = new VectorXY(-0.0005f, 0.5f);
+        var point = new PointXY(-0.0005f, 0.5f);
 
         Assert.That(region.Contains(point), Is.False);
         Assert.That(region.Contains(point, 0.001f), Is.True);
@@ -126,7 +126,7 @@ public class RegionTests
         var contour = new EpsilonAwareContour();
         IRegion region = new Region(new IContour[] { contour });
 
-        bool contains = region.Contains(VectorXY.Zero, 0.25f);
+        bool contains = region.Contains(new PointXY(0f, 0f), 0.25f);
 
         Assert.That(contains, Is.True);
         Assert.That(contour.LastGeometryEpsilon, Is.EqualTo(0.25f));
@@ -141,11 +141,11 @@ public class RegionTests
             CreateSquareContour(1f, 1f, 3f, 3f)
         });
 
-        Assert.That(region.Contains(new VectorXY(-0.5f, 2f)), Is.False);
-        Assert.That(region.Contains(new VectorXY(0.5f, 0.5f)), Is.True);
-        Assert.That(region.Contains(new VectorXY(2f, 2f)), Is.False);
-        Assert.That(region.Contains(new VectorXY(0f, 2f)), Is.True);
-        Assert.That(region.Contains(new VectorXY(1f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(-0.5f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(0.5f, 0.5f)), Is.True);
+        Assert.That(region.Contains(new PointXY(2f, 2f)), Is.False);
+        Assert.That(region.Contains(new PointXY(0f, 2f)), Is.True);
+        Assert.That(region.Contains(new PointXY(1f, 2f)), Is.False);
     }
 
     [Test]
@@ -159,11 +159,11 @@ public class RegionTests
             CreateSquareContour(3f, 3f, 5f, 5f)
         });
 
-        Assert.That(region.Contains(new VectorXY(0.5f, 0.5f)), Is.True);
-        Assert.That(region.Contains(new VectorXY(1.5f, 1.5f)), Is.False);
-        Assert.That(region.Contains(new VectorXY(2.5f, 2.5f)), Is.True);
-        Assert.That(region.Contains(new VectorXY(4f, 4f)), Is.False);
-        Assert.That(region.Contains(new VectorXY(8.5f, 8.5f)), Is.False);
+        Assert.That(region.Contains(new PointXY(0.5f, 0.5f)), Is.True);
+        Assert.That(region.Contains(new PointXY(1.5f, 1.5f)), Is.False);
+        Assert.That(region.Contains(new PointXY(2.5f, 2.5f)), Is.True);
+        Assert.That(region.Contains(new PointXY(4f, 4f)), Is.False);
+        Assert.That(region.Contains(new PointXY(8.5f, 8.5f)), Is.False);
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class RegionTests
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Contains(new VectorXY(float.NaN, 0f)));
+            region.Contains(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -192,7 +192,7 @@ public class RegionTests
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            region.Contains(VectorXY.Zero, geometryEpsilon));
+            region.Contains(new PointXY(0f, 0f), geometryEpsilon));
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
@@ -201,10 +201,10 @@ public class RegionTests
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-            new ParameterizedSegment(new VectorXY(right, bottom), new VectorXY(right, top)),
-            new ParameterizedSegment(new VectorXY(right, top), new VectorXY(left, top)),
-            new ParameterizedSegment(new VectorXY(left, top), new VectorXY(left, bottom))
+            new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
+            new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
+            new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
+            new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
         });
     }
 
@@ -220,14 +220,14 @@ public class RegionTests
         public IReadOnlyList<IFinitePath> Curves => ContourCurves;
 
         public bool Encloses(
-            VectorXY point,
+            PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             LastGeometryEpsilon = geometryEpsilon;
             return geometryEpsilon == 0.25f;
         }
 
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             float minDistance = float.MaxValue;
 
@@ -241,7 +241,7 @@ public class RegionTests
             return minDistance;
         }
 
-        public float SignedDistance(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
+        public float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             float distance = Distance(point);
             return Encloses(point, geometryEpsilon) ? -distance : distance;
@@ -250,31 +250,31 @@ public class RegionTests
 
     private sealed class DistantBoundaryCurve : IFinitePath
     {
-        public VectorXY StartPoint => VectorXY.Zero;
+        public PointXY StartPoint => new PointXY(0f, 0f);
 
-        public VectorXY EndPoint => VectorXY.Zero;
+        public PointXY EndPoint => new PointXY(0f, 0f);
 
-        public VectorXY EndpointA => StartPoint;
+        public PointXY EndpointA => StartPoint;
 
-        public VectorXY EndpointB => EndPoint;
+        public PointXY EndpointB => EndPoint;
 
         public float Length => 0f;
 
-        public VectorXY GetPoint(float curveCoordinate) => VectorXY.Zero;
+        public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
 
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
-            return new List<VectorXY>();
+            return new List<PointXY>();
         }
 
-        public float Distance(VectorXY point) => 1f;
+        public float Distance(PointXY point) => 1f;
 
-        public CurveProjection Project(VectorXY point) => new(VectorXY.Zero, Distance(point));
+        public CurveProjection Project(PointXY point) => new(new PointXY(0f, 0f), Distance(point));
 
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point) => new(
-            VectorXY.Zero,
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point) => new(
+            new PointXY(0f, 0f),
             0f,
             Distance(point));
     }

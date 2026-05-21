@@ -11,6 +11,6 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="point">The point to sample.</param>
         /// <returns>The field value at the specified point.</returns>
-        TValue Sample(VectorXY point);
+        TValue Sample(PointXY point);
     }
 }

@@ -20,17 +20,17 @@ var region = new Region(new IContour[]
     CreateSquareContour(1f, 1f, 3f, 3f)
 });
 
-bool isInsideOuterArea = region.Contains(new VectorXY(0.5f, 0.5f));
-bool isInsideHole = region.Contains(new VectorXY(2f, 2f));
+bool isInsideOuterArea = region.Contains(new PointXY(0.5f, 0.5f));
+bool isInsideHole = region.Contains(new PointXY(2f, 2f));
 
 static Contour CreateSquareContour(float left, float bottom, float right, float top)
 {
-    return new Contour(new IBoundedParameterizedCurve[]
+    return new Contour(new IFinitePath[]
     {
-        new Segment(new VectorXY(left, bottom), new VectorXY(right, bottom)),
-        new Segment(new VectorXY(right, bottom), new VectorXY(right, top)),
-        new Segment(new VectorXY(right, top), new VectorXY(left, top)),
-        new Segment(new VectorXY(left, top), new VectorXY(left, bottom))
+        new ParameterizedSegment(new PointXY(left, bottom), new PointXY(right, bottom)),
+        new ParameterizedSegment(new PointXY(right, bottom), new PointXY(right, top)),
+        new ParameterizedSegment(new PointXY(right, top), new PointXY(left, top)),
+        new ParameterizedSegment(new PointXY(left, top), new PointXY(left, bottom))
     });
 }
 ```

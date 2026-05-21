@@ -44,7 +44,7 @@ public class InfluenceSnapshotTests
             sampler,
             sources);
 
-        Assert.That(field.Sample(new VectorXY(50f, 52f)), Is.EqualTo(100f).Within(0.0001f));
+        Assert.That(field.Sample(new PointXY(50f, 52f)), Is.EqualTo(100f).Within(0.0001f));
         AssertMatchesApprovedSamplerWeightsPng("barycentric-sampler.png", sampler, sources, FieldSize);
     }
 
@@ -54,7 +54,7 @@ public class InfluenceSnapshotTests
         FloatPointInfluenceSource[] sources = CreateCullerSources();
         var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
 
-        List<FloatPointInfluenceSource> selectedSources = culler.Cull(new VectorXY(50f, 34f));
+        List<FloatPointInfluenceSource> selectedSources = culler.Cull(new PointXY(50f, 34f));
 
         Assert.That(selectedSources, Has.Count.EqualTo(3));
         AssertMatchesApprovedCullerPng("delaunay-culler.png", culler, sources, CullerFieldSize);
@@ -64,9 +64,9 @@ public class InfluenceSnapshotTests
     {
         return new[]
         {
-            new FloatPointInfluenceSource(1f, new VectorXY(18f, 14f), 0f),
-            new FloatPointInfluenceSource(1f, new VectorXY(82f, 16f), 100f),
-            new FloatPointInfluenceSource(1f, new VectorXY(50f, 52f), 50f)
+            new FloatPointInfluenceSource(1f, new PointXY(18f, 14f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(82f, 16f), 100f),
+            new FloatPointInfluenceSource(1f, new PointXY(50f, 52f), 50f)
         };
     }
 
@@ -74,9 +74,9 @@ public class InfluenceSnapshotTests
     {
         return new[]
         {
-            new FloatPointInfluenceSource(1f, new VectorXY(18f, 14f), 0f),
-            new FloatPointInfluenceSource(1f, new VectorXY(82f, 16f), 25f),
-            new FloatPointInfluenceSource(1f, new VectorXY(50f, 52f), 100f)
+            new FloatPointInfluenceSource(1f, new PointXY(18f, 14f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(82f, 16f), 25f),
+            new FloatPointInfluenceSource(1f, new PointXY(50f, 52f), 100f)
         };
     }
 
@@ -84,11 +84,11 @@ public class InfluenceSnapshotTests
     {
         return new[]
         {
-            new FloatPointInfluenceSource(1f, new VectorXY(12f, 12f), 0f),
-            new FloatPointInfluenceSource(1f, new VectorXY(88f, 14f), 25f),
-            new FloatPointInfluenceSource(1f, new VectorXY(18f, 58f), 50f),
-            new FloatPointInfluenceSource(1f, new VectorXY(83f, 54f), 75f),
-            new FloatPointInfluenceSource(1f, new VectorXY(50f, 34f), 100f)
+            new FloatPointInfluenceSource(1f, new PointXY(12f, 12f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(88f, 14f), 25f),
+            new FloatPointInfluenceSource(1f, new PointXY(18f, 58f), 50f),
+            new FloatPointInfluenceSource(1f, new PointXY(83f, 54f), 75f),
+            new FloatPointInfluenceSource(1f, new PointXY(50f, 34f), 100f)
         };
     }
 

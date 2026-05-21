@@ -41,7 +41,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 float pointY = firstY + y * cellSize.Y;
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
-                    VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
+                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float signedDistance = GetSignedDistanceToRegion(source, point, curves);
                     values[x, y] = _signedDistanceToGrayLevel(signedDistance);
                 }
@@ -90,13 +90,13 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 throw new ArgumentOutOfRangeException(nameof(grid), "Raster grid resolution components must be positive.");
         }
 
-        private static float GetSignedDistanceToRegion(IRegion region, VectorXY point, IReadOnlyList<IPath> curves)
+        private static float GetSignedDistanceToRegion(IRegion region, PointXY point, IReadOnlyList<IPath> curves)
         {
             float distance = DistanceToRegionBoundary(point, curves);
             return region.Contains(point) ? -distance : distance;
         }
 
-        private static float DistanceToRegionBoundary(VectorXY point, IReadOnlyList<IPath> curves)
+        private static float DistanceToRegionBoundary(PointXY point, IReadOnlyList<IPath> curves)
         {
             float minDistance = float.MaxValue;
 

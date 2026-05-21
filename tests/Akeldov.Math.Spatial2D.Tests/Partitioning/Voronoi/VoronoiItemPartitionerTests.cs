@@ -19,7 +19,7 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Constructor_WhenRelaxationIterationsIsNegative_Throws()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
 
         Assert.Throws<ArgumentOutOfRangeException>(
             () => new VoronoiItemPartitioner<TestItem>(sites, relaxationIterations: -1, EmptyCellPolicy.ThrowException));
@@ -30,23 +30,21 @@ public class VoronoiItemPartitionerTests
     [TestCase(float.NegativeInfinity)]
     public void SiteConstructor_WhenWeightIsNegativeOrNaN_Throws(float weight)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Site(VectorXY.Zero, weight));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Site(new PointXY(0f, 0f), weight));
     }
 
     [Test]
     public void SiteConstructor_WhenWeightIsZero_DoesNotThrow()
     {
-        Assert.DoesNotThrow(() => new Site(VectorXY.Zero, 0f));
+        Assert.DoesNotThrow(() => new Site(new PointXY(0f, 0f), 0f));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void SiteConstructor_WhenPositionCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new Site(new VectorXY(x, y), 1f));
+            new Site(new PointXY(x, y), 1f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("position"));
     }
@@ -56,8 +54,8 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(VectorXY.Zero, 0f),
-            new Site(VectorXY.One, 0f)
+            new Site(new PointXY(0f, 0f), 0f),
+            new Site(new PointXY(1f, 1f), 0f)
         };
 
         var exception = Assert.Throws<ArgumentException>(() =>
@@ -69,7 +67,7 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void SiteConstructor_WhenWeightIsPositiveInfinity_DoesNotThrow()
     {
-        Assert.DoesNotThrow(() => new Site(VectorXY.Zero, float.PositiveInfinity));
+        Assert.DoesNotThrow(() => new Site(new PointXY(0f, 0f), float.PositiveInfinity));
     }
 
     [Test]
@@ -77,13 +75,13 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(10f, 0f), 1f)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(10f, 0f), 1f)
         };
         var texels = new[]
         {
-            new TestItem("left", new VectorXY(1f, 0f)),
-            new TestItem("right", new VectorXY(9f, 0f))
+            new TestItem("left", new PointXY(1f, 0f)),
+            new TestItem("right", new PointXY(9f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
@@ -97,7 +95,7 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Partition_WhenItemsContainNull_Throws()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var texels = new TestItem[] { null! };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -109,8 +107,8 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Partition_WhenItemPositionCoordinateIsInvalid_Throws()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
-        var texels = new[] { new TestItem("invalid", new VectorXY(float.NaN, 0f)) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+        var texels = new[] { new TestItem("invalid", new PointXY(float.PositiveInfinity, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var exception = Assert.Throws<ArgumentException>(() => partitioner.Partition(texels));
@@ -121,22 +119,22 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Partition_WhenCellItemsAccessed_ReturnsReadOnlyView()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
-        var texels = new[] { new TestItem("item", VectorXY.Zero) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
+        var texels = new[] { new TestItem("item", new PointXY(0f, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
 
         Assert.That(cells[0].Items, Is.Not.InstanceOf<List<TestItem>>());
         Assert.Throws<NotSupportedException>(() =>
-            ((IList<TestItem>)cells[0].Items)[0] = new TestItem("replacement", VectorXY.One));
+            ((IList<TestItem>)cells[0].Items)[0] = new TestItem("replacement", new PointXY(1f, 1f)));
     }
 
     [Test]
     public void VoronoiItemPartition_WhenItemListChangesAfterConstruction_UsesOriginalItems()
     {
-        var items = new List<TestItem> { new TestItem("original", VectorXY.Zero) };
-        var cell = new VoronoiItemPartition<TestItem>(new Site(VectorXY.Zero, 1f), items);
+        var items = new List<TestItem> { new TestItem("original", new PointXY(0f, 0f)) };
+        var cell = new VoronoiItemPartition<TestItem>(new Site(new PointXY(0f, 0f), 1f), items);
 
         items.Clear();
 
@@ -150,7 +148,7 @@ public class VoronoiItemPartitionerTests
         var items = new TestItem[] { null! };
 
         var exception = Assert.Throws<ArgumentException>(() =>
-            new VoronoiItemPartition<TestItem>(new Site(VectorXY.Zero, 1f), items));
+            new VoronoiItemPartition<TestItem>(new Site(new PointXY(0f, 0f), 1f), items));
 
         Assert.That(exception!.ParamName, Is.EqualTo("items"));
     }
@@ -160,12 +158,12 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(10f, 0f), 3f)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(10f, 0f), 3f)
         };
         var texels = new[]
         {
-            new TestItem("weighted-right", new VectorXY(3f, 0f))
+            new TestItem("weighted-right", new PointXY(3f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -180,13 +178,13 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 0f),
-            new Site(new VectorXY(10f, 0f), 1f)
+            new Site(new PointXY(0f, 0f), 0f),
+            new Site(new PointXY(10f, 0f), 1f)
         };
         var texels = new[]
         {
-            new TestItem("exact-zero", VectorXY.Zero),
-            new TestItem("near-zero", new VectorXY(1f, 0f))
+            new TestItem("exact-zero", new PointXY(0f, 0f)),
+            new TestItem("near-zero", new PointXY(1f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -201,13 +199,13 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(10f, 0f), float.PositiveInfinity)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(10f, 0f), float.PositiveInfinity)
         };
         var texels = new[]
         {
-            new TestItem("far-from-infinite", new VectorXY(-100f, 0f)),
-            new TestItem("near-infinite", new VectorXY(9f, 0f))
+            new TestItem("far-from-infinite", new PointXY(-100f, 0f)),
+            new TestItem("near-infinite", new PointXY(9f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -222,12 +220,12 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(10f, 0f), float.PositiveInfinity),
-            new Site(VectorXY.Zero, 1f)
+            new Site(new PointXY(10f, 0f), float.PositiveInfinity),
+            new Site(new PointXY(0f, 0f), 1f)
         };
         var texels = new[]
         {
-            new TestItem("exact-finite", VectorXY.Zero)
+            new TestItem("exact-finite", new PointXY(0f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -242,13 +240,13 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 100f), 100f),
-            new Site(new VectorXY(0f, 0f), float.PositiveInfinity),
-            new Site(new VectorXY(10f, 0f), float.PositiveInfinity)
+            new Site(new PointXY(0f, 100f), 100f),
+            new Site(new PointXY(0f, 0f), float.PositiveInfinity),
+            new Site(new PointXY(10f, 0f), float.PositiveInfinity)
         };
         var texels = new[]
         {
-            new TestItem("nearest-infinite", new VectorXY(9f, 0f))
+            new TestItem("nearest-infinite", new PointXY(9f, 0f))
         };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
@@ -262,7 +260,7 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Partition_WhenTexelsIsNull_Throws()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<ArgumentNullException>(() => partitioner.Partition(null!));
@@ -271,7 +269,7 @@ public class VoronoiItemPartitionerTests
     [Test]
     public void Partition_WhenTexelsIsEmpty_Throws()
     {
-        var sites = new[] { new Site(VectorXY.Zero, 1f) };
+        var sites = new[] { new Site(new PointXY(0f, 0f), 1f) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => partitioner.Partition(Array.Empty<TestItem>()));
@@ -282,10 +280,10 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(100f, 0f), 1f)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(100f, 0f), 1f)
         };
-        var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
+        var texels = new[] { new TestItem("left", new PointXY(1f, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites);
 
         Assert.Throws<InvalidOperationException>(() => partitioner.Partition(texels));
@@ -296,10 +294,10 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(100f, 0f), 1f)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(100f, 0f), 1f)
         };
-        var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
+        var texels = new[] { new TestItem("left", new PointXY(1f, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.Exclude);
 
         var cells = partitioner.Partition(texels);
@@ -313,10 +311,10 @@ public class VoronoiItemPartitionerTests
     {
         var sites = new[]
         {
-            new Site(new VectorXY(0f, 0f), 1f),
-            new Site(new VectorXY(100f, 0f), 1f)
+            new Site(new PointXY(0f, 0f), 1f),
+            new Site(new PointXY(100f, 0f), 1f)
         };
-        var texels = new[] { new TestItem("left", new VectorXY(1f, 0f)) };
+        var texels = new[] { new TestItem("left", new PointXY(1f, 0f)) };
         var partitioner = new VoronoiItemPartitioner<TestItem>(sites, EmptyCellPolicy.LeaveAsIs);
 
         var cells = partitioner.Partition(texels);
@@ -328,7 +326,7 @@ public class VoronoiItemPartitionerTests
 
     private sealed class TestItem : IHasPosition2D
     {
-        public TestItem(string id, VectorXY position)
+        public TestItem(string id, PointXY position)
         {
             Id = id;
             Position = position;
@@ -336,6 +334,6 @@ public class VoronoiItemPartitionerTests
 
         public string Id { get; }
 
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
     }
 }

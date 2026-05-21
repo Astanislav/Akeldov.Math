@@ -40,15 +40,17 @@ namespace Akeldov.Math.Spatial2D.Contours
         public IReadOnlyList<IFinitePath> Curves => _readOnlyCurves;
 
         /// <inheritdoc/>
-        public bool Encloses(VectorXY point, float geometryEpsilon = 1E-06F)
+        public bool Encloses(PointXY point, float geometryEpsilon = 1E-06F)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             var ray = new Ray(point);
-            var intersections = new List<VectorXY>();
+            var intersections = new List<PointXY>();
 
             for (int i = 0; i < _curves.Length; i++)
             {
@@ -57,13 +59,13 @@ namespace Akeldov.Math.Spatial2D.Contours
                 if (curve.Distance(point) <= geometryEpsilon)
                     return true;
 
-                List<VectorXY> curveIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
+                List<PointXY> curveIntersections = curve.GetRayIntersections(ray, geometryEpsilon);
                 if (curveIntersections == null)
                     continue;
 
                 for (int j = 0; j < curveIntersections.Count; j++)
                 {
-                    VectorXY intersection = curveIntersections[j];
+                    PointXY intersection = curveIntersections[j];
                     if (intersection.X <= point.X + geometryEpsilon)
                         continue;
 
@@ -76,10 +78,12 @@ namespace Akeldov.Math.Spatial2D.Contours
 
         /// <inheritdoc/>
         /// <inheritdoc/>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             float minDistance = float.MaxValue;
 
@@ -94,7 +98,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         }
 
         /// <inheritdoc/>
-        public float SignedDistance(VectorXY point, float geometryEpsilon = 1E-06F)
+        public float SignedDistance(PointXY point, float geometryEpsilon = 1E-06F)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
@@ -114,7 +118,7 @@ namespace Akeldov.Math.Spatial2D.Contours
             }
         }
 
-        private static void AddDistinct(List<VectorXY> intersections, VectorXY point, float geometryEpsilon)
+        private static void AddDistinct(List<PointXY> intersections, PointXY point, float geometryEpsilon)
         {
             for (int i = 0; i < intersections.Count; i++)
             {

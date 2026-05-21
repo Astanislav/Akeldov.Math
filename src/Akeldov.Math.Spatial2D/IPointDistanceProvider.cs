@@ -10,6 +10,6 @@ namespace Akeldov.Math.Spatial2D
         /// </summary>
         /// <param name="point">The finite point to measure to.</param>
         /// <returns>The shortest unsigned distance to the point.</returns>
-        float Distance(VectorXY point);
+        float Distance(PointXY point);
     }
 }

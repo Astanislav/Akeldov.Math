@@ -13,10 +13,12 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <param name="point">The sampled point.</param>
         /// <param name="minimalDistance">The finite positive minimal distance associated with the sampled point.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="minimalDistance"/> is not finite and positive.</exception>
-        public PoissonDiskPointSample(VectorXY point, float minimalDistance)
+        public PoissonDiskPointSample(PointXY point, float minimalDistance)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Sample point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Sample point coordinates must be finite.");
 
             if (minimalDistance <= 0f || float.IsNaN(minimalDistance) || float.IsInfinity(minimalDistance))
                 throw new ArgumentOutOfRangeException(nameof(minimalDistance), "Minimal distance must be finite and positive.");
@@ -28,7 +30,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// <summary>
         /// Gets the sampled point.
         /// </summary>
-        public VectorXY Point { get; }
+        public PointXY Point { get; }
 
         /// <summary>
         /// Gets the minimal distance associated with the sampled point.
@@ -40,7 +42,7 @@ namespace Akeldov.Math.Spatial2D.Sampling.Point.PoissonDisk
         /// </summary>
         /// <param name="point">The sampled point.</param>
         /// <param name="minimalDistance">The minimal distance associated with the sampled point.</param>
-        public void Deconstruct(out VectorXY point, out float minimalDistance)
+        public void Deconstruct(out PointXY point, out float minimalDistance)
         {
             point = Point;
             minimalDistance = MinimalDistance;

@@ -27,7 +27,7 @@ internal static class PoissonDiskSvgRenderer
 
         for (int i = 0; i < samples.Count; i++)
         {
-            VectorXY point = samples[i].Point;
+            PointXY point = samples[i].Point;
             builder.AppendLine($"    <circle cx=\"{Format(point.X)}\" cy=\"{Format(point.Y)}\" r=\"1.35\"/>");
         }
 

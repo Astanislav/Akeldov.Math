@@ -10,9 +10,9 @@ using Akeldov.Math.Spatial2D.Fields;
 
 var sources = new[]
 {
-    new FloatPointInfluenceSource(1f, new VectorXY(18f, 14f), 0f),
-    new FloatPointInfluenceSource(1f, new VectorXY(82f, 16f), 100f),
-    new FloatPointInfluenceSource(1f, new VectorXY(50f, 52f), 50f)
+    new FloatPointInfluenceSource(1f, new PointXY(18f, 14f), 0f),
+    new FloatPointInfluenceSource(1f, new PointXY(82f, 16f), 100f),
+    new FloatPointInfluenceSource(1f, new PointXY(50f, 52f), 50f)
 };
 ```
 
@@ -24,7 +24,7 @@ Nearest sampling returns the value of the closest source.
 var sampler = new NearestFloatInfluenceSampler<FloatPointInfluenceSource>();
 var field = new FloatPointInfluenceField(sampler, sources);
 
-float value = field.Sample(new VectorXY(40f, 30f));
+float value = field.Sample(new PointXY(40f, 30f));
 ```
 
 ![Nearest influence sampler output](../../../assets/spatial2d/influence/nearest-sampler.png)
@@ -37,7 +37,7 @@ Inverse-distance weighted sampling blends all selected sources, weighted by dist
 var sampler = new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>();
 var field = new FloatPointInfluenceField(sampler, sources);
 
-float value = field.Sample(new VectorXY(40f, 30f));
+float value = field.Sample(new PointXY(40f, 30f));
 ```
 
 ![Inverse-distance weighted influence sampler output](../../../assets/spatial2d/influence/inverse-distance-weighted-sampler.png)
@@ -50,7 +50,7 @@ Barycentric sampling interpolates over nearby source triangles.
 var sampler = new BarycentricFloatSampler<FloatPointInfluenceSource>();
 var field = new FloatPointInfluenceField(sampler, sources);
 
-float value = field.Sample(new VectorXY(40f, 30f));
+float value = field.Sample(new PointXY(40f, 30f));
 ```
 
 ![Barycentric influence sampler output](../../../assets/spatial2d/influence/barycentric-sampler.png)

@@ -28,9 +28,9 @@ public class ContourTests
     {
         var exception = Assert.Throws<ArgumentException>(() => new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(1f, 0f)),
-            new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(2f, 1f)),
-            new ParameterizedSegment(new VectorXY(2f, 1f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
+            new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 1f)),
+            new ParameterizedSegment(new PointXY(2f, 1f), new PointXY(0f, 0f))
         }));
 
         Assert.That(exception!.ParamName, Is.EqualTo("curves"));
@@ -41,9 +41,9 @@ public class ContourTests
     {
         var exception = Assert.Throws<ArgumentException>(() => new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(1f, 0f)),
-            new ParameterizedSegment(new VectorXY(1f, 0f), new VectorXY(1f, 1f)),
-            new ParameterizedSegment(new VectorXY(1f, 1f), new VectorXY(0f, 1f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 0f)),
+            new ParameterizedSegment(new PointXY(1f, 0f), new PointXY(1f, 1f)),
+            new ParameterizedSegment(new PointXY(1f, 1f), new PointXY(0f, 1f))
         }));
 
         Assert.That(exception!.ParamName, Is.EqualTo("curves"));
@@ -59,7 +59,9 @@ public class ContourTests
 
         Assert.That(contour.Curves, Is.Not.InstanceOf<IFinitePath[]>());
         Assert.Throws<NotSupportedException>(() =>
-            ((IList<IFinitePath>)contour.Curves)[0] = new ParameterizedSegment(VectorXY.Zero, VectorXY.One));
+            ((IList<IFinitePath>)contour.Curves)[0] = new ParameterizedSegment(
+                new PointXY(0f, 0f),
+                new PointXY(1f, 1f)));
     }
 
     [Test]
@@ -67,13 +69,13 @@ public class ContourTests
     {
         var contour = new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
-            new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(2f, 2f)),
-            new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
-            new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
+            new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
+            new ParameterizedSegment(new PointXY(2f, 2f), new PointXY(0f, 2f)),
+            new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
 
-        Assert.That(contour.Encloses(new VectorXY(1f, 1f)), Is.True);
+        Assert.That(contour.Encloses(new PointXY(1f, 1f)), Is.True);
     }
 
     [Test]
@@ -84,7 +86,7 @@ public class ContourTests
             CreateUnitCirclePath()
         });
 
-        bool isInside = contour.Encloses(new VectorXY(2f, 0f));
+        bool isInside = contour.Encloses(new PointXY(2f, 0f));
 
         Assert.That(isInside, Is.False);
     }
@@ -97,7 +99,7 @@ public class ContourTests
             CreateUnitCirclePath()
         });
 
-        Assert.That(contour.Encloses(new VectorXY(1f, 0f)), Is.True);
+        Assert.That(contour.Encloses(new PointXY(1f, 0f)), Is.True);
     }
 
     [Test]
@@ -108,7 +110,7 @@ public class ContourTests
             CreateUnitCirclePath()
         });
 
-        var point = new VectorXY(1.0005f, 0f);
+        var point = new PointXY(1.0005f, 0f);
 
         Assert.That(contour.Encloses(point), Is.False);
         Assert.That(contour.Encloses(point, 0.001f), Is.True);
@@ -119,7 +121,7 @@ public class ContourTests
     {
         IContour contour = CreateSquareContour();
 
-        float distance = contour.Distance(new VectorXY(1f, 1f));
+        float distance = contour.Distance(new PointXY(1f, 1f));
 
         Assert.That(distance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -129,7 +131,7 @@ public class ContourTests
     {
         IContour contour = CreateSquareContour();
 
-        float signedDistance = contour.SignedDistance(new VectorXY(1f, 1f));
+        float signedDistance = contour.SignedDistance(new PointXY(1f, 1f));
 
         Assert.That(signedDistance, Is.EqualTo(-1f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -139,7 +141,7 @@ public class ContourTests
     {
         IContour contour = CreateSquareContour();
 
-        float signedDistance = contour.SignedDistance(new VectorXY(3f, 1f));
+        float signedDistance = contour.SignedDistance(new PointXY(3f, 1f));
 
         Assert.That(signedDistance, Is.EqualTo(1f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -152,7 +154,7 @@ public class ContourTests
             CreateUnitCirclePath()
         });
 
-        float signedDistance = contour.SignedDistance(new VectorXY(1.0005f, 0f), 0.001f);
+        float signedDistance = contour.SignedDistance(new PointXY(1.0005f, 0f), 0.001f);
 
         Assert.That(signedDistance, Is.EqualTo(-0.0005f).Within(GeometryConstants.GeometryEpsilon));
     }
@@ -163,7 +165,7 @@ public class ContourTests
         var curve = new EpsilonAwareCurve();
         IContour contour = new Contour(new IFinitePath[] { curve });
 
-        bool encloses = contour.Encloses(VectorXY.Zero, 0.25f);
+        bool encloses = contour.Encloses(new PointXY(0f, 0f), 0.25f);
 
         Assert.That(encloses, Is.True);
         Assert.That(curve.LastGeometryEpsilon, Is.EqualTo(0.25f));
@@ -178,7 +180,7 @@ public class ContourTests
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Encloses(new VectorXY(float.NaN, 0f)));
+            contour.Encloses(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -189,7 +191,7 @@ public class ContourTests
         IContour contour = CreateSquareContour();
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Distance(new VectorXY(float.NaN, 0f)));
+            contour.Distance(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -206,7 +208,7 @@ public class ContourTests
         });
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.Encloses(VectorXY.Zero, geometryEpsilon));
+            contour.Encloses(new PointXY(0f, 0f), geometryEpsilon));
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
@@ -220,7 +222,7 @@ public class ContourTests
         IContour contour = CreateSquareContour();
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            contour.SignedDistance(VectorXY.Zero, geometryEpsilon));
+            contour.SignedDistance(new PointXY(0f, 0f), geometryEpsilon));
 
         Assert.That(exception!.ParamName, Is.EqualTo("geometryEpsilon"));
     }
@@ -229,17 +231,17 @@ public class ContourTests
     {
         return new Contour(new IFinitePath[]
         {
-            new ParameterizedSegment(new VectorXY(0f, 0f), new VectorXY(2f, 0f)),
-            new ParameterizedSegment(new VectorXY(2f, 0f), new VectorXY(2f, 2f)),
-            new ParameterizedSegment(new VectorXY(2f, 2f), new VectorXY(0f, 2f)),
-            new ParameterizedSegment(new VectorXY(0f, 2f), new VectorXY(0f, 0f))
+            new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(2f, 0f)),
+            new ParameterizedSegment(new PointXY(2f, 0f), new PointXY(2f, 2f)),
+            new ParameterizedSegment(new PointXY(2f, 2f), new PointXY(0f, 2f)),
+            new ParameterizedSegment(new PointXY(0f, 2f), new PointXY(0f, 0f))
         });
     }
 
     private static ParameterizedArc CreateUnitCirclePath()
     {
         return new ParameterizedArc(
-            VectorXY.Zero,
+            new PointXY(0f, 0f),
             1f,
             0f,
             2f * MathF.PI,
@@ -250,35 +252,35 @@ public class ContourTests
     {
         public float LastGeometryEpsilon { get; private set; }
 
-        public VectorXY StartPoint => VectorXY.Zero;
+        public PointXY StartPoint => new PointXY(0f, 0f);
 
-        public VectorXY EndPoint => VectorXY.Zero;
+        public PointXY EndPoint => new PointXY(0f, 0f);
 
-        public VectorXY EndpointA => StartPoint;
+        public PointXY EndpointA => StartPoint;
 
-        public VectorXY EndpointB => EndPoint;
+        public PointXY EndpointB => EndPoint;
 
         public float Length => 0f;
 
-        public VectorXY GetPoint(float curveCoordinate) => VectorXY.Zero;
+        public PointXY GetPoint(float curveCoordinate) => new PointXY(0f, 0f);
 
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             LastGeometryEpsilon = geometryEpsilon;
 
             return geometryEpsilon.AlmostEquals(0.25f)
-                ? new List<VectorXY> { new VectorXY(1f, 0f) }
-                : new List<VectorXY>();
+                ? new List<PointXY> { new PointXY(1f, 0f) }
+                : new List<PointXY>();
         }
 
-        public float Distance(VectorXY point) => 1f;
+        public float Distance(PointXY point) => 1f;
 
-        public CurveProjection Project(VectorXY point) => new(VectorXY.Zero, Distance(point));
+        public CurveProjection Project(PointXY point) => new(new PointXY(0f, 0f), Distance(point));
 
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point) => new(
-            VectorXY.Zero,
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point) => new(
+            new PointXY(0f, 0f),
             0f,
             Distance(point));
     }

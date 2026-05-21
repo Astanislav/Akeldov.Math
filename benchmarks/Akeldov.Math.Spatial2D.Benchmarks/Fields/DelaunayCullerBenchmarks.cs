@@ -9,7 +9,7 @@ namespace Akeldov.Math.Spatial2D.Benchmarks.Fields;
 public class DelaunayCullerBenchmarks
 {
     private FloatPointInfluenceSource[] _sources = null!;
-    private VectorXY[] _queries = null!;
+    private PointXY[] _queries = null!;
     private DelaunayCuller<FloatPointInfluenceSource> _culler = null!;
 
     [Params(32, 128, 512)]
@@ -32,7 +32,7 @@ public class DelaunayCullerBenchmarks
                 value: random.NextSingle());
         }
 
-        _queries = new VectorXY[QueryCount];
+        _queries = new PointXY[QueryCount];
         for (int i = 0; i < _queries.Length; i++)
             _queries[i] = NextPoint(random, 1000f);
 
@@ -56,8 +56,8 @@ public class DelaunayCullerBenchmarks
         return selectedSourceCount;
     }
 
-    private static VectorXY NextPoint(Random random, float size)
+    private static PointXY NextPoint(Random random, float size)
     {
-        return new VectorXY(random.NextSingle() * size, random.NextSingle() * size);
+        return new PointXY(random.NextSingle() * size, random.NextSingle() * size);
     }
 }

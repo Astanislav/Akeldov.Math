@@ -22,13 +22,13 @@ using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Contours;
 using Akeldov.Math.Spatial2D.Curves;
 
-var segment = new Segment(
-    new VectorXY(0f, 0f),
-    new VectorXY(10f, 0f));
+var segment = new ParameterizedSegment(
+    new PointXY(0f, 0f),
+    new PointXY(10f, 0f));
 
-var projection = segment.ProjectWithParameter(new VectorXY(4f, 3f));
+var projection = segment.ProjectWithParameter(new PointXY(4f, 3f));
 
-VectorXY point = projection.ProjectedPoint;
+PointXY point = projection.ProjectedPoint;
 float curveCoordinate = projection.CurveCoordinate;
 float distance = projection.Distance;
 ```
@@ -37,29 +37,29 @@ float distance = projection.Distance;
 
 ```csharp
 var line = new Line(
-    new VectorXY(0f, 0f),
-    new VectorXY(10f, 0f));
+    new PointXY(0f, 0f),
+    new PointXY(10f, 0f));
 
 var parametricLine = new ParametricLine(
     line,
-    referencePoint: new VectorXY(2f, 0f));
+    referencePoint: new PointXY(2f, 0f));
 
-var ray = new Ray(VectorXY.Zero, angle: 0f);
+var ray = new Ray(new PointXY(0f, 0f), angle: 0f);
 
-var lineProjection = line.Project(new VectorXY(4f, 3f));
-var parametricLineProjection = parametricLine.ProjectWithParameter(new VectorXY(4f, 3f));
-var rayProjection = ray.ProjectWithParameter(new VectorXY(4f, 3f));
+var lineProjection = line.Project(new PointXY(4f, 3f));
+var parametricLineProjection = parametricLine.ProjectWithParameter(new PointXY(4f, 3f));
+var rayProjection = ray.ProjectWithParameter(new PointXY(4f, 3f));
 ```
 
 ## Circles and Arcs
 
 ```csharp
-var circle = new Circle(VectorXY.Zero, radius: 5f);
-var arc = new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: MathF.PI);
+var circle = new Circle(new PointXY(0f, 0f), radius: 5f);
+var arc = new Arc(new PointXY(0f, 0f), radius: 5f, startAngle: 0f, endAngle: MathF.PI);
 
-float circleDistance = circle.Distance(new VectorXY(3f, 0f));
-var arcProjection = arc.ProjectWithParameter(new VectorXY(0f, 8f));
-bool isWithinAngularRegion = arc.IsWithinAngularRegion(new VectorXY(1f, 1f));
+float circleDistance = circle.Distance(new PointXY(3f, 0f));
+var arcProjection = arc.Project(new PointXY(0f, 8f));
+bool isWithinAngularRegion = arc.IsWithinAngularRegion(new PointXY(1f, 1f));
 ```
 
 ## Contours
@@ -68,12 +68,17 @@ Contours are closed boundaries made from bounded parameterized curves and live i
 Each curve must continue from the previous curve, and the final curve must close the contour.
 
 ```csharp
-var contour = new Contour(new IBoundedParameterizedCurve[]
+var contour = new Contour(new IFinitePath[]
 {
-    new Arc(VectorXY.Zero, radius: 5f, startAngle: 0f, endAngle: 2f * MathF.PI)
+    new ParameterizedArc(
+        new PointXY(0f, 0f),
+        radius: 5f,
+        startAngle: 0f,
+        endAngle: 2f * MathF.PI,
+        angularDirection: AngularDirection.Counterclockwise)
 });
 
-bool isInside = contour.Encloses(new VectorXY(3f, 0f));
+bool isInside = contour.Encloses(new PointXY(3f, 0f));
 ```
 
 ## Helpers

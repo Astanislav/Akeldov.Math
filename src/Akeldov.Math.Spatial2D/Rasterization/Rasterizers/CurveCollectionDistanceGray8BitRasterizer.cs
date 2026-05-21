@@ -36,7 +36,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 float pointY = firstY + y * cellSize.Y;
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
-                    VectorXY point = new VectorXY(firstX + x * cellSize.X, pointY);
+                    PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float distance = GetNearestCurveDistance(source, point);
                     values[x, y] = _distanceToGrayLevel(distance);
                 }
@@ -45,7 +45,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return new Gray8BitRaster(grid, values);
         }
 
-        private static float GetNearestCurveDistance(IReadOnlyList<ICurve> curves, VectorXY point)
+        private static float GetNearestCurveDistance(IReadOnlyList<ICurve> curves, PointXY point)
         {
             float minDistance = float.MaxValue;
 

@@ -6,8 +6,8 @@ namespace Akeldov.Math.Spatial2D.Curves
     internal static class IntersectionListExtensions
     {
         public static void AddDistinct(
-            this List<VectorXY> intersections,
-            VectorXY point,
+            this List<PointXY> intersections,
+            PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             for (int i = 0; i < intersections.Count; i++)

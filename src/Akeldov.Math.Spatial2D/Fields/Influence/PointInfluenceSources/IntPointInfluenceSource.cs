@@ -13,10 +13,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <param name="weight">The source weight used by influence samplers.</param>
         /// <param name="position">The source position.</param>
         /// <param name="value">The value contributed by this source.</param>
-        public IntPointInfluenceSource(float weight, VectorXY position, int value)
+        public IntPointInfluenceSource(float weight, PointXY position, int value)
         {
-            if (!position.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(position), "Influence source position coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                position,
+                nameof(position),
+                "Influence source position coordinates must be finite.");
 
             if (weight < 0f || float.IsNaN(weight))
                 throw new ArgumentOutOfRangeException(nameof(weight), "Influence source weight must be non-negative and not NaN.");
@@ -34,7 +36,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// <summary>
         /// Gets the source position.
         /// </summary>
-        public VectorXY Position { get; }
+        public PointXY Position { get; }
 
         /// <summary>
         /// Gets the value contributed by this source.
@@ -46,10 +48,12 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="point">The point to measure to.</param>
         /// <returns>The Euclidean distance from the source position to the point.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             return Position.Distance(point);
         }
@@ -59,7 +63,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         /// </summary>
         /// <param name="point">The point being sampled.</param>
         /// <returns>The value, source point, distance, and weight used by influence samplers.</returns>
-        public InfluenceSample<int> GetInfluence(VectorXY point)
+        public InfluenceSample<int> GetInfluence(PointXY point)
         {
             return new InfluenceSample<int>(Value, Position, Distance(point), Weight);
         }

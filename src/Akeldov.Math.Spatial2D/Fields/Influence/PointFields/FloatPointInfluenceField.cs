@@ -57,7 +57,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         public IReadOnlyList<float> DistinctValues => _distinctValues;
 
         /// <inheritdoc/>
-        public override float Sample(VectorXY point)
+        public override float Sample(PointXY point)
         {
             float value = base.Sample(point);
             if (float.IsNaN(value))

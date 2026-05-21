@@ -28,7 +28,7 @@ namespace Akeldov.Math.Spatial2D.Regions
         /// Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
         bool Contains(
-            VectorXY point,
+            PointXY point,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon);
     }
 }

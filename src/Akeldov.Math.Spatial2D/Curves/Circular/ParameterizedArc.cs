@@ -10,7 +10,7 @@ namespace Akeldov.Math.Spatial2D.Curves
     [Serializable]
     public readonly struct ParameterizedArc : IFinitePath, IEquatable<ParameterizedArc>
     {
-        private readonly VectorXY _center;
+        private readonly PointXY _center;
         private readonly float _radius;
         private readonly float _startAngle;
         private readonly float _endAngle;
@@ -31,10 +31,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// Thrown when <paramref name="radius"/> is negative, NaN, or infinite, when an angle is NaN or infinite,
         /// or when <paramref name="angularDirection"/> is unsupported.
         /// </exception>
-        public ParameterizedArc(VectorXY center, float radius, float startAngle, float endAngle, AngularDirection angularDirection)
+        public ParameterizedArc(PointXY center, float radius, float startAngle, float endAngle, AngularDirection angularDirection)
         {
-            if (!center.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(center), "Arc center coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                center,
+                nameof(center),
+                "Arc center coordinates must be finite.");
 
             if (radius < 0f || float.IsNaN(radius) || float.IsInfinity(radius))
                 throw new ArgumentOutOfRangeException(nameof(radius), "Arc radius must be finite and non-negative.");
@@ -62,7 +64,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the center of the source circle.
         /// </summary>
-        public VectorXY Center => _center;
+        public PointXY Center => _center;
 
         /// <summary>
         /// Gets the radius of the source circle.
@@ -102,12 +104,12 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the point at the start angle of this arc.
         /// </summary>
-        public VectorXY StartPoint => GetPointAtAngle(_startAngle);
+        public PointXY StartPoint => GetPointAtAngle(_startAngle);
 
         /// <summary>
         /// Gets the point at the end angle of this arc.
         /// </summary>
-        public VectorXY EndPoint => GetPointAtAngle(_endAngle);
+        public PointXY EndPoint => GetPointAtAngle(_endAngle);
 
         /// <summary>
         /// Gets the arc length.
@@ -117,22 +119,24 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <summary>
         /// Gets the endpoint at the start of the traversal direction.
         /// </summary>
-        public VectorXY EndpointA => StartPoint;
+        public PointXY EndpointA => StartPoint;
 
         /// <summary>
         /// Gets the endpoint at the end of the traversal direction.
         /// </summary>
-        public VectorXY EndpointB => EndPoint;
+        public PointXY EndpointB => EndPoint;
 
         /// <summary>
         /// Determines whether the direction from this arc's center to the specified point lies within this arc's angular region.
         /// </summary>
         /// <param name="point">The point to test.</param>
         /// <returns><see langword="true"/> if the point lies within this arc's angular region; otherwise, <see langword="false"/>.</returns>
-        public bool IsWithinAngularRegion(VectorXY point)
+        public bool IsWithinAngularRegion(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY toPoint = (point - Center).Normalize();
             float angle = MathF.Atan2(toPoint.Y, toPoint.X).NormalizeAngleRad();
@@ -174,13 +178,13 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// <param name="ray">The ray to intersect with this arc.</param>
         /// <param name="geometryEpsilon">The geometry comparison tolerance in world coordinate units.</param>
         /// <returns>A new mutable list of intersection points in the forward direction of the ray, owned by the caller.</returns>
-        public List<VectorXY> GetRayIntersections(
+        public List<PointXY> GetRayIntersections(
             Ray ray,
             float geometryEpsilon = GeometryConstants.GeometryEpsilon)
         {
             GeometryConstants.ValidateGeometryEpsilon(geometryEpsilon, nameof(geometryEpsilon));
 
-            var intersections = new List<VectorXY>();
+            var intersections = new List<PointXY>();
 
             if (_radius <= geometryEpsilon)
             {
@@ -216,7 +220,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t1 >= 0f)
             {
-                VectorXY point1 = ray.Origin + dir * t1;
+                PointXY point1 = ray.Origin + dir * t1;
 
                 if (IsWithinAngularRegion(point1))
                     intersections.AddDistinct(point1, geometryEpsilon);
@@ -224,7 +228,7 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (t2 >= 0f)
             {
-                VectorXY point2 = ray.Origin + dir * t2;
+                PointXY point2 = ray.Origin + dir * t2;
 
                 if (IsWithinAngularRegion(point2))
                     intersections.AddDistinct(point2, geometryEpsilon);
@@ -238,7 +242,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to measure from.</param>
         /// <returns>The distance to this arc.</returns>
-        public float Distance(VectorXY point)
+        public float Distance(PointXY point)
         {
             return Project(point).Distance;
         }
@@ -248,7 +252,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point and distance to this arc.</returns>
-        public CurveProjection Project(VectorXY point)
+        public CurveProjection Project(PointXY point)
         {
             var projection = ProjectWithParameter(point);
             return new CurveProjection(projection.ProjectedPoint, projection.Distance);
@@ -259,16 +263,18 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="point">The point to project.</param>
         /// <returns>The projection point, arc length coordinate, and distance to this arc.</returns>
-        public ParameterizedCurveProjection ProjectWithParameter(VectorXY point)
+        public ParameterizedCurveProjection ProjectWithParameter(PointXY point)
         {
-            if (!point.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(point), "Point coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                point,
+                nameof(point),
+                "Point coordinates must be finite.");
 
             VectorXY toPoint = point - _center;
 
             if (_radius <= GeometryConstants.GeometryEpsilon || toPoint.SquaredLength <= GeometryConstants.GeometryEpsilonSquared)
             {
-                VectorXY start = StartPoint;
+                PointXY start = StartPoint;
                 return new ParameterizedCurveProjection(start, 0f, point.Distance(start));
             }
 
@@ -276,13 +282,13 @@ namespace Akeldov.Math.Spatial2D.Curves
 
             if (ContainsAngle(angleToPoint))
             {
-                VectorXY projected = _center + toPoint.Normalize() * _radius;
+                PointXY projected = _center + toPoint.Normalize() * _radius;
                 float curveCoordinate = GetCurveCoordinate(angleToPoint);
                 return new ParameterizedCurveProjection(projected, curveCoordinate, point.Distance(projected));
             }
 
-            VectorXY arcStart = StartPoint;
-            VectorXY arcEnd = EndPoint;
+            PointXY arcStart = StartPoint;
+            PointXY arcEnd = EndPoint;
 
             float distStart = point.Distance(arcStart);
             float distEnd = point.Distance(arcEnd);
@@ -371,7 +377,7 @@ namespace Akeldov.Math.Spatial2D.Curves
         /// </summary>
         /// <param name="curveCoordinate">The finite curve coordinate in world coordinate units.</param>
         /// <returns>The point on this arc.</returns>
-        public VectorXY GetPoint(float curveCoordinate)
+        public PointXY GetPoint(float curveCoordinate)
         {
             if (float.IsNaN(curveCoordinate) || float.IsInfinity(curveCoordinate))
                 throw new ArgumentOutOfRangeException(nameof(curveCoordinate), "Curve coordinate must be finite.");
@@ -391,9 +397,9 @@ namespace Akeldov.Math.Spatial2D.Curves
             return GetPointAtAngle(angle);
         }
 
-        private VectorXY GetPointAtAngle(float angle)
+        private PointXY GetPointAtAngle(float angle)
         {
-            return new VectorXY(
+            return new PointXY(
                 _center.X + _radius * MathF.Cos(angle),
                 _center.Y + _radius * MathF.Sin(angle));
         }

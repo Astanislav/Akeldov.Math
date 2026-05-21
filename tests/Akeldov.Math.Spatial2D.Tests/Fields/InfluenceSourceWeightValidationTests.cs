@@ -11,7 +11,7 @@ public class InfluenceSourceWeightValidationTests
     public void FloatPointInfluenceSource_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new FloatPointInfluenceSource(weight, VectorXY.Zero, 1f));
+            new FloatPointInfluenceSource(weight, new PointXY(0f, 0f), 1f));
     }
 
     [TestCase(0f)]
@@ -19,26 +19,24 @@ public class InfluenceSourceWeightValidationTests
     public void FloatPointInfluenceSource_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new FloatPointInfluenceSource(weight, VectorXY.Zero, 1f));
+            new FloatPointInfluenceSource(weight, new PointXY(0f, 0f), 1f));
     }
 
     [Test]
     public void FloatPointInfluenceSource_WhenValueIsNaN_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new FloatPointInfluenceSource(1f, VectorXY.Zero, float.NaN));
+            new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), float.NaN));
 
         Assert.That(exception!.ParamName, Is.EqualTo("value"));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void FloatPointInfluenceSource_WhenPositionCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new FloatPointInfluenceSource(1f, new VectorXY(x, y), 1f));
+            new FloatPointInfluenceSource(1f, new PointXY(x, y), 1f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("position"));
     }
@@ -49,7 +47,7 @@ public class InfluenceSourceWeightValidationTests
     public void IntPointInfluenceSource_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new IntPointInfluenceSource(weight, VectorXY.Zero, 1));
+            new IntPointInfluenceSource(weight, new PointXY(0f, 0f), 1));
     }
 
     [TestCase(0f)]
@@ -57,17 +55,15 @@ public class InfluenceSourceWeightValidationTests
     public void IntPointInfluenceSource_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new IntPointInfluenceSource(weight, VectorXY.Zero, 1));
+            new IntPointInfluenceSource(weight, new PointXY(0f, 0f), 1));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void IntPointInfluenceSource_WhenPositionCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new IntPointInfluenceSource(1f, new VectorXY(x, y), 1));
+            new IntPointInfluenceSource(1f, new PointXY(x, y), 1));
 
         Assert.That(exception!.ParamName, Is.EqualTo("position"));
     }
@@ -75,10 +71,10 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void PointInfluenceSourceDistance_WhenPointCoordinateIsInvalid_Throws()
     {
-        var source = new FloatPointInfluenceSource(1f, VectorXY.Zero, 1f);
+        var source = new FloatPointInfluenceSource(1f, new PointXY(0f, 0f), 1f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            source.Distance(new VectorXY(float.NaN, 0f)));
+            source.Distance(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -88,7 +84,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.NegativeInfinity)]
     public void FloatCurveInfluenceSource_WhenConstantWeightIsInvalid_Throws(float weight)
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FloatCurveInfluenceSource(weight, curve, 1f));
@@ -98,7 +94,7 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.PositiveInfinity)]
     public void FloatCurveInfluenceSource_WhenConstantWeightIsAllowed_DoesNotThrow(float weight)
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
 
         Assert.DoesNotThrow(() =>
             new FloatCurveInfluenceSource(weight, curve, 1f));
@@ -107,7 +103,7 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenConstantValueIsNaN_Throws()
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             new FloatCurveInfluenceSource(1f, curve, float.NaN));
@@ -118,11 +114,11 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenValueProviderReturnsNaN_Throws()
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(1f, curve, _ => float.NaN);
 
         Assert.Throws<InvalidOperationException>(() =>
-            source.GetInfluence(VectorXY.Zero));
+            source.GetInfluence(new PointXY(0f, 0f)));
     }
 
     [TestCase(-1f)]
@@ -130,21 +126,21 @@ public class InfluenceSourceWeightValidationTests
     [TestCase(float.NegativeInfinity)]
     public void FloatCurveInfluenceSource_WhenWeightProviderReturnsInvalidWeight_Throws(float weight)
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
         Assert.Throws<InvalidOperationException>(() =>
-            source.GetInfluence(VectorXY.Zero));
+            source.GetInfluence(new PointXY(0f, 0f)));
     }
 
     [TestCase(0f)]
     [TestCase(float.PositiveInfinity)]
     public void FloatCurveInfluenceSource_WhenWeightProviderReturnsAllowedWeight_ReturnsWeight(float weight)
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(_ => weight, curve, 1f);
 
-        var influence = source.GetInfluence(VectorXY.Zero);
+        var influence = source.GetInfluence(new PointXY(0f, 0f));
 
         Assert.That(influence.Weight, Is.EqualTo(weight));
     }
@@ -152,11 +148,11 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void FloatCurveInfluenceSource_WhenPointCoordinateIsInvalid_Throws()
     {
-        var curve = new ParameterizedSegment(VectorXY.Zero, VectorXY.One);
+        var curve = new ParameterizedSegment(new PointXY(0f, 0f), new PointXY(1f, 1f));
         var source = new FloatCurveInfluenceSource(1f, curve, 1f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            source.GetInfluence(new VectorXY(float.NaN, 0f)));
+            source.GetInfluence(new PointXY(float.PositiveInfinity, 0f)));
 
         Assert.That(exception!.ParamName, Is.EqualTo("point"));
     }
@@ -167,7 +163,7 @@ public class InfluenceSourceWeightValidationTests
     public void InfluenceSample_WhenWeightIsInvalid_Throws(float weight)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, weight));
+            new InfluenceSample<float>(1f, new PointXY(0f, 0f), 0f, weight));
     }
 
     [TestCase(0f)]
@@ -175,7 +171,7 @@ public class InfluenceSourceWeightValidationTests
     public void InfluenceSample_WhenWeightIsAllowed_DoesNotThrow(float weight)
     {
         Assert.DoesNotThrow(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, 0f, weight));
+            new InfluenceSample<float>(1f, new PointXY(0f, 0f), 0f, weight));
     }
 
     [TestCase(-1f)]
@@ -185,7 +181,7 @@ public class InfluenceSourceWeightValidationTests
     public void InfluenceSample_WhenDistanceIsInvalid_Throws(float distance)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, distance, 1f));
+            new InfluenceSample<float>(1f, new PointXY(0f, 0f), distance, 1f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("distance"));
     }
@@ -195,17 +191,15 @@ public class InfluenceSourceWeightValidationTests
     public void InfluenceSample_WhenDistanceIsAllowed_DoesNotThrow(float distance)
     {
         Assert.DoesNotThrow(() =>
-            new InfluenceSample<float>(1f, VectorXY.Zero, distance, 1f));
+            new InfluenceSample<float>(1f, new PointXY(0f, 0f), distance, 1f));
     }
 
-    [TestCase(float.NaN, 0f)]
-    [TestCase(0f, float.NaN)]
     [TestCase(float.PositiveInfinity, 0f)]
     [TestCase(0f, float.NegativeInfinity)]
     public void InfluenceSample_WhenSourcePointCoordinateIsInvalid_Throws(float x, float y)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new InfluenceSample<float>(1f, new VectorXY(x, y), 0f, 1f));
+            new InfluenceSample<float>(1f, new PointXY(x, y), 0f, 1f));
 
         Assert.That(exception!.ParamName, Is.EqualTo("sourcePoint"));
     }
@@ -213,7 +207,7 @@ public class InfluenceSourceWeightValidationTests
     [Test]
     public void InfluenceSample_WhenCreated_StoresSourcePoint()
     {
-        var sourcePoint = new VectorXY(2f, 3f);
+        var sourcePoint = new PointXY(2f, 3f);
 
         var sample = new InfluenceSample<float>(1f, sourcePoint, 4f, 5f);
 

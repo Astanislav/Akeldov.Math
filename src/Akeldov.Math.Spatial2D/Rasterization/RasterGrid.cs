@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// </summary>
     public readonly struct RasterGrid : IEquatable<RasterGrid>
     {
-        private readonly VectorXY _origin;
+        private readonly PointXY _origin;
         private readonly VectorXY _size;
         private readonly VectorXYInt _resolution;
         private readonly VectorXY _cellSize;
@@ -18,10 +18,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="origin">The lower-left grid origin in world coordinates.</param>
         /// <param name="size">The grid size in world coordinates. Both components must be finite and positive.</param>
         /// <param name="resolution">The grid resolution in cells. Both components must be positive.</param>
-        public RasterGrid(VectorXY origin, VectorXY size, VectorXYInt resolution)
+        public RasterGrid(PointXY origin, VectorXY size, VectorXYInt resolution)
         {
-            if (!origin.IsFinite)
-                throw new ArgumentOutOfRangeException(nameof(origin), "Raster grid origin coordinates must be finite.");
+            PointXYValidation.ThrowIfNotFinite(
+                origin,
+                nameof(origin),
+                "Raster grid origin coordinates must be finite.");
 
             if (!size.IsFinite || size.X <= 0f || size.Y <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(size), "Raster grid size components must be finite and positive.");
@@ -38,7 +40,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <summary>
         /// Gets the lower-left grid origin in world coordinates.
         /// </summary>
-        public VectorXY Origin => _origin;
+        public PointXY Origin => _origin;
 
         /// <summary>
         /// Gets the grid size in world coordinates.
@@ -61,7 +63,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// <param name="x">The zero-based X cell index.</param>
         /// <param name="y">The zero-based Y cell index.</param>
         /// <returns>The cell center in world coordinates.</returns>
-        public VectorXY GetCellCenter(int x, int y)
+        public PointXY GetCellCenter(int x, int y)
         {
             return GetCellCenter(new VectorXYInt(x, y));
         }
@@ -71,12 +73,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         /// </summary>
         /// <param name="index">The zero-based cell index.</param>
         /// <returns>The cell center in world coordinates.</returns>
-        public VectorXY GetCellCenter(VectorXYInt index)
+        public PointXY GetCellCenter(VectorXYInt index)
         {
             if (index.X < 0 || index.Y < 0 || index.X >= Resolution.X || index.Y >= Resolution.Y)
                 throw new ArgumentOutOfRangeException(nameof(index), "Raster grid index must be inside the grid resolution.");
 
-            return new VectorXY(
+            return new PointXY(
                 Origin.X + (index.X + 0.5f) * CellSize.X,
                 Origin.Y + (index.Y + 0.5f) * CellSize.Y);
         }

@@ -23,7 +23,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <exception cref="System.ArgumentOutOfRangeException">
         /// Thrown when <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
-        bool Encloses(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
+        bool Encloses(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
 
         /// <summary>
         /// Returns the shortest unsigned distance from the specified point to a contour boundary.
@@ -31,7 +31,7 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// <param name="point">The finite point to measure from.</param>
         /// <returns>The shortest non-negative distance to the contour boundary in world coordinate units.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="point"/> has a non-finite coordinate.</exception>
-        float Distance(VectorXY point);
+        float Distance(PointXY point);
 
         /// <summary>
         /// Returns the signed distance from the specified point to this contour boundary.
@@ -45,6 +45,6 @@ namespace Akeldov.Math.Spatial2D.Contours
         /// Thrown when <paramref name="point"/> has a non-finite coordinate, or when
         /// <paramref name="geometryEpsilon"/> is negative, NaN, or infinite.
         /// </exception>
-        float SignedDistance(VectorXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
+        float SignedDistance(PointXY point, float geometryEpsilon = GeometryConstants.GeometryEpsilon);
     }
 }

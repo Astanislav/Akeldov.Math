@@ -73,7 +73,7 @@ namespace Akeldov.Math.Spatial2D.Fields
         public float Max => _max;
 
         /// <inheritdoc/>
-        public override float Sample(VectorXY point)
+        public override float Sample(PointXY point)
         {
             float value = base.Sample(point);
             if (float.IsNaN(value))
