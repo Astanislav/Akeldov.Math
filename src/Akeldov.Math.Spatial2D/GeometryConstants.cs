@@ -22,10 +22,23 @@ namespace Akeldov.Math.Spatial2D
                 ThrowInvalidGeometryEpsilon(parameterName);
         }
 
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        internal static void ValidateFiniteAngle(float angle, string parameterName)
+        {
+            if (float.IsNaN(angle) || float.IsInfinity(angle))
+                ThrowInvalidAngle(parameterName);
+        }
+
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         private static void ThrowInvalidGeometryEpsilon(string parameterName)
         {
             throw new System.ArgumentOutOfRangeException(parameterName, "Geometry epsilon must be finite and non-negative.");
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void ThrowInvalidAngle(string parameterName)
+        {
+            throw new System.ArgumentOutOfRangeException(parameterName, "Angle must be finite.");
         }
     }
 }

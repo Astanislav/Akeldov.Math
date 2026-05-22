@@ -11,9 +11,12 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="point">The vector to rotate.</param>
         /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated vector.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Rotate(this VectorXY point, float angle)
         {
+            GeometryConstants.ValidateFiniteAngle(angle, nameof(angle));
+
             float cos = MathF.Cos(angle);
             float sin = MathF.Sin(angle);
 

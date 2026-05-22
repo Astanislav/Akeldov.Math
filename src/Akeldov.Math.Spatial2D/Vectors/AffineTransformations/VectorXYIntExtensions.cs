@@ -15,6 +15,7 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Transform(this VectorXYInt point, float angle, VectorXY offset)
         {
@@ -29,6 +30,7 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Transform(this VectorXYInt point, float angle, VectorXYInt offset)
         {
@@ -44,6 +46,7 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Transform(this VectorXYInt point, float scaleFactor, float angle, VectorXY offset)
         {
@@ -60,6 +63,7 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="angle">The rotation angle in radians.</param>
         /// <param name="offset">The translation offset.</param>
         /// <returns>The transformed point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Transform(this VectorXYInt point, float scaleFactor, float angle, VectorXYInt offset)
         {
@@ -75,9 +79,12 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="pivot">The pivot point.</param>
         /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Rotate(this VectorXYInt point, VectorXYInt pivot, float angle)
         {
+            GeometryConstants.ValidateFiniteAngle(angle, nameof(angle));
+
             float cos = MathF.Cos(angle);
             float sin = MathF.Sin(angle);
 
@@ -96,9 +103,12 @@ namespace Akeldov.Math.Spatial2D
         /// <param name="pivot">The pivot point.</param>
         /// <param name="angle">The rotation angle in radians.</param>
         /// <returns>The rotated point.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="angle"/> is NaN or infinite.</exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorXY Rotate(this VectorXYInt point, VectorXY pivot, float angle)
         {
+            GeometryConstants.ValidateFiniteAngle(angle, nameof(angle));
+
             float cos = MathF.Cos(angle);
             float sin = MathF.Sin(angle);
 

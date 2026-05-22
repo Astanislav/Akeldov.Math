@@ -38,6 +38,38 @@ public class VectorXYTests
         Assert.That(angle, Is.EqualTo(-MathF.PI / 2f).Within(GeometryConstants.GeometryEpsilon));
     }
 
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Rotate_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new VectorXY(1f, 0f).Rotate(angle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void RotateAroundPivot_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new VectorXY(1f, 0f).Rotate(VectorXY.Zero, angle));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void Transform_WhenAngleIsInvalid_Throws(float angle)
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new VectorXY(1f, 0f).Transform(angle, VectorXY.Zero));
+
+        Assert.That(exception!.ParamName, Is.EqualTo("angle"));
+    }
+
     [Test]
     public void Equals_WhenComponentsDifferWithinGeometryEpsilon_ReturnsFalse()
     {
