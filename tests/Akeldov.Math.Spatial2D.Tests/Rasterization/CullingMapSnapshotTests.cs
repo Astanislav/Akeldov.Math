@@ -16,11 +16,12 @@ public class CullingMapSnapshotTests
     {
         FloatPointInfluenceSource[] sources = CreateSources();
         var culler = new DelaunayCuller<FloatPointInfluenceSource>(sources);
+        Dictionary<PointXY, RGBA16BitColor> sourceColors = CreateSourceColors(sources);
 
         RGBA16BitRaster raster = sources.RasterizeCullingMap(
             SnapshotGrid,
             culler,
-            CreatePalette());
+            point => sourceColors[point]);
 
         byte[] actual = SaveToPngBytes(raster, "delaunay-culling-map-rgba16.png");
 
@@ -39,16 +40,19 @@ public class CullingMapSnapshotTests
         };
     }
 
-    private static RGBA16BitColor[] CreatePalette()
+    private static Dictionary<PointXY, RGBA16BitColor> CreateSourceColors(
+        IReadOnlyList<FloatPointInfluenceSource> sources)
     {
-        return new[]
+        var colors = new Dictionary<PointXY, RGBA16BitColor>(sources.Count)
         {
-            new RGBA16BitColor(0xefef, 0x4444, 0x4444, 0xffff),
-            new RGBA16BitColor(0x2222, 0xc5c5, 0x5e5e, 0xffff),
-            new RGBA16BitColor(0x3b3b, 0x8282, 0xf6f6, 0xffff),
-            new RGBA16BitColor(0xf5f5, 0x9e9e, 0x0b0b, 0xffff),
-            new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff)
+            { sources[0].Position, new RGBA16BitColor(0xefef, 0x4444, 0x4444, 0xffff) },
+            { sources[1].Position, new RGBA16BitColor(0x2222, 0xc5c5, 0x5e5e, 0xffff) },
+            { sources[2].Position, new RGBA16BitColor(0x3b3b, 0x8282, 0xf6f6, 0xffff) },
+            { sources[3].Position, new RGBA16BitColor(0xf5f5, 0x9e9e, 0x0b0b, 0xffff) },
+            { sources[4].Position, new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff) }
         };
+
+        return colors;
     }
 
     private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)

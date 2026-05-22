@@ -14,68 +14,57 @@ public class CullingMapRasterizationTests
             origin: new PointXY(0f, 0f),
             size: new VectorXY(3f, 1f),
             resolution: new VectorXYInt(3, 1));
-        var sourceColors = new[]
-        {
-            new RGBA16BitColor(60000, 0, 0, ushort.MaxValue),
-            new RGBA16BitColor(0, 60000, 0, ushort.MaxValue),
-            new RGBA16BitColor(0, 0, 60000, ushort.MaxValue)
-        };
 
         RGBA16BitRaster raster = sources.RasterizeCullingMap(
             grid,
             new XBandCuller(sources),
-            sourceColors);
+            SourceColor);
 
-        Assert.That(raster[0, 0], Is.EqualTo(sourceColors[0]));
+        Assert.That(raster[0, 0], Is.EqualTo(SourceColor(sources[0].Position)));
         Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(44045, 44045, 0, ushort.MaxValue)));
         Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(36638, 36638, 36638, ushort.MaxValue)));
     }
 
     [Test]
-    public void RasterizeCullingMap_WhenPaletteIsShort_WrapsSourceColors()
+    public void RasterizeCullingMap_WhenColorSelectorUsesPosition_ColorsSelectedSourcePosition()
     {
         TestPointSource[] sources = CreateSources();
         var grid = new RasterGrid(
             origin: new PointXY(2f, 0f),
             size: new VectorXY(1f, 1f),
             resolution: new VectorXYInt(1, 1));
-        var sourceColors = new[]
-        {
-            new RGBA16BitColor(100, 200, 300, 400),
-            new RGBA16BitColor(500, 600, 700, 800)
-        };
 
         RGBA16BitRaster raster = sources.RasterizeCullingMap(
             grid,
             new ThirdSourceCuller(sources),
-            sourceColors);
+            SourceColor);
 
-        Assert.That(raster[0, 0], Is.EqualTo(sourceColors[0]));
+        Assert.That(raster[0, 0], Is.EqualTo(SourceColor(sources[2].Position)));
     }
 
     [Test]
     public void CullingMapRGBA16BitRasterizer_WhenConstructedWithNullCuller_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new CullingMapRGBA16BitRasterizer<TestPointSource>(null!));
+            new CullingMapRGBA16BitRasterizer<TestPointSource>(null!, SourceColor));
     }
 
     [Test]
-    public void CullingMapRGBA16BitRasterizer_WhenConstructedWithEmptyPalette_Throws()
+    public void CullingMapRGBA16BitRasterizer_WhenConstructedWithNullColorSelector_Throws()
     {
         var culler = new FixedCuller(new TestPointSource(new PointXY(0f, 0f)));
 
-        var exception = Assert.Throws<ArgumentException>(() =>
-            new CullingMapRGBA16BitRasterizer<TestPointSource>(culler, Array.Empty<RGBA16BitColor>()));
+        var exception = Assert.Throws<ArgumentNullException>(() =>
+            new CullingMapRGBA16BitRasterizer<TestPointSource>(culler, null!));
 
-        Assert.That(exception!.ParamName, Is.EqualTo("sourceColors"));
+        Assert.That(exception!.ParamName, Is.EqualTo("sourcePositionToColor"));
     }
 
     [Test]
     public void Rasterize_WhenSourceIsEmpty_Throws()
     {
         var culler = new FixedCuller(new TestPointSource(new PointXY(0f, 0f)));
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(culler);
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(culler, SourceColor);
 
         var exception = Assert.Throws<ArgumentException>(() =>
             rasterizer.Rasterize(Array.Empty<TestPointSource>(), CreateGrid()));
@@ -87,7 +76,7 @@ public class CullingMapRasterizationTests
     public void Rasterize_WhenGridHasDefaultValue_Throws()
     {
         TestPointSource[] sources = CreateSources();
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(sources[0]));
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(sources[0]), SourceColor);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             rasterizer.Rasterize(sources, default));
@@ -97,7 +86,7 @@ public class CullingMapRasterizationTests
     public void Rasterize_WhenCullerReturnsNull_ThrowsInvalidOperationException()
     {
         TestPointSource[] sources = CreateSources();
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new NullCuller());
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new NullCuller(), SourceColor);
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
             rasterizer.Rasterize(sources, CreateGrid()));
@@ -110,7 +99,7 @@ public class CullingMapRasterizationTests
     {
         TestPointSource[] sources = CreateSources();
         var foreignSource = new TestPointSource(new PointXY(10f, 10f));
-        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(foreignSource));
+        var rasterizer = new CullingMapRGBA16BitRasterizer<TestPointSource>(new FixedCuller(foreignSource), SourceColor);
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
             rasterizer.Rasterize(sources, CreateGrid()));
@@ -131,6 +120,17 @@ public class CullingMapRasterizationTests
             new TestPointSource(new PointXY(1f, 0f)),
             new TestPointSource(new PointXY(2f, 0f))
         };
+    }
+
+    private static RGBA16BitColor SourceColor(PointXY point)
+    {
+        if (point.X < 0.5f)
+            return new RGBA16BitColor(60000, 0, 0, ushort.MaxValue);
+
+        if (point.X < 1.5f)
+            return new RGBA16BitColor(0, 60000, 0, ushort.MaxValue);
+
+        return new RGBA16BitColor(0, 0, 60000, ushort.MaxValue);
     }
 
     private sealed class XBandCuller : IInfluenceSourceCuller<TestPointSource>

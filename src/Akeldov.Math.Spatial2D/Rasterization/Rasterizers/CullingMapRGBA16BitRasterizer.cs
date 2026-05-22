@@ -9,9 +9,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// Rasterizes point-source culling selections into a 16-bit RGBA raster.
     /// </summary>
     /// <remarks>
-    /// Each source is assigned a color by its index in the rasterized source list. For every raster cell,
-    /// the configured culler selects relevant sources at the cell center and the rasterizer writes the
-    /// linear RGB average color of the selected sources.
+    /// Each selected source is assigned a color from its position. For every raster cell, the configured
+    /// culler selects relevant sources at the cell center and the rasterizer writes the linear RGB average
+    /// color of the selected sources.
     /// </remarks>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public sealed class CullingMapRGBA16BitRasterizer<TPointSource> :
@@ -21,40 +21,20 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         private const float SrgbLinearThreshold = 0.04045f;
         private const float LinearSrgbThreshold = 0.0031308f;
 
-        private static readonly RGBA16BitColor[] DefaultPalette =
-        {
-            new RGBA16BitColor(0xefef, 0x4444, 0x4444, 0xffff),
-            new RGBA16BitColor(0x2222, 0xc5c5, 0x5e5e, 0xffff),
-            new RGBA16BitColor(0x3b3b, 0x8282, 0xf6f6, 0xffff),
-            new RGBA16BitColor(0xf5f5, 0x9e9e, 0x0b0b, 0xffff),
-            new RGBA16BitColor(0xa8a8, 0x5555, 0xf7f7, 0xffff)
-        };
-
         private readonly IInfluenceSourceCuller<TPointSource> _culler;
-        private readonly RGBA16BitColor[] _sourceColors;
+        private readonly Func<PointXY, RGBA16BitColor> _sourcePositionToColor;
 
         /// <summary>
-        /// Initializes a new culling map rasterizer with the default source color palette.
+        /// Initializes a new culling map rasterizer with the specified source position color selector.
         /// </summary>
         /// <param name="culler">The culler used to select sources for each raster cell center.</param>
-        public CullingMapRGBA16BitRasterizer(IInfluenceSourceCuller<TPointSource> culler)
-            : this(culler, DefaultPalette)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new culling map rasterizer with the specified source colors.
-        /// </summary>
-        /// <param name="culler">The culler used to select sources for each raster cell center.</param>
-        /// <param name="sourceColors">
-        /// The source color palette. Source indexes beyond this palette wrap around to the beginning.
-        /// </param>
+        /// <param name="sourcePositionToColor">The function that maps a selected source position to a 16-bit RGBA color.</param>
         public CullingMapRGBA16BitRasterizer(
             IInfluenceSourceCuller<TPointSource> culler,
-            IReadOnlyList<RGBA16BitColor> sourceColors)
+            Func<PointXY, RGBA16BitColor> sourcePositionToColor)
         {
             _culler = culler ?? throw new ArgumentNullException(nameof(culler));
-            _sourceColors = CopySourceColors(sourceColors);
+            _sourcePositionToColor = sourcePositionToColor ?? throw new ArgumentNullException(nameof(sourcePositionToColor));
         }
 
         /// <inheritdoc/>
@@ -114,12 +94,11 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                 if (selectedSource is null)
                     throw new InvalidOperationException("Influence source culler returned a source list containing null.");
 
-                int sourceIndex = IndexOfSource(sources, selectedSource);
-                if (sourceIndex < 0)
+                if (!ContainsSource(sources, selectedSource))
                     throw new InvalidOperationException(
                         "Influence source culler returned a source that is not present in the rasterized source list.");
 
-                RGBA16BitColor color = _sourceColors[sourceIndex % _sourceColors.Length];
+                RGBA16BitColor color = _sourcePositionToColor(selectedSource.Position);
                 red += Srgb16ToLinear(color.Red);
                 green += Srgb16ToLinear(color.Green);
                 blue += Srgb16ToLinear(color.Blue);
@@ -158,17 +137,17 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             return (ushort)MathF.Round(srgb * ushort.MaxValue);
         }
 
-        private static int IndexOfSource(IReadOnlyList<TPointSource> sources, TPointSource selectedSource)
+        private static bool ContainsSource(IReadOnlyList<TPointSource> sources, TPointSource selectedSource)
         {
             var comparer = EqualityComparer<TPointSource>.Default;
 
             for (int i = 0; i < sources.Count; i++)
             {
                 if (comparer.Equals(sources[i], selectedSource))
-                    return i;
+                    return true;
             }
 
-            return -1;
+            return false;
         }
 
         private static TPointSource[] CopySources(IReadOnlyList<TPointSource> source)
@@ -188,21 +167,6 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
                 copy[i] = pointSource;
             }
-
-            return copy;
-        }
-
-        private static RGBA16BitColor[] CopySourceColors(IReadOnlyList<RGBA16BitColor> sourceColors)
-        {
-            if (sourceColors == null)
-                throw new ArgumentNullException(nameof(sourceColors));
-
-            if (sourceColors.Count == 0)
-                throw new ArgumentException("Culling map source color palette must not be empty.", nameof(sourceColors));
-
-            var copy = new RGBA16BitColor[sourceColors.Count];
-            for (int i = 0; i < sourceColors.Count; i++)
-                copy[i] = sourceColors[i];
 
             return copy;
         }
