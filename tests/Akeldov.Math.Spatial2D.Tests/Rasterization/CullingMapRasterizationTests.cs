@@ -7,7 +7,7 @@ namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
 public class CullingMapRasterizationTests
 {
     [Test]
-    public void RasterizeCullingMap_WhenCullerSelectsOneTwoAndThreeSources_AveragesSourceColors()
+    public void RasterizeCullingMap_WhenCullerSelectsOneTwoAndThreeSources_BlendsSourceColorsInLinearRgb()
     {
         TestPointSource[] sources = CreateSources();
         var grid = new RasterGrid(
@@ -27,8 +27,8 @@ public class CullingMapRasterizationTests
             sourceColors);
 
         Assert.That(raster[0, 0], Is.EqualTo(sourceColors[0]));
-        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(30000, 30000, 0, ushort.MaxValue)));
-        Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(20000, 20000, 20000, ushort.MaxValue)));
+        Assert.That(raster[1, 0], Is.EqualTo(new RGBA16BitColor(44045, 44045, 0, ushort.MaxValue)));
+        Assert.That(raster[2, 0], Is.EqualTo(new RGBA16BitColor(36638, 36638, 36638, ushort.MaxValue)));
     }
 
     [Test]

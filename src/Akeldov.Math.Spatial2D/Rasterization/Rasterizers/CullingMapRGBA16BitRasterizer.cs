@@ -11,13 +11,16 @@ namespace Akeldov.Math.Spatial2D.Rasterization
     /// <remarks>
     /// Each source is assigned a color by its index in the rasterized source list. For every raster cell,
     /// the configured culler selects relevant sources at the cell center and the rasterizer writes the
-    /// average color of the selected sources.
+    /// linear RGB average color of the selected sources.
     /// </remarks>
     /// <typeparam name="TPointSource">The point influence source type.</typeparam>
     public sealed class CullingMapRGBA16BitRasterizer<TPointSource> :
         IRasterizer<IReadOnlyList<TPointSource>, RGBA16BitRaster>
         where TPointSource : IPointInfluenceSource
     {
+        private const float SrgbLinearThreshold = 0.04045f;
+        private const float LinearSrgbThreshold = 0.0031308f;
+
         private static readonly RGBA16BitColor[] DefaultPalette =
         {
             new RGBA16BitColor(0xefef, 0x4444, 0x4444, 0xffff),
@@ -100,9 +103,9 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             IReadOnlyList<TPointSource> sources,
             IReadOnlyList<TPointSource> selectedSources)
         {
-            ulong red = 0UL;
-            ulong green = 0UL;
-            ulong blue = 0UL;
+            float red = 0f;
+            float green = 0f;
+            float blue = 0f;
             ulong alpha = 0UL;
 
             for (int i = 0; i < selectedSources.Count; i++)
@@ -117,18 +120,42 @@ namespace Akeldov.Math.Spatial2D.Rasterization
                         "Influence source culler returned a source that is not present in the rasterized source list.");
 
                 RGBA16BitColor color = _sourceColors[sourceIndex % _sourceColors.Length];
-                red += color.Red;
-                green += color.Green;
-                blue += color.Blue;
+                red += Srgb16ToLinear(color.Red);
+                green += Srgb16ToLinear(color.Green);
+                blue += Srgb16ToLinear(color.Blue);
                 alpha += color.Alpha;
             }
 
+            float inverseCount = 1f / selectedSources.Count;
             ulong halfCount = (ulong)selectedSources.Count / 2UL;
             return new RGBA16BitColor(
-                (ushort)((red + halfCount) / (ulong)selectedSources.Count),
-                (ushort)((green + halfCount) / (ulong)selectedSources.Count),
-                (ushort)((blue + halfCount) / (ulong)selectedSources.Count),
+                LinearToSrgb16(red * inverseCount),
+                LinearToSrgb16(green * inverseCount),
+                LinearToSrgb16(blue * inverseCount),
                 (ushort)((alpha + halfCount) / (ulong)selectedSources.Count));
+        }
+
+        private static float Srgb16ToLinear(ushort value)
+        {
+            float srgb = value / (float)ushort.MaxValue;
+            return srgb <= SrgbLinearThreshold
+                ? srgb / 12.92f
+                : MathF.Pow((srgb + 0.055f) / 1.055f, 2.4f);
+        }
+
+        private static ushort LinearToSrgb16(float value)
+        {
+            if (value <= 0f)
+                return 0;
+
+            if (value >= 1f)
+                return ushort.MaxValue;
+
+            float srgb = value <= LinearSrgbThreshold
+                ? value * 12.92f
+                : 1.055f * MathF.Pow(value, 1f / 2.4f) - 0.055f;
+
+            return (ushort)MathF.Round(srgb * ushort.MaxValue);
         }
 
         private static int IndexOfSource(IReadOnlyList<TPointSource> sources, TPointSource selectedSource)
