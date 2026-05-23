@@ -27,6 +27,27 @@ public class PoissonDiskPointSampleSnapshotTests
         AssertMatchesApprovedPng("poisson-disk-samples-rgba16.png", actual);
     }
 
+    [Test]
+    public void RasterizeGray16_WithVariableDistancePoissonDiskSamplesAndRings_MatchesApprovedImage()
+    {
+        var sampler = new PoissonDiskPointSampler(new Random(12345), maxAttempts: 30);
+        var field = new HorizontalGradientFloatField(min: 5f, max: 13f, width: FieldSize.X);
+        List<PoissonDiskPointSample> samples = sampler.Sample(FieldSize, field);
+
+        Gray16BitRaster raster = samples.Rasterize(
+            SnapshotGrid,
+            new PoissonDiskPointSampleCollectionRingsGray16BitRasterizer(
+                pointRadius: 1.45f,
+                ringThickness: 0.18f,
+                backgroundGrayLevel: 0x1010,
+                ringGrayLevel: 0x8a8a,
+                pointGrayLevel: ushort.MaxValue));
+        byte[] actual = SaveToPngBytes(raster, "poisson-disk-samples-rings-gray16.png");
+
+        Assert.That(samples, Has.Count.EqualTo(104));
+        AssertMatchesApprovedPng("poisson-disk-samples-rings-gray16.png", actual);
+    }
+
     private static RGBA16BitColor ToSnapshotColor(PoissonDiskPointSample sample, float distance)
     {
         float distanceT = MathF.Min(distance / sample.MinimalDistance, 1f);
@@ -54,6 +75,13 @@ public class PoissonDiskPointSampleSnapshotTests
             from.Red * inverseAmount + to.Red * amount,
             from.Green * inverseAmount + to.Green * amount,
             from.Blue * inverseAmount + to.Blue * amount);
+    }
+
+    private static byte[] SaveToPngBytes(Gray16BitRaster raster, string approvedFileName)
+    {
+        string actualPath = GetActualPath(approvedFileName);
+        raster.SaveAsPng(actualPath);
+        return File.ReadAllBytes(actualPath);
     }
 
     private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
