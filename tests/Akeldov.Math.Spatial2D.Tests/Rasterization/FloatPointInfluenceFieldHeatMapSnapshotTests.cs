@@ -1,0 +1,91 @@
+using Akeldov.Math.Spatial2D.Fields;
+using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
+
+namespace Akeldov.Math.Spatial2D.Tests.Rasterization;
+
+public class FloatPointInfluenceFieldHeatMapSnapshotTests
+{
+    private static readonly RasterGrid SnapshotGrid = new RasterGrid(
+        origin: new PointXY(0f, 0f),
+        size: new VectorXY(100f, 70f),
+        resolution: new VectorXYInt(160, 112));
+
+    [Test]
+    public void RasterizeHeatMap_WithInverseDistanceWeightedField_MatchesApprovedImage()
+    {
+        var field = new FloatPointInfluenceField(
+            new InverseDistanceWeightedFloatSampler<FloatPointInfluenceSource>(),
+            CreateSources());
+
+        RGBA16BitRaster raster = field.RasterizeHeatMap(SnapshotGrid);
+        byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-heatmap-rgba16.png");
+
+        AssertMatchesApprovedPng("float-point-influence-field-heatmap-rgba16.png", actual);
+    }
+
+    private static FloatPointInfluenceSource[] CreateSources()
+    {
+        return new[]
+        {
+            new FloatPointInfluenceSource(1f, new PointXY(12f, 12f), 0f),
+            new FloatPointInfluenceSource(1f, new PointXY(88f, 14f), 25f),
+            new FloatPointInfluenceSource(1f, new PointXY(18f, 58f), 50f),
+            new FloatPointInfluenceSource(1f, new PointXY(83f, 54f), 75f),
+            new FloatPointInfluenceSource(1f, new PointXY(50f, 34f), 100f)
+        };
+    }
+
+    private static byte[] SaveToPngBytes(RGBA16BitRaster raster, string approvedFileName)
+    {
+        string actualPath = GetActualPath(approvedFileName);
+        raster.SaveAsPng(actualPath);
+        return File.ReadAllBytes(actualPath);
+    }
+
+    private static void AssertMatchesApprovedPng(string approvedFileName, byte[] actual)
+    {
+        string approvedPath = Path.Combine(
+            TestContext.CurrentContext.TestDirectory,
+            "Rasterization",
+            "Approved",
+            approvedFileName);
+
+        if (!File.Exists(approvedPath))
+        {
+            string actualPath = GetActualPath(approvedFileName);
+            TestContext.AddTestAttachment(actualPath, "Actual float point influence field heat map snapshot");
+            Assert.Fail($"Float point influence field heat map approved image is missing. Actual image: {actualPath}");
+        }
+
+        byte[] approved = File.ReadAllBytes(approvedPath);
+
+        if (!BytesEqual(actual, approved))
+        {
+            string actualPath = GetActualPath(approvedFileName);
+            TestContext.AddTestAttachment(actualPath, "Actual float point influence field heat map snapshot");
+            Assert.Fail($"Float point influence field heat map snapshot changed. Actual image: {actualPath}");
+        }
+    }
+
+    private static string GetActualPath(string approvedFileName)
+    {
+        return Path.Combine(
+            TestContext.CurrentContext.WorkDirectory,
+            approvedFileName.Replace(".png", ".actual.png"));
+    }
+
+    private static bool BytesEqual(byte[] left, byte[] right)
+    {
+        if (left.Length != right.Length)
+            return false;
+
+        for (int i = 0; i < left.Length; i++)
+        {
+            if (left[i] != right[i])
+                return false;
+        }
+
+        return true;
+    }
+}

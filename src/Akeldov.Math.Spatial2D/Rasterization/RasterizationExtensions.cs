@@ -54,6 +54,19 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         }
 
         /// <summary>
+        /// Rasterizes a floating-point point influence field as a 16-bit RGBA heat map.
+        /// </summary>
+        /// <param name="source">The influence field to rasterize.</param>
+        /// <param name="grid">The raster grid that describes the sampled region.</param>
+        /// <returns>A 16-bit RGBA heat map raster produced from the influence field values.</returns>
+        public static RGBA16BitRaster RasterizeHeatMap(
+            this FloatPointInfluenceField source,
+            RasterGrid grid)
+        {
+            return source.Rasterize(grid, new FloatPointInfluenceFieldHeatMapRGBA16BitRasterizer());
+        }
+
+        /// <summary>
         /// Rasterizes Poisson disk point samples on the specified raster grid using nearest-sample distance mapping.
         /// </summary>
         /// <param name="source">The Poisson disk point samples to rasterize.</param>
