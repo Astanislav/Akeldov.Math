@@ -24,6 +24,19 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
         AssertMatchesApprovedPng("float-point-influence-field-heatmap-rgba16.png", actual);
     }
 
+    [Test]
+    public void RasterizeHeatMap_WithBarycentricField_MatchesApprovedImage()
+    {
+        var field = new FloatPointInfluenceField(
+            new BarycentricFloatSampler<FloatPointInfluenceSource>(),
+            CreateSources());
+
+        RGBA16BitRaster raster = field.RasterizeHeatMap(SnapshotGrid);
+        byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-barycentric-heatmap-rgba16.png");
+
+        AssertMatchesApprovedPng("float-point-influence-field-barycentric-heatmap-rgba16.png", actual);
+    }
+
     private static FloatPointInfluenceSource[] CreateSources()
     {
         return new[]
