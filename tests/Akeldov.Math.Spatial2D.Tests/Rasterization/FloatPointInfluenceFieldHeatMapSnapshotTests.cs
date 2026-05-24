@@ -12,6 +12,19 @@ public class FloatPointInfluenceFieldHeatMapSnapshotTests
         resolution: new VectorXYInt(160, 112));
 
     [Test]
+    public void RasterizeHeatMap_WithNearestField_MatchesApprovedImage()
+    {
+        var field = new FloatPointInfluenceField(
+            new NearestFloatInfluenceSampler<FloatPointInfluenceSource>(),
+            CreateSources());
+
+        RGBA16BitRaster raster = field.RasterizeHeatMap(SnapshotGrid);
+        byte[] actual = SaveToPngBytes(raster, "float-point-influence-field-nearest-heatmap-rgba16.png");
+
+        AssertMatchesApprovedPng("float-point-influence-field-nearest-heatmap-rgba16.png", actual);
+    }
+
+    [Test]
     public void RasterizeHeatMap_WithInverseDistanceWeightedField_MatchesApprovedImage()
     {
         var field = new FloatPointInfluenceField(
