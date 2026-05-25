@@ -10,6 +10,14 @@ Angles are expressed in radians by default. Degree-based members use the `Deg` s
 
 The images below are distance rasters produced by the curve rasterizers: bright pixels are close to the curve and dark pixels are farther away.
 
+| Non-Parameterized | Parameterized | Coordinate Domain | Notes |
+|---|---|---|---|
+| `Line` | `ParametricLine` | `(-inf, +inf)` | Infinite line; parameterized version adds origin and direction. |
+| - | `Ray` | `[0, +inf)` | Half-line, inherently directed from its origin. |
+| `Segment` | `ParameterizedSegment` | `[0, Length]` | `Segment` is endpoint-order agnostic; `ParameterizedSegment` has start/end direction. |
+| `Circle` | - | - | Full circumference; distance/projection is to the ring, not a filled disk. |
+| `Arc` | `ParameterizedArc` | `[0, Length]` | Bounded angular span; parameterized version adds traversal direction. |
+
 ## Linear Curves
 
 Use linear curves when the shortest path to a point is measured against straight geometry.
