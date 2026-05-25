@@ -6,7 +6,7 @@ namespace Akeldov.Math.Spatial2D
     /// <summary>
     /// Represents a two-dimensional point with single-precision floating-point coordinates.
     /// </summary>
-    public readonly struct PointXY : IPointDistanceProvider, IEquatable<PointXY>
+    public readonly struct PointXY : IPointDistanceProvider, IHasPosition2D, IEquatable<PointXY>
     {
         /// <summary>
         /// Initializes a new point with the specified coordinates.
@@ -37,6 +37,11 @@ namespace Akeldov.Math.Spatial2D
         /// Gets the Y coordinate.
         /// </summary>
         public float Y { get; }
+
+        /// <summary>
+        /// Gets this point as its own position.
+        /// </summary>
+        public PointXY Position => this;
 
         /// <summary>
         /// Indicates whether this point has the same coordinates as another point.

@@ -64,6 +64,14 @@ public class PointXYTests
     }
 
     [Test]
+    public void Position_ReturnsThisPoint()
+    {
+        var point = new PointXY(1f, -2f);
+
+        Assert.That(point.Position, Is.EqualTo(point));
+    }
+
+    [Test]
     public void Constructor_WhenCoordinatesAreInfinite_DoesNotThrow()
     {
         Assert.DoesNotThrow(() => new PointXY(float.PositiveInfinity, 0f));

@@ -182,6 +182,36 @@ public class PositionedCollectionExtensionsTests
         Assert.That(closest.Name, Is.EqualTo("center"));
     }
 
+    [Test]
+    public void GetCentroid_WithPointArray_ReturnsCentroid()
+    {
+        var points = new[]
+        {
+            new PointXY(0f, 0f),
+            new PointXY(10f, 0f),
+            new PointXY(-4f, 6f)
+        };
+
+        PointXY centroid = points.GetCentroid();
+
+        Assert.That(centroid, Is.EqualTo(new PointXY(2f, 2f)));
+    }
+
+    [Test]
+    public void GetClosestTo_WithPointArray_ReturnsClosestPoint()
+    {
+        var points = new[]
+        {
+            new PointXY(0f, 0f),
+            new PointXY(10f, 0f),
+            new PointXY(-4f, 6f)
+        };
+
+        PointXY closest = points.GetClosestTo(new PointXY(9f, 1f));
+
+        Assert.That(closest, Is.EqualTo(new PointXY(10f, 0f)));
+    }
+
     private static void AssertItemsArgumentException(TestDelegate action)
     {
         var exception = Assert.Throws<ArgumentException>(action);
