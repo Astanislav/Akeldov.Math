@@ -13,14 +13,46 @@ public class PointXYExtensionsTests
         Assert.That(point, Is.EqualTo(new PointXY(2f, 4f)));
     }
 
-    [Test]
-    public void LerpTo_WhenParameterIsNaN_Throws()
+    [TestCase(0f, 1f, 2f)]
+    [TestCase(1f, 5f, 10f)]
+    public void LerpTo_WhenParameterIsZeroOrOne_ReturnsEndpoint(
+        float t,
+        float expectedX,
+        float expectedY)
+    {
+        var source = new PointXY(1f, 2f);
+        var target = new PointXY(5f, 10f);
+
+        PointXY point = source.LerpTo(target, t);
+
+        Assert.That(point, Is.EqualTo(new PointXY(expectedX, expectedY)));
+    }
+
+    [TestCase(-0.25f, 0f, 0f)]
+    [TestCase(1.25f, 6f, 12f)]
+    public void LerpTo_WhenParameterIsOutsideZeroToOne_ReturnsExtrapolatedPoint(
+        float t,
+        float expectedX,
+        float expectedY)
+    {
+        var source = new PointXY(1f, 2f);
+        var target = new PointXY(5f, 10f);
+
+        PointXY point = source.LerpTo(target, t);
+
+        Assert.That(point, Is.EqualTo(new PointXY(expectedX, expectedY)));
+    }
+
+    [TestCase(float.NaN)]
+    [TestCase(float.PositiveInfinity)]
+    [TestCase(float.NegativeInfinity)]
+    public void LerpTo_WhenParameterIsInvalid_Throws(float t)
     {
         var source = new PointXY(1f, 2f);
         var target = new PointXY(5f, 10f);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            source.LerpTo(target, float.NaN));
+            source.LerpTo(target, t));
 
         Assert.That(exception!.ParamName, Is.EqualTo("t"));
     }
