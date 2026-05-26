@@ -41,9 +41,9 @@ public class PoissonDiskPointSampleRasterizationTests
 
         Gray16BitRaster raster = samples.Rasterize(grid, ToGray16);
 
-        Assert.That(raster.Values[0, 0], Is.EqualTo(1000));
-        Assert.That(raster.Values[1, 0], Is.EqualTo(1100));
-        Assert.That(raster.Values[2, 0], Is.EqualTo(2000));
+        Assert.That(raster[0, 0], Is.EqualTo(1000));
+        Assert.That(raster[1, 0], Is.EqualTo(1100));
+        Assert.That(raster[2, 0], Is.EqualTo(2000));
     }
 
     [Test]
@@ -66,9 +66,9 @@ public class PoissonDiskPointSampleRasterizationTests
 
         Gray16BitRaster raster = samples.Rasterize(grid, rasterizer);
 
-        Assert.That(raster.Values[0, 0], Is.EqualTo(200));
-        Assert.That(raster.Values[1, 0], Is.EqualTo(100));
-        Assert.That(raster.Values[2, 0], Is.EqualTo(10));
+        Assert.That(raster[0, 0], Is.EqualTo(200));
+        Assert.That(raster[1, 0], Is.EqualTo(100));
+        Assert.That(raster[2, 0], Is.EqualTo(10));
     }
 
     [Test]

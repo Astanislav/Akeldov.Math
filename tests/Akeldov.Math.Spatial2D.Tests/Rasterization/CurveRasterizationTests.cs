@@ -14,9 +14,9 @@ public class CurveRasterizationTests
 
         Gray8BitRaster raster = curve.Rasterize(grid, new CurveDistanceGray8BitRasterizer(ToGray8));
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(10));
-        Assert.That(raster.Values[1, 1], Is.EqualTo(0));
-        Assert.That(raster.Values[1, 2], Is.EqualTo(10));
+        Assert.That(raster[1, 0], Is.EqualTo(10));
+        Assert.That(raster[1, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 2], Is.EqualTo(10));
     }
 
     [Test]
@@ -31,9 +31,9 @@ public class CurveRasterizationTests
 
         Gray8BitRaster raster = curves.Rasterize(grid, new CurveCollectionDistanceGray8BitRasterizer(ToGray8));
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(0));
-        Assert.That(raster.Values[1, 1], Is.EqualTo(10));
-        Assert.That(raster.Values[1, 2], Is.EqualTo(0));
+        Assert.That(raster[1, 0], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(10));
+        Assert.That(raster[1, 2], Is.EqualTo(0));
     }
 
     [Test]
@@ -46,10 +46,10 @@ public class CurveRasterizationTests
             grid,
             new ParameterizedCurveDistanceGray8BitRasterizer(ToParameterizedGray8));
 
-        Assert.That(raster.Values[0, 1], Is.EqualTo(0));
-        Assert.That(raster.Values[1, 1], Is.EqualTo(20));
-        Assert.That(raster.Values[2, 1], Is.EqualTo(40));
-        Assert.That(raster.Values[1, 2], Is.EqualTo(30));
+        Assert.That(raster[0, 1], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(20));
+        Assert.That(raster[2, 1], Is.EqualTo(40));
+        Assert.That(raster[1, 2], Is.EqualTo(30));
     }
 
     [Test]
@@ -66,9 +66,9 @@ public class CurveRasterizationTests
             grid,
             new ParameterizedCurveCollectionDistanceGray8BitRasterizer(ToParameterizedGray8));
 
-        Assert.That(raster.Values[0, 0], Is.EqualTo(0));
-        Assert.That(raster.Values[1, 1], Is.EqualTo(30));
-        Assert.That(raster.Values[2, 2], Is.EqualTo(40));
+        Assert.That(raster[0, 0], Is.EqualTo(0));
+        Assert.That(raster[1, 1], Is.EqualTo(30));
+        Assert.That(raster[2, 2], Is.EqualTo(40));
     }
 
     [Test]

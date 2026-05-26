@@ -164,15 +164,17 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int height = raster.Height;
             int stride = checked(width + 1);
             var scanlines = new byte[checked(height * stride)];
+            byte[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
                 int y = height - 1 - row;
                 int offset = row * stride;
+                int valueIndex = y * width;
                 scanlines[offset] = 0;
 
                 for (int x = 0; x < width; x++)
-                    scanlines[offset + 1 + x] = raster.Values[x, y];
+                    scanlines[offset + 1 + x] = values[valueIndex++];
             }
 
             return scanlines;
@@ -195,16 +197,18 @@ namespace Akeldov.Math.Spatial2D.Imaging
             int rowLength = checked(width * 2);
             int stride = checked(rowLength + 1);
             var scanlines = new byte[checked(height * stride)];
+            ushort[] values = raster.Values;
 
             for (int row = 0; row < height; row++)
             {
                 int y = height - 1 - row;
                 int offset = row * stride;
+                int valueIndex = y * width;
                 scanlines[offset] = 0;
 
                 for (int x = 0; x < width; x++)
                 {
-                    ushort value = raster.Values[x, y];
+                    ushort value = values[valueIndex++];
                     int valueOffset = offset + 1 + x * 2;
                     WriteUInt16BigEndian(scanlines, valueOffset, value);
                 }

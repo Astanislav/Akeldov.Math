@@ -34,7 +34,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
 
             ValidateGrid(grid);
             PoissonDiskPointSample[] samples = CopySamples(source);
-            var values = new ushort[grid.Resolution.X, grid.Resolution.Y];
+            var values = new ushort[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -42,11 +42,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             for (int y = 0; y < grid.Resolution.Y; y++)
             {
                 float pointY = firstY + y * cellSize.Y;
+                int valueIndex = y * grid.Resolution.X;
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
                     PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     PoissonDiskPointSample nearestSample = FindNearestSample(samples, point, out float distance);
-                    values[x, y] = _sampleDistanceToGrayLevel(nearestSample, distance);
+                    values[valueIndex++] = _sampleDistanceToGrayLevel(nearestSample, distance);
                 }
             }
 

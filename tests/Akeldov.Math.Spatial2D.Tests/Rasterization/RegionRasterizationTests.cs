@@ -23,10 +23,10 @@ public class RegionRasterizationTests
 
         Gray8BitRaster raster = region.Rasterize(grid, new RegionSignedDistanceGray8BitRasterizer(ToMaskValue));
 
-        Assert.That(raster.Values[0, 0], Is.EqualTo(byte.MaxValue));
-        Assert.That(raster.Values[1, 1], Is.EqualTo(byte.MinValue));
-        Assert.That(raster.Values[2, 2], Is.EqualTo(byte.MinValue));
-        Assert.That(raster.Values[3, 3], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[0, 0], Is.EqualTo(byte.MaxValue));
+        Assert.That(raster[1, 1], Is.EqualTo(byte.MinValue));
+        Assert.That(raster[2, 2], Is.EqualTo(byte.MinValue));
+        Assert.That(raster[3, 3], Is.EqualTo(byte.MaxValue));
     }
 
     [Test]

@@ -26,7 +26,7 @@ namespace Akeldov.Math.Spatial2D.Rasterization
         {
             ValidateSource(source);
             ValidateGrid(grid);
-            var values = new byte[grid.Resolution.X, grid.Resolution.Y];
+            var values = new byte[checked(grid.Resolution.X * grid.Resolution.Y)];
             VectorXY cellSize = grid.CellSize;
             float firstX = grid.Origin.X + cellSize.X * 0.5f;
             float firstY = grid.Origin.Y + cellSize.Y * 0.5f;
@@ -34,11 +34,12 @@ namespace Akeldov.Math.Spatial2D.Rasterization
             for (int y = 0; y < grid.Resolution.Y; y++)
             {
                 float pointY = firstY + y * cellSize.Y;
+                int valueIndex = y * grid.Resolution.X;
                 for (int x = 0; x < grid.Resolution.X; x++)
                 {
                     PointXY point = new PointXY(firstX + x * cellSize.X, pointY);
                     float distance = GetNearestCurveDistance(source, point);
-                    values[x, y] = _distanceToGrayLevel(distance);
+                    values[valueIndex++] = _distanceToGrayLevel(distance);
                 }
             }
 

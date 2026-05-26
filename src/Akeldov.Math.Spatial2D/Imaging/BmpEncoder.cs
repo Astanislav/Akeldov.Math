@@ -162,13 +162,15 @@ namespace Akeldov.Math.Spatial2D.Imaging
             }
         }
 
-        private static void WriteGray8Pixels(BinaryWriter writer, byte[,] values, int width, int height, int rowStride)
+        private static void WriteGray8Pixels(BinaryWriter writer, byte[] values, int width, int height, int rowStride)
         {
             int padding = rowStride - width;
             for (int y = 0; y < height; y++)
             {
+                int valueIndex = y * width;
+
                 for (int x = 0; x < width; x++)
-                    writer.Write(values[x, y]);
+                    writer.Write(values[valueIndex++]);
 
                 WritePadding(writer, padding);
             }

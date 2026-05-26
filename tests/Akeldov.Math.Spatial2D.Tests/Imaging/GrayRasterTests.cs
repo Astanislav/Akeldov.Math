@@ -8,31 +8,50 @@ public class GrayRasterTests
     [Test]
     public void Gray8BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
-        byte[,] values = { { 1, 2 }, { 3, 4 } };
+        byte[] values = { 1, 2, 3, 4 };
         var raster = new Gray8BitRaster(CreateGrid(), values);
 
-        values[1, 0] = 9;
+        values[1] = 9;
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(9));
+        Assert.That(raster[1, 0], Is.EqualTo(9));
+        Assert.That(raster.Values[1], Is.EqualTo(9));
     }
 
     [Test]
     public void Gray8BitRasterClone_WhenCloneBufferChanges_DoesNotChangeSource()
     {
-        byte[,] values = { { 1, 2 }, { 3, 4 } };
+        byte[] values = { 1, 2, 3, 4 };
         var raster = new Gray8BitRaster(CreateGrid(), values);
 
         Gray8BitRaster clone = raster.Clone();
-        clone.Values[1, 0] = 9;
+        clone[1, 0] = 9;
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(3));
-        Assert.That(clone.Values[1, 0], Is.EqualTo(9));
+        Assert.That(raster[1, 0], Is.EqualTo(2));
+        Assert.That(clone[1, 0], Is.EqualTo(9));
+    }
+
+    [Test]
+    public void Gray8BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Gray8BitRaster(CreateGrid(), new byte[3]));
+    }
+
+    [Test]
+    public void Gray8BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
+    {
+        var raster = new Gray8BitRaster(CreateGrid(), new byte[4]);
+
+        raster[1, 0] = 9;
+
+        Assert.That(raster[1, 0], Is.EqualTo(9));
+        Assert.That(raster.Values[1], Is.EqualTo(9));
     }
 
     [Test]
     public void SaveAsPng_WhenRasterIsGray8Bit_WritesPng8()
     {
-        byte[,] values = { { 0x12, 0x34 }, { 0x56, 0x78 } };
+        byte[] values = { 0x12, 0x56, 0x34, 0x78 };
         var raster = new Gray8BitRaster(CreateGrid(), values);
         string path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "gray8.png");
 
@@ -50,25 +69,44 @@ public class GrayRasterTests
     [Test]
     public void Gray16BitRaster_WhenSourceBufferChanges_ReflectsMutation()
     {
-        ushort[,] values = { { 1, 2 }, { 3, 4 } };
+        ushort[] values = { 1, 2, 3, 4 };
         var raster = new Gray16BitRaster(CreateGrid(), values);
 
-        values[1, 0] = 9;
+        values[1] = 9;
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(9));
+        Assert.That(raster[1, 0], Is.EqualTo(9));
+        Assert.That(raster.Values[1], Is.EqualTo(9));
     }
 
     [Test]
     public void Gray16BitRasterClone_WhenCloneBufferChanges_DoesNotChangeSource()
     {
-        ushort[,] values = { { 1, 2 }, { 3, 4 } };
+        ushort[] values = { 1, 2, 3, 4 };
         var raster = new Gray16BitRaster(CreateGrid(), values);
 
         Gray16BitRaster clone = raster.Clone();
-        clone.Values[1, 0] = 9;
+        clone[1, 0] = 9;
 
-        Assert.That(raster.Values[1, 0], Is.EqualTo(3));
-        Assert.That(clone.Values[1, 0], Is.EqualTo(9));
+        Assert.That(raster[1, 0], Is.EqualTo(2));
+        Assert.That(clone[1, 0], Is.EqualTo(9));
+    }
+
+    [Test]
+    public void Gray16BitRaster_WhenValueCountDoesNotMatchGrid_Throws()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Gray16BitRaster(CreateGrid(), new ushort[3]));
+    }
+
+    [Test]
+    public void Gray16BitRasterIndexer_WhenCoordinatesAreUsed_MapsToRowMajorValue()
+    {
+        var raster = new Gray16BitRaster(CreateGrid(), new ushort[4]);
+
+        raster[1, 0] = 9;
+
+        Assert.That(raster[1, 0], Is.EqualTo(9));
+        Assert.That(raster.Values[1], Is.EqualTo(9));
     }
 
     private static RasterGrid CreateGrid()
