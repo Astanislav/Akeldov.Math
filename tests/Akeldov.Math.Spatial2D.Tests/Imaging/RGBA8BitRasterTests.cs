@@ -68,6 +68,20 @@ public class RGBA8BitRasterTests
     }
 
     [Test]
+    public void SaveAsPng_WhenRGBA8BitStreamIsProvided_WritesPng8WithAlpha()
+    {
+        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        using var stream = new MemoryStream();
+
+        raster.SaveAsPng(stream);
+
+        byte[] bytes = stream.ToArray();
+        Assert.That(bytes[0..8], Is.EqualTo(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }));
+        Assert.That(bytes[24], Is.EqualTo(8));
+        Assert.That(bytes[25], Is.EqualTo(6));
+    }
+
+    [Test]
     public void SaveAsBmp_WhenRasterIsRGBA8Bit_WritesBmp32WithBgraPixels()
     {
         RGBA8BitRaster raster = CreateRasterWithFirstPixel();
@@ -85,6 +99,26 @@ public class RGBA8BitRasterTests
         Assert.That(bytes[0], Is.EqualTo((byte)'B'));
         Assert.That(bytes[1], Is.EqualTo((byte)'M'));
         Assert.That(bitsPerPixel, Is.EqualTo(32));
+        Assert.That(bytes[pixelOffset], Is.EqualTo(0x56));
+        Assert.That(bytes[pixelOffset + 1], Is.EqualTo(0x34));
+        Assert.That(bytes[pixelOffset + 2], Is.EqualTo(0x12));
+        Assert.That(bytes[pixelOffset + 3], Is.EqualTo(0x78));
+    }
+
+    [Test]
+    public void SaveAsBmp_WhenRGBA8BitStreamIsProvided_WritesBmp32WithBgraPixels()
+    {
+        RGBA8BitRaster raster = CreateRasterWithFirstPixel();
+        using var stream = new MemoryStream();
+
+        raster.SaveAsBmp(stream);
+
+        byte[] bytes = stream.ToArray();
+        int pixelOffset = BitConverter.ToInt32(bytes, 10);
+
+        Assert.That(bytes[0], Is.EqualTo((byte)'B'));
+        Assert.That(bytes[1], Is.EqualTo((byte)'M'));
+        Assert.That(BitConverter.ToInt16(bytes, 28), Is.EqualTo(32));
         Assert.That(bytes[pixelOffset], Is.EqualTo(0x56));
         Assert.That(bytes[pixelOffset + 1], Is.EqualTo(0x34));
         Assert.That(bytes[pixelOffset + 2], Is.EqualTo(0x12));

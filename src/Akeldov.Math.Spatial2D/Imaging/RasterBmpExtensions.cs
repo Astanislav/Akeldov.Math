@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
@@ -16,6 +18,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         }
 
         /// <summary>
+        /// Saves an 8-bit grayscale raster as an indexed grayscale BMP stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output BMP stream.</param>
+        public static void SaveAsBmp(this Gray8BitRaster raster, Stream stream)
+        {
+            BmpEncoder.Save(raster, stream);
+        }
+
+        /// <summary>
         /// Saves an 8-bit RGBA raster as a 32-bit BGRA BMP file.
         /// </summary>
         /// <param name="raster">The raster to save.</param>
@@ -23,6 +35,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public static void SaveAsBmp(this RGBA8BitRaster raster, string path)
         {
             BmpEncoder.Save(raster, path);
+        }
+
+        /// <summary>
+        /// Saves an 8-bit RGBA raster as a 32-bit BGRA BMP stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output BMP stream.</param>
+        public static void SaveAsBmp(this RGBA8BitRaster raster, Stream stream)
+        {
+            BmpEncoder.Save(raster, stream);
         }
     }
 }

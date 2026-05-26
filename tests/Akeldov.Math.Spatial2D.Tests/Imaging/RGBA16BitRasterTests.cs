@@ -69,6 +69,22 @@ public class RGBA16BitRasterTests
         Assert.That(bytes[25], Is.EqualTo(6));
     }
 
+    [Test]
+    public void SaveAsPng_WhenRGBA16BitStreamIsProvided_WritesPng16WithAlpha()
+    {
+        var values = new RGBA16BitColor[6];
+        values[0] = new RGBA16BitColor(0x1234, 0x5678, 0x9abc, 0xdef0);
+        var raster = new RGBA16BitRaster(CreateGrid(), values);
+        using var stream = new MemoryStream();
+
+        raster.SaveAsPng(stream);
+
+        byte[] bytes = stream.ToArray();
+        Assert.That(bytes[0..8], Is.EqualTo(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 }));
+        Assert.That(bytes[24], Is.EqualTo(16));
+        Assert.That(bytes[25], Is.EqualTo(6));
+    }
+
     private static RasterGrid CreateGrid()
     {
         return new RasterGrid(new PointXY(0f, 0f), new VectorXY(2f, 3f), new VectorXYInt(2, 3));

@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Akeldov.Math.Spatial2D.Imaging
 {
     /// <summary>
@@ -16,6 +18,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         }
 
         /// <summary>
+        /// Saves an 8-bit grayscale raster as an 8-bit grayscale PNG stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output PNG stream.</param>
+        public static void SaveAsPng(this Gray8BitRaster raster, Stream stream)
+        {
+            PngEncoder.Save(raster, stream);
+        }
+
+        /// <summary>
         /// Saves a 16-bit grayscale raster as a 16-bit grayscale PNG file.
         /// </summary>
         /// <param name="raster">The raster to save.</param>
@@ -23,6 +35,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public static void SaveAsPng(this Gray16BitRaster raster, string path)
         {
             PngEncoder.Save(raster, path);
+        }
+
+        /// <summary>
+        /// Saves a 16-bit grayscale raster as a 16-bit grayscale PNG stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output PNG stream.</param>
+        public static void SaveAsPng(this Gray16BitRaster raster, Stream stream)
+        {
+            PngEncoder.Save(raster, stream);
         }
 
         /// <summary>
@@ -36,6 +58,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         }
 
         /// <summary>
+        /// Saves an 8-bit RGBA raster as an 8-bit RGBA PNG stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output PNG stream.</param>
+        public static void SaveAsPng(this RGBA8BitRaster raster, Stream stream)
+        {
+            PngEncoder.Save(raster, stream);
+        }
+
+        /// <summary>
         /// Saves a 16-bit RGBA raster as a 16-bit RGBA PNG file.
         /// </summary>
         /// <param name="raster">The raster to save.</param>
@@ -43,6 +75,16 @@ namespace Akeldov.Math.Spatial2D.Imaging
         public static void SaveAsPng(this RGBA16BitRaster raster, string path)
         {
             PngEncoder.Save(raster, path);
+        }
+
+        /// <summary>
+        /// Saves a 16-bit RGBA raster as a 16-bit RGBA PNG stream.
+        /// </summary>
+        /// <param name="raster">The raster to save.</param>
+        /// <param name="stream">The output PNG stream.</param>
+        public static void SaveAsPng(this RGBA16BitRaster raster, Stream stream)
+        {
+            PngEncoder.Save(raster, stream);
         }
     }
 }
