@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes
 {
-    public class HexMap<TValue>
+    public class HexMap<TValue> : IHexMap<TValue>
     {
         private readonly TValue[] _values;
 

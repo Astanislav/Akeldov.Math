@@ -31,6 +31,22 @@ public class HexMapTests
     }
 
     [Test]
+    public void HexMap_ImplementsIHexMap()
+    {
+        var topology = new HexFieldTopology(3, 2, Layout.OddR);
+        var source = new HexMap<int>(topology);
+        IHexMap<int> map = source;
+
+        source[new VectorXYInt(2, 1)] = 42;
+
+        Assert.That(map.Topology, Is.SameAs(topology));
+        Assert.That(map.Width, Is.EqualTo(3));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(map[5], Is.EqualTo(42));
+    }
+
+    [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
         var topology = new HexFieldTopology(3, 2, Layout.OddR);
