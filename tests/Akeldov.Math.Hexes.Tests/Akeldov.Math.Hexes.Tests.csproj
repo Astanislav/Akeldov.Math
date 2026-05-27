@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\src\Akeldov.Math.Hexes\Akeldov.Math.Hexes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="**\Approved\*.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
