@@ -8,23 +8,25 @@ namespace Akeldov.Math.Hexes.Tests.Chromatization;
 public class HexFieldChromatizationTests
 {
     [Test]
-    public void ToHexFieldChromatization_MatchesSingleHexChromaticClass_ForEveryLayout()
+    public void Constructor_MatchesSingleHexChromaticClass_ForEveryLayout()
     {
-        var resolution = new VectorXYInt(5, 4);
+        const int width = 5;
+        const int height = 4;
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            HexFieldChromatization chromatization = resolution.ToHexFieldChromatization(layout);
+            HexFieldChromatization chromatization = new HexFieldChromatization(width, height, layout);
 
-            Assert.That(chromatization.Width, Is.EqualTo(resolution.X));
-            Assert.That(chromatization.Height, Is.EqualTo(resolution.Y));
-            Assert.That(chromatization.ChromaticIndices, Has.Length.EqualTo(resolution.X * resolution.Y));
+            Assert.That(chromatization.Width, Is.EqualTo(width));
+            Assert.That(chromatization.Height, Is.EqualTo(height));
+            Assert.That(chromatization.Layout, Is.EqualTo(layout));
+            Assert.That(chromatization.ChromaticIndices, Has.Length.EqualTo(width * height));
 
-            for (int y = 0; y < resolution.Y; y++)
+            for (int y = 0; y < height; y++)
             {
-                int rowStart = y * resolution.X;
+                int rowStart = y * width;
 
-                for (int x = 0; x < resolution.X; x++)
+                for (int x = 0; x < width; x++)
                 {
                     byte expected = (byte)new VectorXYInt(x, y).GetChromaticClass(layout);
 
@@ -32,6 +34,26 @@ public class HexFieldChromatizationTests
                 }
             }
         }
+    }
+
+    [Test]
+    public void ToHexFieldChromatization_UsesConstructor()
+    {
+        var resolution = new VectorXYInt(2, 1);
+
+        HexFieldChromatization chromatization = resolution.ToHexFieldChromatization(Layout.OddR);
+
+        Assert.That(chromatization.Width, Is.EqualTo(2));
+        Assert.That(chromatization.Height, Is.EqualTo(1));
+        Assert.That(chromatization.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(chromatization.ChromaticIndices, Has.Length.EqualTo(2));
+    }
+
+    [Test]
+    public void Constructor_WhenWidthIsNegative_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new HexFieldChromatization(-1, 1, Layout.OddR));
     }
 
     [Test]
