@@ -93,23 +93,23 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
                     if (center.SquaredLength < closetsA.SquaredLength)
                     {
-                        var segment1 = new Segment(center, closetsA);
+                        var segment1 = CreateSegment(center, closetsA);
                         segments.Add(segment1);
                     }
                     else
                     {
-                        var segment1 = new Segment(closetsA, center);
+                        var segment1 = CreateSegment(closetsA, center);
                         segments.Add(segment1);
                     }
 
                     if (center.SquaredLength < closetsB.SquaredLength)
                     {
-                        var segment2 = new Segment(center, closetsB);
+                        var segment2 = CreateSegment(center, closetsB);
                         segments.Add(segment2);
                     }
                     else
                     {
-                        var segment2 = new Segment(closetsB, center);
+                        var segment2 = CreateSegment(closetsB, center);
                         segments.Add(segment2);
                     }
                 }
@@ -119,12 +119,12 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
                     if (center.SquaredLength < closetsA.SquaredLength)
                     {
-                        var segment1 = new Segment(center, closetsA);
+                        var segment1 = CreateSegment(center, closetsA);
                         segments.Add(segment1);
                     }
                     else
                     {
-                        var segment1 = new Segment(closetsA, center);
+                        var segment1 = CreateSegment(closetsA, center);
                         segments.Add(segment1);
                     }
                 }
@@ -138,7 +138,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             var distinctSegments = segments.ToList();
             while (true)
             {
-                var groups = distinctSegments.GroupBy(x => x.StartPoint);
+                var groups = distinctSegments.GroupBy(x => x.EndpointA);
 
                 var sameStartGroups = groups.Where(x => x.Count() > 1).ToList();
                 if (sameStartGroups.Any())
@@ -152,12 +152,12 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     if (rnd.Next(0, 100) < 50)
                     {
                         var segmentAIndex = distinctSegments.IndexOf(segmentA);
-                        distinctSegments[segmentAIndex] = new Segment(segmentA.EndPoint, segmentA.StartPoint);
+                        distinctSegments[segmentAIndex] = new Segment(segmentA.EndpointB, segmentA.EndpointA);
                     }
                     else
                     {
                         var segmentBIndex = distinctSegments.IndexOf(segmentB);
-                        distinctSegments[segmentBIndex] = new Segment(segmentB.EndPoint, segmentB.StartPoint);
+                        distinctSegments[segmentBIndex] = new Segment(segmentB.EndpointB, segmentB.EndpointA);
                     }
                 }
                 else
@@ -169,7 +169,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
             for (int i = 0; i < distinctSegments.Count; i++)
             {
                 var current = distinctSegments[i];
-                distinctSegments[i] = new Segment(current.StartPoint, current.EndPoint, true, false);
+                distinctSegments[i] = new Segment(current.EndpointA, current.EndpointB, true, false);
             }
 
             return distinctSegments;
@@ -203,7 +203,7 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                 if (handled.Contains(currentSegment))
                     continue;
 
-                var currentSegmentLine = new Line(currentSegment.StartPoint, currentSegment.EndPoint);
+                var currentSegmentLine = new Line(currentSegment.EndpointA, currentSegment.EndpointB);
 
                 for (int j = 0; j < segments.Count; j++)
                 {
@@ -215,33 +215,33 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
                     if (handled.Contains(anotherSegment))
                         continue;
 
-                    if (currentSegmentLine.Distance(anotherSegment.StartPoint) < threshold && currentSegmentLine.Distance(anotherSegment.EndPoint) < threshold)
+                    if (currentSegmentLine.Distance(anotherSegment.EndpointA) < threshold && currentSegmentLine.Distance(anotherSegment.EndpointB) < threshold)
                     {
                         res = true;
                         currentSegmentHasBeenMerged = true;
 
-                        var distAA = currentSegment.StartPoint.Distance(anotherSegment.StartPoint);
-                        var distAB = currentSegment.StartPoint.Distance(anotherSegment.EndPoint);
-                        var distBA = currentSegment.EndPoint.Distance(anotherSegment.StartPoint);
-                        var distBB = currentSegment.EndPoint.Distance(anotherSegment.EndPoint);
+                        var distAA = currentSegment.EndpointA.Distance(anotherSegment.EndpointA);
+                        var distAB = currentSegment.EndpointA.Distance(anotherSegment.EndpointB);
+                        var distBA = currentSegment.EndpointB.Distance(anotherSegment.EndpointA);
+                        var distBB = currentSegment.EndpointB.Distance(anotherSegment.EndpointB);
 
                         Segment newSegment;
 
                         if (distAA > distAB && distAA > distBA && distAA > distBB)
                         {
-                            newSegment = new Segment(currentSegment.StartPoint, anotherSegment.StartPoint);
+                            newSegment = new Segment(currentSegment.EndpointA, anotherSegment.EndpointA);
                         }
                         else if (distAB > distAA && distAB > distBA && distAB > distBB)
                         {
-                            newSegment = new Segment(currentSegment.StartPoint, anotherSegment.EndPoint);
+                            newSegment = new Segment(currentSegment.EndpointA, anotherSegment.EndpointB);
                         }
                         else if (distBA > distAB && distBA > distAA && distBA > distBB)
                         {
-                            newSegment = new Segment(currentSegment.EndPoint, anotherSegment.StartPoint);
+                            newSegment = new Segment(currentSegment.EndpointB, anotherSegment.EndpointA);
                         }
                         else
                         {
-                            newSegment = new Segment(currentSegment.EndPoint, anotherSegment.EndPoint);
+                            newSegment = new Segment(currentSegment.EndpointB, anotherSegment.EndpointB);
                         }
 
                         mergedSegments.Add(newSegment);

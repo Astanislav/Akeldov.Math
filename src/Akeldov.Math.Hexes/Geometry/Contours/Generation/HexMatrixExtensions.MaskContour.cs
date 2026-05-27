@@ -45,27 +45,45 @@ namespace Akeldov.Math.Hexes.Geometry.Contours
 
                     if (layout == Layout.OddR || layout == Layout.EvenR)
                     {
-                        if (leftIsBorder) borderLines.Add(new Segment(points[2], points[3], true, false));
-                        if (rightIsBorder) borderLines.Add(new Segment(points[5], points[0], true, false));
-                        if (topLeftIsBorder) borderLines.Add(new Segment(points[1], points[2], true, false));
-                        if (topRightIsBorder) borderLines.Add(new Segment(points[0], points[1], true, false));
-                        if (bottomLeftIsBorder) borderLines.Add(new Segment(points[3], points[4], true, false));
-                        if (bottomRightIsBorder) borderLines.Add(new Segment(points[4], points[5], true, false));
+                        if (leftIsBorder) borderLines.Add(CreateSegment(points[2], points[3], true, false));
+                        if (rightIsBorder) borderLines.Add(CreateSegment(points[5], points[0], true, false));
+                        if (topLeftIsBorder) borderLines.Add(CreateSegment(points[1], points[2], true, false));
+                        if (topRightIsBorder) borderLines.Add(CreateSegment(points[0], points[1], true, false));
+                        if (bottomLeftIsBorder) borderLines.Add(CreateSegment(points[3], points[4], true, false));
+                        if (bottomRightIsBorder) borderLines.Add(CreateSegment(points[4], points[5], true, false));
                     }
                     else
                     {
-                        if (leftIsBorder) borderLines.Add(new Segment(points[3], points[4], true, false));
-                        if (rightIsBorder) borderLines.Add(new Segment(points[0], points[1], true, false));
-                        if (topLeftIsBorder) borderLines.Add(new Segment(points[2], points[3], true, false));
-                        if (topRightIsBorder) borderLines.Add(new Segment(points[1], points[2], true, false));
-                        if (bottomLeftIsBorder) borderLines.Add(new Segment(points[4], points[5], true, false));
-                        if (bottomRightIsBorder) borderLines.Add(new Segment(points[5], points[0], true, false));
+                        if (leftIsBorder) borderLines.Add(CreateSegment(points[3], points[4], true, false));
+                        if (rightIsBorder) borderLines.Add(CreateSegment(points[0], points[1], true, false));
+                        if (topLeftIsBorder) borderLines.Add(CreateSegment(points[2], points[3], true, false));
+                        if (topRightIsBorder) borderLines.Add(CreateSegment(points[1], points[2], true, false));
+                        if (bottomLeftIsBorder) borderLines.Add(CreateSegment(points[4], points[5], true, false));
+                        if (bottomRightIsBorder) borderLines.Add(CreateSegment(points[5], points[0], true, false));
                     }
                 }
             }
 
             throw new NotImplementedException();
             //return borderLines.ToArray().OrderContour();
+        }
+
+        private static Segment CreateSegment(
+            VectorXY endpointA,
+            VectorXY endpointB,
+            bool includesEndpointA,
+            bool includesEndpointB)
+        {
+            return new Segment(
+                (PointXY)endpointA,
+                (PointXY)endpointB,
+                includesEndpointA,
+                includesEndpointB);
+        }
+
+        private static Segment CreateSegment(VectorXY endpointA, VectorXY endpointB)
+        {
+            return new Segment((PointXY)endpointA, (PointXY)endpointB);
         }
     }
 }
