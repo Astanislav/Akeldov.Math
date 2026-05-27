@@ -1,23 +1,108 @@
-﻿using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
+using System;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
     public sealed class HexFieldGeometry
     {
-        private readonly int _width;
-        private readonly int _height;
-
-        public HexFieldGeometry(int width, int height, VectorXY[] centers)
+        public HexFieldGeometry(
+            int width,
+            int height,
+            VectorXY origin,
+            float apothem,
+            Layout layout)
         {
-            _width = width;
-            _height = height;
-            Centers = centers;
+            if (width < 0)
+                throw new ArgumentOutOfRangeException(nameof(width));
+
+            if (height < 0)
+                throw new ArgumentOutOfRangeException(nameof(height));
+
+            var radius = apothem.ConvertHexApothemToRadius();
+            var count = checked(width * height);
+
+            Width = width;
+            Height = height;
+            Origin = origin;
+            Apothem = apothem;
+            Layout = layout;
+            Centers = new VectorXY[count];
+
+            switch (layout)
+            {
+                case Layout.OddR:
+                    FillRowLayoutCenters(false, radius);
+                    break;
+                case Layout.EvenR:
+                    FillRowLayoutCenters(true, radius);
+                    break;
+                case Layout.OddQ:
+                    FillColumnLayoutCenters(false, radius);
+                    break;
+                case Layout.EvenQ:
+                    FillColumnLayoutCenters(true, radius);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
         }
 
-        public int Width => _width;
+        public int Width { get; }
 
-        public int Height => _height;
+        public int Height { get; }
+
+        public VectorXY Origin { get; }
+
+        public float Apothem { get; }
+
+        public Layout Layout { get; }
 
         public VectorXY[] Centers { get; }
+
+        private void FillRowLayoutCenters(bool evenRowsAreShifted, float radius)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                var rowStart = y * Width;
+                var rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
+                var xShift = GetShiftRelativeToOrigin(rowIsShifted, evenRowsAreShifted);
+                var centerY = Origin.Y + 1.5f * radius * y;
+
+                for (int x = 0; x < Width; x++)
+                {
+                    Centers[rowStart + x] = new VectorXY(
+                        Origin.X + x * 2f * Apothem + xShift,
+                        centerY);
+                }
+            }
+        }
+
+        private void FillColumnLayoutCenters(bool evenColumnsAreShifted, float radius)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                var rowStart = y * Width;
+                var baseY = Origin.Y + y * 2f * Apothem;
+
+                for (int x = 0; x < Width; x++)
+                {
+                    var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
+                    var yShift = GetShiftRelativeToOrigin(columnIsShifted, evenColumnsAreShifted);
+
+                    Centers[rowStart + x] = new VectorXY(
+                        Origin.X + 1.5f * radius * x,
+                        baseY + yShift);
+                }
+            }
+        }
+
+        private float GetShiftRelativeToOrigin(bool indexIsShifted, bool originIndexIsShifted)
+        {
+            if (indexIsShifted == originIndexIsShifted)
+                return 0f;
+
+            return indexIsShifted ? Apothem : -Apothem;
+        }
     }
 }
