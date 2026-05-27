@@ -1,4 +1,6 @@
-﻿using Akeldov.Math.Spatial2D;
+using Akeldov.Math.Hexes.Topology;
+using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -6,31 +8,38 @@ namespace Akeldov.Math.Hexes
 {
     public class HexMap<TValue>
     {
-        private VectorXYInt _resolution;
-        private TValue[] _values;
+        private readonly TValue[] _values;
 
-        public HexMap(VectorXYInt resolution)
+        public HexMap(HexFieldTopology topology)
         {
-            _resolution = resolution;
-            _values = new TValue[resolution.X * resolution.Y];
+            Topology = topology ?? throw new ArgumentNullException(nameof(topology));
+            _values = new TValue[checked(topology.Width * topology.Height)];
         }
 
-        internal HexMap(VectorXYInt resolution, TValue[] values)
+        internal HexMap(HexFieldTopology topology, TValue[] values)
         {
-            if (values.Length != resolution.X * resolution.Y)
-                throw new ArgumentException("Values length must match resolution.", nameof(values));
+            Topology = topology ?? throw new ArgumentNullException(nameof(topology));
+            _values = values ?? throw new ArgumentNullException(nameof(values));
 
-            _resolution = resolution;
-            _values = values;
+            if (values.Length != topology.Width * topology.Height)
+                throw new ArgumentException("Values length must match topology dimensions.", nameof(values));
         }
+
+        public HexFieldTopology Topology { get; }
+
+        public int Width => Topology.Width;
+
+        public int Height => Topology.Height;
+
+        public Layout Layout => Topology.Layout;
 
         public TValue this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (index.X < 0 || index.X >= _resolution.X ||
-                    index.Y < 0 || index.Y >= _resolution.Y)
+                if (index.X < 0 || index.X >= Topology.Width ||
+                    index.Y < 0 || index.Y >= Topology.Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 return _values[GetFlatIndex(index)];
@@ -38,8 +47,8 @@ namespace Akeldov.Math.Hexes
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                if (index.X < 0 || index.X >= _resolution.X ||
-                    index.Y < 0 || index.Y >= _resolution.Y)
+                if (index.X < 0 || index.X >= Topology.Width ||
+                    index.Y < 0 || index.Y >= Topology.Height)
                     throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
 
                 _values[GetFlatIndex(index)] = value;
@@ -55,6 +64,6 @@ namespace Akeldov.Math.Hexes
             set => _values[index] = value;
         }
 
-        private int GetFlatIndex(VectorXYInt index) => index.Y * _resolution.X + index.X;
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Topology.Width + index.X;
     }
 }
