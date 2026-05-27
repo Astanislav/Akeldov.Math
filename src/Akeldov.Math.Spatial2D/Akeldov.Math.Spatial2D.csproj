@@ -5,11 +5,11 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>Akeldov.Math.Spatial2D</PackageId>
-		<Version>0.2.0</Version>
+		<Version>0.3.0</Version>
 		<Authors>Stanislav Akeldov</Authors>
 		<Copyright>Copyright (c) 2025 Stanislav Akeldov</Copyright>
 		<Description>Two-dimensional geometry, vector math, contours, regions, rasterization, spatial sampling, partitioning, and influence field utilities.</Description>
-		<PackageReleaseNotes>Added rasterization primitives, grayscale rasters, BMP/PNG export, signed-distance rasterizers, contour smoothing/filleting, and Region support for multi-contour areas with holes via FillRule.EvenOdd. Breaking changes: Contour APIs moved to the Contours namespace, IContour.Contains was renamed to Encloses, IDistanceMeasurable was renamed to IPointDistanceProvider, and contours now require a closed continuous chain of bounded curves.</PackageReleaseNotes>
+		<PackageReleaseNotes>Added PointXY for point semantics across geometry, sampling, partitioning, and influence APIs; RGBA8/RGBA16 colors and rasters; stream overloads for BMP/PNG export; curve, parameterized-curve, Poisson disk, culling-map, and influence-field heat-map rasterizers; and contour distance/signed-distance APIs. Added non-parameterized Segment and Arc primitives, length-based parameterized curve contracts, explicit casts from ParameterizedSegment/ParameterizedArc, and epsilon-aware intersection, enclosure, and containment APIs. Improved Delaunay culler performance, finite-value validation, linear-RGB culling-map blending, and grayscale raster buffer layout. Breaking changes: point-like public APIs now use PointXY instead of VectorXY, curve abstractions were split into finite/path/parameterized contracts, Segment and Arc are now non-parameterized geometry while ParameterizedSegment and ParameterizedArc provide path coordinates, and contour/region APIs now use IFinitePath, PointXY, and explicit geometry epsilon parameters.</PackageReleaseNotes>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>math;geometry;2d;vectors;spatial;curves;contours;regions;rasterization;imaging;sampling;voronoi;poisson-disk</PackageTags>
