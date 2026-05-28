@@ -25,7 +25,9 @@ nav:
           - Learn:
               - Overview: Spatial2D/learn/index.md
               - Vectors: Spatial2D/learn/vectors.md
-              - Curves: Spatial2D/learn/curves.md
+              - Curves:
+                  - Overview: Spatial2D/learn/curves.md
+                  - Linear Curves: Spatial2D/learn/curves/linear.md
               - Regions: Spatial2D/learn/regions.md
               - Rasterization: Spatial2D/learn/rasterization.md
               - Poisson Disk Sampling: Spatial2D/learn/poisson-disk-sampling.md

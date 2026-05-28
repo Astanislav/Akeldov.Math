@@ -21,6 +21,7 @@ The images below are distance rasters produced by the curve rasterizers: bright 
 ## Linear Curves
 
 Use linear curves when the shortest path to a point is measured against straight geometry.
+For constructor details, coordinate domains, endpoint inclusion, and ray-intersection behavior, see [Linear Curves](curves/linear.md).
 
 <p>
   <img alt="Line distance raster" src="../../assets/spatial2d/curves/line-distance.png" width="160">
