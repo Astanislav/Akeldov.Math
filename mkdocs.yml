@@ -28,6 +28,7 @@ nav:
               - Curves:
                   - Overview: Spatial2D/learn/curves.md
                   - Linear Curves: Spatial2D/learn/curves/linear.md
+                  - Circular Curves: Spatial2D/learn/curves/circular.md
               - Regions: Spatial2D/learn/regions.md
               - Rasterization: Spatial2D/learn/rasterization.md
               - Poisson Disk Sampling: Spatial2D/learn/poisson-disk-sampling.md

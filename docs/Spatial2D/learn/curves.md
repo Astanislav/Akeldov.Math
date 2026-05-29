@@ -75,6 +75,7 @@ PointXY halfway = segment.GetPoint(segment.Length * 0.5f);
 ## Circular Curves
 
 Use circular curves for distance to a circumference or a bounded angular span.
+For constructor details, angular spans, direction, coordinate domains, and ray-intersection behavior, see [Circular Curves](curves/circular.md).
 
 <p>
   <img alt="Circle distance raster" src="../../../assets/spatial2d/curves/circle-distance.png" width="160">
