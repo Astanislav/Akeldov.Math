@@ -24,11 +24,11 @@ Use linear curves when the shortest path to a point is measured against straight
 For constructor details, coordinate domains, endpoint inclusion, and ray-intersection behavior, see [Linear Curves](curves/linear.md).
 
 <p>
-  <img alt="Line distance raster" src="../../assets/spatial2d/curves/line-distance.png" width="160">
-  <img alt="Parametric line distance raster" src="../../assets/spatial2d/curves/parametric-line-distance.png" width="160">
-  <img alt="Ray distance raster" src="../../assets/spatial2d/curves/ray-distance.png" width="160">
-  <img alt="Segment distance raster" src="../../assets/spatial2d/curves/segment-distance.png" width="160">
-  <img alt="Parameterized segment distance raster" src="../../assets/spatial2d/curves/parameterized-segment-distance.png" width="160">
+  <img alt="Line distance raster" src="../../../assets/spatial2d/curves/line-distance.png" width="160">
+  <img alt="Parametric line distance raster" src="../../../assets/spatial2d/curves/parametric-line-distance.png" width="160">
+  <img alt="Ray distance raster" src="../../../assets/spatial2d/curves/ray-distance.png" width="160">
+  <img alt="Segment distance raster" src="../../../assets/spatial2d/curves/segment-distance.png" width="160">
+  <img alt="Parameterized segment distance raster" src="../../../assets/spatial2d/curves/parameterized-segment-distance.png" width="160">
 </p>
 
 - `Line` is an infinite geometric line. It has no start point and no curve coordinate.
@@ -77,9 +77,9 @@ PointXY halfway = segment.GetPoint(segment.Length * 0.5f);
 Use circular curves for distance to a circumference or a bounded angular span.
 
 <p>
-  <img alt="Circle distance raster" src="../../assets/spatial2d/curves/circle-distance.png" width="160">
-  <img alt="Arc distance raster" src="../../assets/spatial2d/curves/arc-distance.png" width="160">
-  <img alt="Parameterized arc distance raster" src="../../assets/spatial2d/curves/parameterized-arc-distance.png" width="160">
+  <img alt="Circle distance raster" src="../../../assets/spatial2d/curves/circle-distance.png" width="160">
+  <img alt="Arc distance raster" src="../../../assets/spatial2d/curves/arc-distance.png" width="160">
+  <img alt="Parameterized arc distance raster" src="../../../assets/spatial2d/curves/parameterized-arc-distance.png" width="160">
 </p>
 
 - `Circle` measures distance to the circumference, not to a filled disk.
@@ -122,10 +122,10 @@ Parameterized curves are useful when sampling needs to vary along the curve.
 The rasterizers can use the curve coordinate to change thickness, falloff, or influence along a path.
 
 <p>
-  <img alt="Parametric line with growing thickness" src="../../assets/spatial2d/curves/parametric-line-growing-thickness.png" width="160">
-  <img alt="Ray with growing thickness" src="../../assets/spatial2d/curves/ray-growing-thickness.png" width="160">
-  <img alt="Parameterized segment with growing thickness" src="../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png" width="160">
-  <img alt="Parameterized arc with growing thickness" src="../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png" width="160">
+  <img alt="Parametric line with growing thickness" src="../../../assets/spatial2d/curves/parametric-line-growing-thickness.png" width="160">
+  <img alt="Ray with growing thickness" src="../../../assets/spatial2d/curves/ray-growing-thickness.png" width="160">
+  <img alt="Parameterized segment with growing thickness" src="../../../assets/spatial2d/curves/parameterized-segment-growing-thickness.png" width="160">
+  <img alt="Parameterized arc with growing thickness" src="../../../assets/spatial2d/curves/parameterized-arc-growing-thickness.png" width="160">
 </p>
 
 ```csharp
