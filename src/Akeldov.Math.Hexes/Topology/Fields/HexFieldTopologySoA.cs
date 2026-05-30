@@ -4,7 +4,7 @@ using System;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public class HexFieldTopology
+    public class HexFieldTopologySoA
     {
         private static readonly VectorXYInt[] RowUnshiftedOffsets = new VectorXYInt[]
         {
@@ -46,7 +46,7 @@ namespace Akeldov.Math.Hexes.Topology
             new VectorXYInt(-1, 1)
         };
 
-        public HexFieldTopology(
+        public HexFieldTopologySoA(
             int width,
             int height,
             Layout layout)

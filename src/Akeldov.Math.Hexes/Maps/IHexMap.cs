@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes
 {
     public interface IHexMap<TValue>
     {
-        HexFieldTopology Topology { get; }
+        HexFieldTopologySoA Topology { get; }
 
         int Width { get; }
 

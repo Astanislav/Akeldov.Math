@@ -15,7 +15,7 @@ public class HexFieldTopologyRasterizationSnapshotTests
     [TestCase(Layout.EvenQ, "hex-field-topology-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
-        var topology = new HexFieldTopology(
+        var topology = new HexFieldTopologySoA(
             width: 5,
             height: 4,
             layout: layout);

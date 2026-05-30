@@ -8,7 +8,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rasterization
 {
     public sealed class HexFieldTopologyRGBA16BitRasterizer :
-        IRasterizer<HexFieldTopology, RGBA16BitRaster>
+        IRasterizer<HexFieldTopologySoA, RGBA16BitRaster>
     {
         private const float ApothemToRadius = 1.1547005f;
 
@@ -49,7 +49,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             _indexToColor = indexToColor ?? throw new ArgumentNullException(nameof(indexToColor));
         }
 
-        public RGBA16BitRaster Rasterize(HexFieldTopology source, RasterGrid grid)
+        public RGBA16BitRaster Rasterize(HexFieldTopologySoA source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -74,7 +74,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new RGBA16BitRaster(grid, values);
         }
 
-        public RasterGrid CreateGrid(HexFieldTopology source, float pixelsPerApothem)
+        public RasterGrid CreateGrid(HexFieldTopologySoA source, float pixelsPerApothem)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -188,7 +188,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private RasterBounds GetBounds(
-            HexFieldTopology source,
+            HexFieldTopologySoA source,
             float radius,
             VectorXY[] normalizedVertexes)
         {
@@ -231,7 +231,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new RasterBounds(minX, minY, maxX, maxY);
         }
 
-        private static void ValidateSource(HexFieldTopology source)
+        private static void ValidateSource(HexFieldTopologySoA source)
         {
             if (source.Width <= 0 || source.Height <= 0)
                 throw new ArgumentException("Hex field topology must contain at least one hex.", nameof(source));

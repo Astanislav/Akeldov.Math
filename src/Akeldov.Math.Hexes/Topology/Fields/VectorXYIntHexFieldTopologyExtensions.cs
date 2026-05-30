@@ -5,9 +5,9 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class VectorXYIntExtensions
     {
-        public static HexFieldTopology ToHexHieldTopology(this VectorXYInt resolution, Layout layout)
+        public static HexFieldTopologySoA ToHexHieldTopology(this VectorXYInt resolution, Layout layout)
         {
-            return new HexFieldTopology(resolution.X, resolution.Y, layout);
+            return new HexFieldTopologySoA(resolution.X, resolution.Y, layout);
         }
     }
 }

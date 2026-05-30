@@ -7,7 +7,7 @@ namespace Akeldov.Math.Hexes.Geometry
     public static class HexFieldTopologyGeometryExtensions
     {
         public static HexFieldGeometry ToHexFieldGeometry(
-            this HexFieldTopology topology,
+            this HexFieldTopologySoA topology,
             VectorXY origin,
             float apothem)
         {

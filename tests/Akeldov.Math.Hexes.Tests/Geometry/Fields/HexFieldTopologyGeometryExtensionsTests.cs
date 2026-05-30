@@ -11,7 +11,7 @@ public class HexFieldTopologyGeometryExtensionsTests
     [Test]
     public void ToHexFieldGeometry_UsesTopologyDimensionsLayoutAndProvidedGeometry()
     {
-        var topology = new HexFieldTopology(2, 1, Layout.OddR);
+        var topology = new HexFieldTopologySoA(2, 1, Layout.OddR);
         var origin = new VectorXY(10f, 20f);
 
         HexFieldGeometry geometry = topology.ToHexFieldGeometry(origin, 2f);
@@ -28,7 +28,7 @@ public class HexFieldTopologyGeometryExtensionsTests
     [Test]
     public void ToHexFieldGeometry_WhenTopologyIsNull_Throws()
     {
-        HexFieldTopology topology = null!;
+        HexFieldTopologySoA topology = null!;
 
         Assert.Throws<ArgumentNullException>(() =>
             topology.ToHexFieldGeometry(new VectorXY(0f, 0f), 1f));
