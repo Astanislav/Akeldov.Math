@@ -32,6 +32,9 @@ Then check the generated HTML image `src` values resolve to files under
 
 ## Tests
 
+When sandboxing is active, request elevated access immediately for .NET build and test commands.
+The repository's .NET build and test commands write under `bin` and `obj`, which may fail with sandbox `Access denied` errors.
+
 For the Spatial2D NUnit tests, build the test project first, then run the test assembly directly:
 
 ```powershell
@@ -42,4 +45,14 @@ The explicit framework and single MSBuild node avoid intermittent empty `Build F
 
 ```powershell
 dotnet vstest tests\Akeldov.Math.Spatial2D.Tests\bin\Debug\net6.0\Akeldov.Math.Spatial2D.Tests.dll "--logger:console;verbosity=detailed"
+```
+
+For the Hexes NUnit tests, build the test project first, then run the test assembly directly:
+
+```powershell
+dotnet build tests\Akeldov.Math.Hexes.Tests\Akeldov.Math.Hexes.Tests.csproj --framework net6.0 --no-restore --disable-build-servers /maxcpucount:1
+```
+
+```powershell
+dotnet vstest tests\Akeldov.Math.Hexes.Tests\bin\Debug\net6.0\Akeldov.Math.Hexes.Tests.dll "--logger:console;verbosity=detailed"
 ```
