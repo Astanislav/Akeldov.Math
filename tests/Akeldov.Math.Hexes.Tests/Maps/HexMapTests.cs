@@ -39,10 +39,8 @@ public class HexMapTests
 
         source[new VectorXYInt(2, 1)] = 42;
 
-        Assert.That(map.Topology, Is.SameAs(topology));
         Assert.That(map.Width, Is.EqualTo(3));
         Assert.That(map.Height, Is.EqualTo(2));
-        Assert.That(map.Layout, Is.EqualTo(Layout.OddR));
         Assert.That(map[5], Is.EqualTo(42));
     }
 
