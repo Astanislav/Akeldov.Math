@@ -50,6 +50,29 @@ public class HexFieldChromatizationTests
     }
 
     [Test]
+    public void HexFieldChromatization_ImplementsIHexMap()
+    {
+        var source = new HexFieldChromatization(3, 2, Layout.OddR);
+        IHexMap<byte> map = source;
+
+        byte chromaticIndex = source.ChromaticIndices[5];
+
+        Assert.That(map.Width, Is.EqualTo(3));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(chromaticIndex));
+        Assert.That(map[5], Is.EqualTo(chromaticIndex));
+    }
+
+    [Test]
+    public void Indexer_WhenIndexIsOutsideChromatization_Throws()
+    {
+        var chromatization = new HexFieldChromatization(3, 2, Layout.OddR);
+
+        Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(3, 0)]);
+        Assert.Throws<IndexOutOfRangeException>(() => _ = chromatization[new VectorXYInt(0, 2)]);
+    }
+
+    [Test]
     public void Constructor_WhenWidthIsNegative_Throws()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>

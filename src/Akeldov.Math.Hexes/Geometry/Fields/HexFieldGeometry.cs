@@ -1,10 +1,11 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
-    public sealed class HexFieldGeometry
+    public sealed class HexFieldGeometry : IHexMap<VectorXY>
     {
         public HexFieldGeometry(
             int width,
@@ -60,6 +61,25 @@ namespace Akeldov.Math.Hexes.Geometry
 
         public VectorXY[] Centers { get; }
 
+        public VectorXY this[VectorXYInt index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (index.X < 0 || index.X >= Width ||
+                    index.Y < 0 || index.Y >= Height)
+                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+
+                return Centers[GetFlatIndex(index)];
+            }
+        }
+
+        public VectorXY this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Centers[index];
+        }
+
         private void FillRowLayoutCenters(bool evenRowsAreShifted, float radius)
         {
             for (int y = 0; y < Height; y++)
@@ -104,5 +124,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
             return indexIsShifted ? Apothem : -Apothem;
         }
+
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
     }
 }

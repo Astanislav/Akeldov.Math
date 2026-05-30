@@ -1,9 +1,11 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
+using Akeldov.Math.Spatial2D;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Chromatization
 {
-    public sealed class HexFieldChromatization
+    public sealed class HexFieldChromatization : IHexMap<byte>
     {
         public HexFieldChromatization(int width, int height, Layout layout)
         {
@@ -47,6 +49,25 @@ namespace Akeldov.Math.Hexes.Chromatization
 
         public byte[] ChromaticIndices { get; }
 
+        public byte this[VectorXYInt index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (index.X < 0 || index.X >= Width ||
+                    index.Y < 0 || index.Y >= Height)
+                    throw new IndexOutOfRangeException($"Hex index out of bounds: {index}");
+
+                return ChromaticIndices[GetFlatIndex(index)];
+            }
+        }
+
+        public byte this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => ChromaticIndices[index];
+        }
+
         private void FillRowLayoutChromaticIndices(bool shiftedRowsUseUpperOffset)
         {
             for (int y = 0; y < Height; y++)
@@ -85,5 +106,7 @@ namespace Akeldov.Math.Hexes.Chromatization
             int result = value % divisor;
             return result < 0 ? result + divisor : result;
         }
+
+        private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
     }
 }

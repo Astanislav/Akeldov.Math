@@ -36,4 +36,27 @@ public class HexFieldGeometryTests
 
         VectorAssert.AreEqual(geometry.Centers[0], expectedX, expectedY);
     }
+
+    [Test]
+    public void HexFieldGeometry_ImplementsIHexMap()
+    {
+        var source = new HexFieldGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR);
+        IHexMap<VectorXY> map = source;
+
+        VectorXY center = source.Centers[5];
+
+        Assert.That(map.Width, Is.EqualTo(3));
+        Assert.That(map.Height, Is.EqualTo(2));
+        Assert.That(map[new VectorXYInt(2, 1)], Is.EqualTo(center));
+        Assert.That(map[5], Is.EqualTo(center));
+    }
+
+    [Test]
+    public void Indexer_WhenIndexIsOutsideGeometry_Throws()
+    {
+        var geometry = new HexFieldGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR);
+
+        Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(3, 0)]);
+        Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(0, 2)]);
+    }
 }
