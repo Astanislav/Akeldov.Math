@@ -15,7 +15,7 @@ public class HexFieldGeometryRasterizationSnapshotTests
     [TestCase(Layout.EvenQ, "hex-field-geometry-even-q-rgba16.png")]
     public void Rasterize_WithLayout_MatchesApprovedImage(Layout layout, string approvedFileName)
     {
-        var geometry = new HexFieldGeometry(
+        var geometry = new HexCenterMap(
             width: 5,
             height: 4,
             origin: new VectorXY(0f, 0f),

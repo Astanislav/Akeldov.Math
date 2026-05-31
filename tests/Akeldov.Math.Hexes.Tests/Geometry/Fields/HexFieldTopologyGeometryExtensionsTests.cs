@@ -14,7 +14,7 @@ public class HexFieldTopologyGeometryExtensionsTests
         var topology = new HexFieldTopologySoA(2, 1, Layout.OddR);
         var origin = new VectorXY(10f, 20f);
 
-        HexFieldGeometry geometry = topology.ToHexFieldGeometry(origin, 2f);
+        HexCenterMap geometry = topology.ToHexFieldGeometry(origin, 2f);
 
         Assert.That(geometry.Width, Is.EqualTo(topology.Width));
         Assert.That(geometry.Height, Is.EqualTo(topology.Height));

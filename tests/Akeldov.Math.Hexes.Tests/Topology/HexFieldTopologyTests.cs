@@ -9,7 +9,7 @@ public class HexFieldTopologyTests
     [Test]
     public void Constructor_ExposesDimensionsAndLayout()
     {
-        var topology = new HexFieldTopology(3, 2, Layout.EvenQ);
+        var topology = new HexAdjacencyMap(3, 2, Layout.EvenQ);
 
         Assert.That(topology.Width, Is.EqualTo(3));
         Assert.That(topology.Height, Is.EqualTo(2));
@@ -21,7 +21,7 @@ public class HexFieldTopologyTests
     [Test]
     public void HexFieldTopology_ImplementsIHexMap()
     {
-        IHexMap<HexAdjacency> topology = new HexFieldTopology(3, 2, Layout.OddR);
+        IHexMap<HexAdjacency> topology = new HexAdjacencyMap(3, 2, Layout.OddR);
 
         HexAdjacency adjacency = topology[new VectorXYInt(1, 0)];
 
@@ -35,7 +35,7 @@ public class HexFieldTopologyTests
     {
         var source = new HexFieldTopologySoA(3, 2, Layout.OddR);
 
-        var topology = new HexFieldTopology(source);
+        var topology = new HexAdjacencyMap(source);
         HexAdjacency adjacency = topology[new VectorXYInt(1, 0)];
 
         Assert.That(adjacency.HasAdjacent, Is.EqualTo(source.HasAdjacent[1]));
@@ -50,7 +50,7 @@ public class HexFieldTopologyTests
     [Test]
     public void Indexer_WhenIndexIsOutsideTopology_Throws()
     {
-        var topology = new HexFieldTopology(3, 2, Layout.OddR);
+        var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = topology[new VectorXYInt(0, 2)]);
@@ -59,6 +59,6 @@ public class HexFieldTopologyTests
     [Test]
     public void Constructor_WhenSourceIsNull_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new HexFieldTopology(null!));
+        Assert.Throws<ArgumentNullException>(() => new HexAdjacencyMap(null!));
     }
 }

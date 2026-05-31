@@ -7,7 +7,7 @@ using System;
 namespace Akeldov.Math.Hexes.Rasterization
 {
     public sealed class HexFieldGeometryRGBA16BitRasterizer :
-        IRasterizer<HexFieldGeometry, RGBA16BitRaster>
+        IRasterizer<HexCenterMap, RGBA16BitRaster>
     {
         private readonly Func<PointXY, RGBA16BitColor> _centerToColor;
 
@@ -16,7 +16,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             _centerToColor = centerToColor ?? throw new ArgumentNullException(nameof(centerToColor));
         }
 
-        public RGBA16BitRaster Rasterize(HexFieldGeometry source, RasterGrid grid)
+        public RGBA16BitRaster Rasterize(HexCenterMap source, RasterGrid grid)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -38,7 +38,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             return new RGBA16BitRaster(grid, values);
         }
 
-        public static RasterGrid CreateGrid(HexFieldGeometry source, float pixelsPerApothem)
+        public static RasterGrid CreateGrid(HexCenterMap source, float pixelsPerApothem)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -112,7 +112,7 @@ namespace Akeldov.Math.Hexes.Rasterization
         }
 
         private static RasterBounds GetBounds(
-            HexFieldGeometry source,
+            HexCenterMap source,
             float radius,
             VectorXY[] normalizedVertexes)
         {
@@ -126,7 +126,7 @@ namespace Akeldov.Math.Hexes.Rasterization
             return bounds;
         }
 
-        private static void ValidateSource(HexFieldGeometry source)
+        private static void ValidateSource(HexCenterMap source)
         {
             if (source.Width <= 0 || source.Height <= 0)
                 throw new ArgumentException("Hex field geometry must contain at least one hex.", nameof(source));

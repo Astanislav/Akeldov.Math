@@ -12,7 +12,7 @@ public class HexFieldGeometryRasterizationTests
     [Test]
     public void Rasterize_UsesPixelsPerApothemForRasterResolution()
     {
-        var geometry = new HexFieldGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
 
         RasterGrid grid = HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 3f);
         RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(
@@ -26,7 +26,7 @@ public class HexFieldGeometryRasterizationTests
     [Test]
     public void Rasterize_MapsHexCenterToColor()
     {
-        var geometry = new HexFieldGeometry(2, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(2, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
         var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
         var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
         var mappedCenters = new List<PointXY>();
@@ -59,7 +59,7 @@ public class HexFieldGeometryRasterizationTests
     [Test]
     public void CreateGrid_WhenPixelsPerApothemIsInvalid_Throws()
     {
-        var geometry = new HexFieldGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
 
         Assert.Throws<ArgumentOutOfRangeException>(() =>
             HexFieldGeometryRGBA16BitRasterizer.CreateGrid(geometry, 0f));
@@ -68,7 +68,7 @@ public class HexFieldGeometryRasterizationTests
     [Test]
     public void Rasterize_UsesProvidedGrid()
     {
-        var geometry = new HexFieldGeometry(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
+        var geometry = new HexCenterMap(1, 1, new VectorXY(0f, 0f), 2f, Layout.OddR);
         var grid = new RasterGrid(new PointXY(-2f, -2f), new VectorXY(4f, 4f), new VectorXYInt(4, 4));
 
         RGBA16BitRaster raster = new HexFieldGeometryRGBA16BitRasterizer(

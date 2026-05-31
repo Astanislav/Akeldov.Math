@@ -6,7 +6,7 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static class HexFieldTopologyGeometryExtensions
     {
-        public static HexFieldGeometry ToHexFieldGeometry(
+        public static HexCenterMap ToHexFieldGeometry(
             this HexFieldTopologySoA topology,
             VectorXY origin,
             float apothem)
@@ -14,7 +14,7 @@ namespace Akeldov.Math.Hexes.Geometry
             if (topology == null)
                 throw new ArgumentNullException(nameof(topology));
 
-            return new HexFieldGeometry(
+            return new HexCenterMap(
                 topology.Width,
                 topology.Height,
                 origin,

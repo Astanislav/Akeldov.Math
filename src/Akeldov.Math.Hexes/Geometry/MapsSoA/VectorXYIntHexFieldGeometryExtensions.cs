@@ -6,21 +6,21 @@ namespace Akeldov.Math.Hexes.Geometry
 {
     public static partial class VectorXYIntExtensions
     {
-        public static HexFieldGeometry ToHexGeometrySoA(this VectorXYInt resolution, Layout layout, float apothem)
+        public static HexCenterMap ToHexGeometrySoA(this VectorXYInt resolution, Layout layout, float apothem)
         {
             var radius = apothem.ConvertHexApothemToRadius();
             var origin = GetDefaultOrigin(apothem, radius, layout);
 
-            return new HexFieldGeometry(resolution.X, resolution.Y, origin, apothem, layout);
+            return new HexCenterMap(resolution.X, resolution.Y, origin, apothem, layout);
         }
 
-        public static HexFieldGeometry ToHexGeometrySoA(
+        public static HexCenterMap ToHexGeometrySoA(
             this VectorXYInt resolution,
             Layout layout,
             VectorXY origin,
             float apothem)
         {
-            return new HexFieldGeometry(resolution.X, resolution.Y, origin, apothem, layout);
+            return new HexCenterMap(resolution.X, resolution.Y, origin, apothem, layout);
         }
 
         private static VectorXY GetDefaultOrigin(float apothem, float radius, Layout layout)

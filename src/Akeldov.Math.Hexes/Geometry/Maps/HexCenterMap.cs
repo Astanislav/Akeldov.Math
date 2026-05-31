@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Geometry
 {
-    public sealed class HexFieldGeometry : IHexMap<VectorXY>
+    public sealed class HexCenterMap : IHexMap<VectorXY>
     {
-        public HexFieldGeometry(
+        public HexCenterMap(
             int width,
             int height,
             VectorXY origin,

@@ -5,11 +5,11 @@ using System.Runtime.CompilerServices;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public sealed class HexFieldTopology : IHexMap<HexAdjacency>
+    public sealed class HexAdjacencyMap : IHexMap<HexAdjacency>
     {
         private readonly HexAdjacency[] _adjacent;
 
-        public HexFieldTopology(
+        public HexAdjacencyMap(
             int width,
             int height,
             Layout layout)
@@ -17,7 +17,7 @@ namespace Akeldov.Math.Hexes.Topology
         {
         }
 
-        public HexFieldTopology(HexFieldTopologySoA source)
+        public HexAdjacencyMap(HexFieldTopologySoA source)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));

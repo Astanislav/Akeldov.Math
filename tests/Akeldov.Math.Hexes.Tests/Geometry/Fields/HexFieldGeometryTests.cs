@@ -15,7 +15,7 @@ public class HexFieldGeometryTests
 
         foreach (Layout layout in Enum.GetValues(typeof(Layout)))
         {
-            var geometry = new HexFieldGeometry(2, 2, origin, apothem, layout);
+            var geometry = new HexCenterMap(2, 2, origin, apothem, layout);
 
             Assert.That(geometry.Width, Is.EqualTo(2));
             Assert.That(geometry.Height, Is.EqualTo(2));
@@ -40,7 +40,7 @@ public class HexFieldGeometryTests
     [Test]
     public void HexFieldGeometry_ImplementsIHexMap()
     {
-        var source = new HexFieldGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR);
+        var source = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
         IHexMap<VectorXY> map = source;
 
         VectorXY center = source.Centers[5];
@@ -54,7 +54,7 @@ public class HexFieldGeometryTests
     [Test]
     public void Indexer_WhenIndexIsOutsideGeometry_Throws()
     {
-        var geometry = new HexFieldGeometry(3, 2, VectorXY.Zero, 2f, Layout.OddR);
+        var geometry = new HexCenterMap(3, 2, VectorXY.Zero, 2f, Layout.OddR);
 
         Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(3, 0)]);
         Assert.Throws<IndexOutOfRangeException>(() => _ = geometry[new VectorXYInt(0, 2)]);
