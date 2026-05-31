@@ -10,9 +10,84 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const int InvalidHexIndex = -1;
 
+        private static readonly sbyte[] RowUnshiftedOffsets = new sbyte[]
+        {
+            1, 0,
+            0, 1,
+            -1, 1,
+            -1, 0,
+            -1, -1,
+            0, -1
+        };
+
+        private static readonly sbyte[] RowShiftedOffsets = new sbyte[]
+        {
+            1, 0,
+            1, 1,
+            0, 1,
+            -1, 0,
+            0, -1,
+            1, -1
+        };
+
+        private static readonly sbyte[] ColumnUnshiftedOffsets = new sbyte[]
+        {
+            0, 1,
+            1, 0,
+            1, -1,
+            0, -1,
+            -1, -1,
+            -1, 0
+        };
+
+        private static readonly sbyte[] ColumnShiftedOffsets = new sbyte[]
+        {
+            0, 1,
+            1, 1,
+            1, 0,
+            0, -1,
+            -1, 0,
+            -1, 1
+        };
+
         private IndexedHexAdjacency[] _adjacent;
         private int[] _hexIndices;
         private bool[] _hasHex;
+
+        public HexAdjacencyGrid(
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
+            VectorXY hexOrigin,
+            float hexApothem,
+            VectorXYInt resolution)
+        {
+            ThrowIfHexDimensionIsNotPositive(hexWidth, nameof(hexWidth));
+            ThrowIfHexDimensionIsNotPositive(hexHeight, nameof(hexHeight));
+
+            if (!hexOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
+
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+
+            float hexRadius = hexApothem.ConvertHexApothemToRadius();
+            GridBounds bounds = GetBounds(hexWidth, hexHeight, layout, hexOrigin, hexApothem, hexRadius);
+
+            Initialize(
+                hexWidth,
+                hexHeight,
+                layout,
+                hexOrigin,
+                hexApothem,
+                hexRadius,
+                new VectorXY(bounds.MinX, bounds.MinY),
+                new VectorXY(bounds.Width, bounds.Height),
+                resolution);
+        }
 
         public HexAdjacencyGrid(
             HexAdjacencyMap hexAdjacencyMap,
@@ -36,15 +111,63 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
             float hexRadius = hexApothem.ConvertHexApothemToRadius();
-            GridBounds bounds = GetBounds(hexAdjacencyMap, hexOrigin, hexApothem, hexRadius);
+            GridBounds bounds = GetBounds(
+                hexAdjacencyMap.Width,
+                hexAdjacencyMap.Height,
+                hexAdjacencyMap.Layout,
+                hexOrigin,
+                hexApothem,
+                hexRadius);
 
             Initialize(
-                hexAdjacencyMap,
+                hexAdjacencyMap.Width,
+                hexAdjacencyMap.Height,
+                hexAdjacencyMap.Layout,
                 hexOrigin,
                 hexApothem,
                 hexRadius,
                 new VectorXY(bounds.MinX, bounds.MinY),
                 new VectorXY(bounds.Width, bounds.Height),
+                resolution);
+        }
+
+        public HexAdjacencyGrid(
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
+            VectorXY hexOrigin,
+            float hexApothem,
+            VectorXY gridOrigin,
+            VectorXY gridSize,
+            VectorXYInt resolution)
+        {
+            ThrowIfHexDimensionIsNotPositive(hexWidth, nameof(hexWidth));
+            ThrowIfHexDimensionIsNotPositive(hexHeight, nameof(hexHeight));
+
+            if (!hexOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(hexOrigin), hexOrigin, "Hex origin components must be finite.");
+
+            if (float.IsNaN(hexApothem) || float.IsInfinity(hexApothem) || hexApothem <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(hexApothem), hexApothem, "Hex apothem must be finite and positive.");
+
+            if (!gridOrigin.IsFinite)
+                throw new ArgumentOutOfRangeException(nameof(gridOrigin), gridOrigin, "Grid origin components must be finite.");
+
+            if (!gridSize.IsFinite || gridSize.X <= 0f || gridSize.Y <= 0f)
+                throw new ArgumentOutOfRangeException(nameof(gridSize), gridSize, "Grid size components must be finite and positive.");
+
+            if (resolution.X <= 0 || resolution.Y <= 0)
+                throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
+
+            Initialize(
+                hexWidth,
+                hexHeight,
+                layout,
+                hexOrigin,
+                hexApothem,
+                hexApothem.ConvertHexApothemToRadius(),
+                gridOrigin,
+                gridSize,
                 resolution);
         }
 
@@ -78,7 +201,9 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentOutOfRangeException(nameof(resolution), resolution, "Grid resolution components must be positive.");
 
             Initialize(
-                hexAdjacencyMap,
+                hexAdjacencyMap.Width,
+                hexAdjacencyMap.Height,
+                hexAdjacencyMap.Layout,
                 hexOrigin,
                 hexApothem,
                 hexApothem.ConvertHexApothemToRadius(),
@@ -178,7 +303,9 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         private void Initialize(
-            HexAdjacencyMap hexAdjacencyMap,
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
             VectorXY hexOrigin,
             float hexApothem,
             float hexRadius,
@@ -186,8 +313,8 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY gridSize,
             VectorXYInt resolution)
         {
-            HexResolution = new VectorXYInt(hexAdjacencyMap.Width, hexAdjacencyMap.Height);
-            Layout = hexAdjacencyMap.Layout;
+            HexResolution = new VectorXYInt(hexWidth, hexHeight);
+            Layout = layout;
             HexOrigin = hexOrigin;
             HexApothem = hexApothem;
             HexRadius = hexRadius;
@@ -201,31 +328,31 @@ namespace Akeldov.Math.Hexes.Topology
             _hexIndices = new int[_adjacent.Length];
             _hasHex = new bool[_adjacent.Length];
 
-            Fill(hexAdjacencyMap);
+            Fill();
         }
 
-        private void Fill(HexAdjacencyMap hexAdjacencyMap)
+        private void Fill()
         {
             switch (Layout)
             {
                 case Layout.OddR:
-                    FillRowLayout(hexAdjacencyMap, false);
+                    FillRowLayout(false);
                     break;
                 case Layout.EvenR:
-                    FillRowLayout(hexAdjacencyMap, true);
+                    FillRowLayout(true);
                     break;
                 case Layout.OddQ:
-                    FillColumnLayout(hexAdjacencyMap, false);
+                    FillColumnLayout(false);
                     break;
                 case Layout.EvenQ:
-                    FillColumnLayout(hexAdjacencyMap, true);
+                    FillColumnLayout(true);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(Layout));
             }
         }
 
-        private void FillRowLayout(HexAdjacencyMap hexAdjacencyMap, bool evenRowsAreShifted)
+        private void FillRowLayout(bool evenRowsAreShifted)
         {
             for (int y = 0; y < ResolutionY; y++)
             {
@@ -247,12 +374,12 @@ namespace Akeldov.Math.Hexes.Topology
 
                     _hasHex[flatIndex] = true;
                     _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex, hexAdjacencyMap[hexIndex]);
+                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex);
                 }
             }
         }
 
-        private void FillColumnLayout(HexAdjacencyMap hexAdjacencyMap, bool evenColumnsAreShifted)
+        private void FillColumnLayout(bool evenColumnsAreShifted)
         {
             for (int y = 0; y < ResolutionY; y++)
             {
@@ -274,22 +401,69 @@ namespace Akeldov.Math.Hexes.Topology
 
                     _hasHex[flatIndex] = true;
                     _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex, hexAdjacencyMap[hexIndex]);
+                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex);
                 }
             }
         }
 
-        private static IndexedHexAdjacency CreateIndexedAdjacency(int index, HexAdjacency adjacency)
+        private IndexedHexAdjacency CreateIndexedAdjacency(int index)
         {
+            int x = index % HexResolution.X;
+            int y = index / HexResolution.X;
+
+            switch (Layout)
+            {
+                case Layout.OddR:
+                    return CreateIndexedAdjacency(x, y, index, ((y & 1) == 1) ? RowShiftedOffsets : RowUnshiftedOffsets);
+                case Layout.EvenR:
+                    return CreateIndexedAdjacency(x, y, index, ((y & 1) == 0) ? RowShiftedOffsets : RowUnshiftedOffsets);
+                case Layout.OddQ:
+                    return CreateIndexedAdjacency(x, y, index, ((x & 1) == 1) ? ColumnShiftedOffsets : ColumnUnshiftedOffsets);
+                case Layout.EvenQ:
+                    return CreateIndexedAdjacency(x, y, index, ((x & 1) == 0) ? ColumnShiftedOffsets : ColumnUnshiftedOffsets);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Layout));
+            }
+        }
+
+        private IndexedHexAdjacency CreateIndexedAdjacency(
+            int x,
+            int y,
+            int flatIndex,
+            sbyte[] offsets)
+        {
+            var flags = IndexedHexAdjacencyFlags.OwnIndex;
+
+            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex, IndexedHexAdjacencyFlags.Adjacent0, ref flags);
+            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex, IndexedHexAdjacencyFlags.Adjacent1, ref flags);
+            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex, IndexedHexAdjacencyFlags.Adjacent2, ref flags);
+            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex, IndexedHexAdjacencyFlags.Adjacent3, ref flags);
+            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex, IndexedHexAdjacencyFlags.Adjacent4, ref flags);
+            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex, IndexedHexAdjacencyFlags.Adjacent5, ref flags);
+
             return new IndexedHexAdjacency(
-                IndexedHexAdjacencyFlags.OwnIndex | (IndexedHexAdjacencyFlags)adjacency.Flags,
-                index,
-                adjacency.Adjacent0Index,
-                adjacency.Adjacent1Index,
-                adjacency.Adjacent2Index,
-                adjacency.Adjacent3Index,
-                adjacency.Adjacent4Index,
-                adjacency.Adjacent5Index);
+                flags,
+                flatIndex,
+                adjacent0Index,
+                adjacent1Index,
+                adjacent2Index,
+                adjacent3Index,
+                adjacent4Index,
+                adjacent5Index);
+        }
+
+        private int GetAdjacentFlatIndex(
+            int x,
+            int y,
+            int fallbackFlatIndex,
+            IndexedHexAdjacencyFlags flag,
+            ref IndexedHexAdjacencyFlags flags)
+        {
+            if ((uint)x >= (uint)HexResolution.X || (uint)y >= (uint)HexResolution.Y)
+                return fallbackFlatIndex;
+
+            flags |= flag;
+            return y * HexResolution.X + x;
         }
 
         private VectorXY GetCellCenterUnchecked(int x, int y)
@@ -403,26 +577,28 @@ namespace Akeldov.Math.Hexes.Topology
         private int GetFlatIndex(VectorXYInt index) => index.Y * ResolutionX + index.X;
 
         private static GridBounds GetBounds(
-            HexAdjacencyMap hexAdjacencyMap,
+            int hexWidth,
+            int hexHeight,
+            Layout layout,
             VectorXY hexOrigin,
             float hexApothem,
             float hexRadius)
         {
-            VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(hexAdjacencyMap.Layout);
+            VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(layout);
             GridBounds bounds = GetHexBounds(
-                GetHexCenter(0, 0, hexOrigin, hexApothem, hexRadius, hexAdjacencyMap.Layout),
+                GetHexCenter(0, 0, hexOrigin, hexApothem, hexRadius, layout),
                 hexRadius,
                 normalizedVertexes);
 
-            for (int y = 0; y < hexAdjacencyMap.Height; y++)
+            for (int y = 0; y < hexHeight; y++)
             {
-                for (int x = 0; x < hexAdjacencyMap.Width; x++)
+                for (int x = 0; x < hexWidth; x++)
                 {
                     if (x == 0 && y == 0)
                         continue;
 
                     bounds = bounds.Include(GetHexBounds(
-                        GetHexCenter(x, y, hexOrigin, hexApothem, hexRadius, hexAdjacencyMap.Layout),
+                        GetHexCenter(x, y, hexOrigin, hexApothem, hexRadius, layout),
                         hexRadius,
                         normalizedVertexes));
                 }
@@ -460,6 +636,12 @@ namespace Akeldov.Math.Hexes.Topology
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
+        }
+
+        private static void ThrowIfHexDimensionIsNotPositive(int value, string paramName)
+        {
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(paramName, value, "Hex grid dimensions must be positive.");
         }
 
         private static GridBounds GetHexBounds(

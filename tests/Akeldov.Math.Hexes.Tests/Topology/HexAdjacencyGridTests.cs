@@ -30,6 +30,27 @@ public class HexAdjacencyGridTests
     }
 
     [Test]
+    public void Constructor_WithoutAdjacencyMap_ExposesGeometryResolutionAndSampledValues()
+    {
+        var origin = new VectorXY(10f, -20f);
+
+        var grid = new HexAdjacencyGrid(2, 1, Layout.OddR, origin, 2f, new VectorXYInt(4, 2));
+
+        Assert.That(grid.HexResolution, Is.EqualTo(new VectorXYInt(2, 1)));
+        Assert.That(grid.Layout, Is.EqualTo(Layout.OddR));
+        Assert.That(grid.HexOrigin, Is.EqualTo(origin));
+        Assert.That(grid.HexApothem, Is.EqualTo(2f));
+        Assert.That(grid.HexRadius, Is.EqualTo(2f.ConvertHexApothemToRadius()));
+        Assert.That(grid.Resolution, Is.EqualTo(new VectorXYInt(4, 2)));
+        Assert.That(grid.ResolutionX, Is.EqualTo(4));
+        Assert.That(grid.ResolutionY, Is.EqualTo(2));
+        Assert.That(grid.Count, Is.EqualTo(8));
+        Assert.That(grid.Adjacent, Has.Length.EqualTo(8));
+        Assert.That(grid.HexIndices, Has.Length.EqualTo(8));
+        Assert.That(grid.HasHex, Has.Length.EqualTo(8));
+    }
+
+    [Test]
     public void Indexer_WhenGridIsDenserThanMap_ReusesHexAdjacency()
     {
         var map = new HexAdjacencyMap(2, 1, Layout.OddR);
@@ -48,6 +69,23 @@ public class HexAdjacencyGridTests
         AssertIndexedAdjacency(grid[new VectorXYInt(1, 0)], 0, map[new VectorXYInt(0, 0)]);
         AssertIndexedAdjacency(grid[new VectorXYInt(2, 0)], 1, map[new VectorXYInt(1, 0)]);
         AssertIndexedAdjacency(grid[new VectorXYInt(3, 0)], 1, map[new VectorXYInt(1, 0)]);
+    }
+
+    [Test]
+    public void Indexer_WithoutAdjacencyMap_ReusesIndexedHexAdjacency()
+    {
+        var map = new IndexedHexAdjacencyMap(2, 1, Layout.OddR);
+
+        var grid = new HexAdjacencyGrid(2, 1, Layout.OddR, VectorXY.Zero, 2f, new VectorXYInt(4, 1));
+
+        Assert.That(grid.GetHexIndex(new VectorXYInt(0, 0)), Is.EqualTo(new VectorXYInt(0, 0)));
+        Assert.That(grid.GetHexIndex(new VectorXYInt(1, 0)), Is.EqualTo(new VectorXYInt(0, 0)));
+        Assert.That(grid.GetHexIndex(new VectorXYInt(2, 0)), Is.EqualTo(new VectorXYInt(1, 0)));
+        Assert.That(grid.GetHexIndex(new VectorXYInt(3, 0)), Is.EqualTo(new VectorXYInt(1, 0)));
+        Assert.That(grid[new VectorXYInt(0, 0)], Is.EqualTo(map[new VectorXYInt(0, 0)]));
+        Assert.That(grid[new VectorXYInt(1, 0)], Is.EqualTo(map[new VectorXYInt(0, 0)]));
+        Assert.That(grid[new VectorXYInt(2, 0)], Is.EqualTo(map[new VectorXYInt(1, 0)]));
+        Assert.That(grid[new VectorXYInt(3, 0)], Is.EqualTo(map[new VectorXYInt(1, 0)]));
     }
 
     [Test]
@@ -137,6 +175,15 @@ public class HexAdjacencyGridTests
         var map = new HexAdjacencyMap(0, 1, Layout.OddR);
 
         Assert.Throws<ArgumentException>(() => new HexAdjacencyGrid(map, VectorXY.Zero, 1f, VectorXYInt.One));
+    }
+
+    [Test]
+    public void Constructor_WhenHexDimensionIsNotPositive_Throws()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(0, 1, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(1, 0, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(-1, 1, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(1, -1, Layout.OddR, VectorXY.Zero, 1f, VectorXYInt.One));
     }
 
     [Test]
