@@ -7,46 +7,6 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class IndexedHexAdjacencyMap : IHexMap<IndexedHexAdjacency>
     {
-        private static readonly sbyte[] RowUnshiftedOffsets = new sbyte[]
-        {
-            1, 0,
-            0, 1,
-            -1, 1,
-            -1, 0,
-            -1, -1,
-            0, -1
-        };
-
-        private static readonly sbyte[] RowShiftedOffsets = new sbyte[]
-        {
-            1, 0,
-            1, 1,
-            0, 1,
-            -1, 0,
-            0, -1,
-            1, -1
-        };
-
-        private static readonly sbyte[] ColumnUnshiftedOffsets = new sbyte[]
-        {
-            0, 1,
-            1, 0,
-            1, -1,
-            0, -1,
-            -1, -1,
-            -1, 0
-        };
-
-        private static readonly sbyte[] ColumnShiftedOffsets = new sbyte[]
-        {
-            0, 1,
-            1, 1,
-            1, 0,
-            0, -1,
-            -1, 0,
-            -1, 1
-        };
-
         private readonly IndexedHexAdjacency[] _adjacent;
 
         public IndexedHexAdjacencyMap(
@@ -120,8 +80,7 @@ namespace Akeldov.Math.Hexes.Topology
             for (int y = 0; y < Height; y++)
             {
                 var rowStart = y * Width;
-                var rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
-                var offsets = rowIsShifted ? RowShiftedOffsets : RowUnshiftedOffsets;
+                var offsets = HexAdjacencyOffsets.GetRowOffsets(y, evenRowsAreShifted);
 
                 for (int x = 0; x < Width; x++)
                 {
@@ -139,8 +98,7 @@ namespace Akeldov.Math.Hexes.Topology
 
                 for (int x = 0; x < Width; x++)
                 {
-                    var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
-                    var offsets = columnIsShifted ? ColumnShiftedOffsets : ColumnUnshiftedOffsets;
+                    var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
                     var flatIndex = rowStart + x;
                     _adjacent[flatIndex] = CreateAdjacency(x, y, flatIndex, offsets);
                 }

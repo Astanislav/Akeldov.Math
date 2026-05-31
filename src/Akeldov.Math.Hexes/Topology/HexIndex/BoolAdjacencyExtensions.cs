@@ -7,27 +7,7 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class BoolExtensions
     {
-        private static readonly VectorXYInt[] RowUnshiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(1, 0),
-            new VectorXYInt(0, 1),
-            new VectorXYInt(-1, 1),
-            new VectorXYInt(-1, 0),
-            new VectorXYInt(-1, -1),
-            new VectorXYInt(0, -1)
-        };
-
-        private static readonly VectorXYInt[] RowShiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(1, 0),
-            new VectorXYInt(1, 1),
-            new VectorXYInt(0, 1),
-            new VectorXYInt(-1, 0),
-            new VectorXYInt(0, -1),
-            new VectorXYInt(1, -1)
-        };
-
-        private static readonly VectorXYInt[] ColumnUnshiftedOffsets = new VectorXYInt[]
+        private static readonly VectorXYInt[] ColumnUnshiftedEdgeOffsets = new VectorXYInt[]
         {
             new VectorXYInt(1, 0),
             new VectorXYInt(0, 1),
@@ -37,7 +17,7 @@ namespace Akeldov.Math.Hexes.Topology
             new VectorXYInt(1, -1)
         };
 
-        private static readonly VectorXYInt[] ColumnShiftedOffsets = new VectorXYInt[]
+        private static readonly VectorXYInt[] ColumnShiftedEdgeOffsets = new VectorXYInt[]
         {
             new VectorXYInt(1, 1),
             new VectorXYInt(0, 1),
@@ -53,13 +33,13 @@ namespace Akeldov.Math.Hexes.Topology
             switch (layout)
             {
                 case Layout.OddR:
-                    return axisIsEven ? RowUnshiftedOffsets : RowShiftedOffsets;
+                    return HexAdjacencyOffsets.GetRowVectorOffsets(axisIsEven, false);
                 case Layout.EvenR:
-                    return axisIsEven ? RowShiftedOffsets : RowUnshiftedOffsets;
+                    return HexAdjacencyOffsets.GetRowVectorOffsets(axisIsEven, true);
                 case Layout.OddQ:
-                    return axisIsEven ? ColumnUnshiftedOffsets : ColumnShiftedOffsets;
+                    return axisIsEven ? ColumnUnshiftedEdgeOffsets : ColumnShiftedEdgeOffsets;
                 case Layout.EvenQ:
-                    return axisIsEven ? ColumnShiftedOffsets : ColumnUnshiftedOffsets;
+                    return axisIsEven ? ColumnShiftedEdgeOffsets : ColumnUnshiftedEdgeOffsets;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }

@@ -10,46 +10,6 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const int InvalidHexIndex = -1;
 
-        private static readonly sbyte[] RowUnshiftedOffsets = new sbyte[]
-        {
-            1, 0,
-            0, 1,
-            -1, 1,
-            -1, 0,
-            -1, -1,
-            0, -1
-        };
-
-        private static readonly sbyte[] RowShiftedOffsets = new sbyte[]
-        {
-            1, 0,
-            1, 1,
-            0, 1,
-            -1, 0,
-            0, -1,
-            1, -1
-        };
-
-        private static readonly sbyte[] ColumnUnshiftedOffsets = new sbyte[]
-        {
-            0, 1,
-            1, 0,
-            1, -1,
-            0, -1,
-            -1, -1,
-            -1, 0
-        };
-
-        private static readonly sbyte[] ColumnShiftedOffsets = new sbyte[]
-        {
-            0, 1,
-            1, 1,
-            1, 0,
-            0, -1,
-            -1, 0,
-            -1, 1
-        };
-
         private IndexedHexAdjacency[] _adjacent;
         private int[] _hexIndices;
         private bool[] _hasHex;
@@ -411,19 +371,7 @@ namespace Akeldov.Math.Hexes.Topology
             int x = index % HexResolution.X;
             int y = index / HexResolution.X;
 
-            switch (Layout)
-            {
-                case Layout.OddR:
-                    return CreateIndexedAdjacency(x, y, index, ((y & 1) == 1) ? RowShiftedOffsets : RowUnshiftedOffsets);
-                case Layout.EvenR:
-                    return CreateIndexedAdjacency(x, y, index, ((y & 1) == 0) ? RowShiftedOffsets : RowUnshiftedOffsets);
-                case Layout.OddQ:
-                    return CreateIndexedAdjacency(x, y, index, ((x & 1) == 1) ? ColumnShiftedOffsets : ColumnUnshiftedOffsets);
-                case Layout.EvenQ:
-                    return CreateIndexedAdjacency(x, y, index, ((x & 1) == 0) ? ColumnShiftedOffsets : ColumnUnshiftedOffsets);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(Layout));
-            }
+            return CreateIndexedAdjacency(x, y, index, HexAdjacencyOffsets.GetOffsets(Layout, x, y));
         }
 
         private IndexedHexAdjacency CreateIndexedAdjacency(

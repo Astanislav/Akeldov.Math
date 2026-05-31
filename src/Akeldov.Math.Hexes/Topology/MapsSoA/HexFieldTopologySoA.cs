@@ -1,51 +1,10 @@
 using Akeldov.Math.Hexes.Vectors.QRS;
-using Akeldov.Math.Spatial2D;
 using System;
 
 namespace Akeldov.Math.Hexes.Topology
 {
     public class HexFieldTopologySoA
     {
-        private static readonly VectorXYInt[] RowUnshiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(1, 0),
-            new VectorXYInt(0, 1),
-            new VectorXYInt(-1, 1),
-            new VectorXYInt(-1, 0),
-            new VectorXYInt(-1, -1),
-            new VectorXYInt(0, -1)
-        };
-
-        private static readonly VectorXYInt[] RowShiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(1, 0),
-            new VectorXYInt(1, 1),
-            new VectorXYInt(0, 1),
-            new VectorXYInt(-1, 0),
-            new VectorXYInt(0, -1),
-            new VectorXYInt(1, -1)
-        };
-
-        private static readonly VectorXYInt[] ColumnUnshiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(0, 1),
-            new VectorXYInt(1, 0),
-            new VectorXYInt(1, -1),
-            new VectorXYInt(0, -1),
-            new VectorXYInt(-1, -1),
-            new VectorXYInt(-1, 0)
-        };
-
-        private static readonly VectorXYInt[] ColumnShiftedOffsets = new VectorXYInt[]
-        {
-            new VectorXYInt(0, 1),
-            new VectorXYInt(1, 1),
-            new VectorXYInt(1, 0),
-            new VectorXYInt(0, -1),
-            new VectorXYInt(-1, 0),
-            new VectorXYInt(-1, 1)
-        };
-
         public HexFieldTopologySoA(
             int width,
             int height,
@@ -105,8 +64,7 @@ namespace Akeldov.Math.Hexes.Topology
             for (int y = 0; y < Height; y++)
             {
                 var rowStart = y * Width;
-                var rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
-                var offsets = rowIsShifted ? RowShiftedOffsets : RowUnshiftedOffsets;
+                var offsets = HexAdjacencyOffsets.GetRowOffsets(y, evenRowsAreShifted);
 
                 for (int x = 0; x < Width; x++)
                 {
@@ -127,8 +85,7 @@ namespace Akeldov.Math.Hexes.Topology
 
                 for (int x = 0; x < Width; x++)
                 {
-                    var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
-                    var offsets = columnIsShifted ? ColumnShiftedOffsets : ColumnUnshiftedOffsets;
+                    var offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
 
                     FillTopologyCell(
                         x,
@@ -143,20 +100,20 @@ namespace Akeldov.Math.Hexes.Topology
             int x,
             int y,
             int flatIndex,
-            VectorXYInt[] offsets)
+            sbyte[] offsets)
         {
-            var candidate0X = x + offsets[0].X;
-            var candidate0Y = y + offsets[0].Y;
-            var candidate1X = x + offsets[1].X;
-            var candidate1Y = y + offsets[1].Y;
-            var candidate2X = x + offsets[2].X;
-            var candidate2Y = y + offsets[2].Y;
-            var candidate3X = x + offsets[3].X;
-            var candidate3Y = y + offsets[3].Y;
-            var candidate4X = x + offsets[4].X;
-            var candidate4Y = y + offsets[4].Y;
-            var candidate5X = x + offsets[5].X;
-            var candidate5Y = y + offsets[5].Y;
+            var candidate0X = x + offsets[0];
+            var candidate0Y = y + offsets[1];
+            var candidate1X = x + offsets[2];
+            var candidate1Y = y + offsets[3];
+            var candidate2X = x + offsets[4];
+            var candidate2Y = y + offsets[5];
+            var candidate3X = x + offsets[6];
+            var candidate3Y = y + offsets[7];
+            var candidate4X = x + offsets[8];
+            var candidate4Y = y + offsets[9];
+            var candidate5X = x + offsets[10];
+            var candidate5Y = y + offsets[11];
 
             var mask = (byte)0;
 
