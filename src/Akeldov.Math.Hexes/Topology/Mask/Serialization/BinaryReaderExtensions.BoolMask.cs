@@ -1,4 +1,3 @@
-using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -7,22 +6,6 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public static partial class BinaryReaderExtensions
     {
-        public static Polyhex ReadPolyhexStamp(
-            this BinaryReader binaryReader)
-        {
-            var isNotNull = binaryReader.ReadBoolean();
-            if (isNotNull)
-            {
-                var dimension = binaryReader.ReadVectorQRSInt();
-                var boolMask = binaryReader.ReadBoolMask();
-                return new Polyhex(boolMask);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool[,] ReadBoolMask(this BinaryReader reader)
         {
