@@ -7,40 +7,81 @@ namespace Akeldov.Math.Hexes.Topology
 {
     public sealed class HexAdjacencyMap : IHexMap<HexAdjacency>
     {
+        private static readonly sbyte[] RowUnshiftedOffsets = new sbyte[]
+        {
+            1, 0,
+            0, 1,
+            -1, 1,
+            -1, 0,
+            -1, -1,
+            0, -1
+        };
+
+        private static readonly sbyte[] RowShiftedOffsets = new sbyte[]
+        {
+            1, 0,
+            1, 1,
+            0, 1,
+            -1, 0,
+            0, -1,
+            1, -1
+        };
+
+        private static readonly sbyte[] ColumnUnshiftedOffsets = new sbyte[]
+        {
+            0, 1,
+            1, 0,
+            1, -1,
+            0, -1,
+            -1, -1,
+            -1, 0
+        };
+
+        private static readonly sbyte[] ColumnShiftedOffsets = new sbyte[]
+        {
+            0, 1,
+            1, 1,
+            1, 0,
+            0, -1,
+            -1, 0,
+            -1, 1
+        };
+
         private readonly HexAdjacency[] _adjacent;
 
         public HexAdjacencyMap(
             int width,
             int height,
             Layout layout)
-            : this(new HexFieldTopologySoA(width, height, layout))
         {
-        }
+            if (width < 0)
+                throw new ArgumentOutOfRangeException(nameof(width));
 
-        public HexAdjacencyMap(HexFieldTopologySoA source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            if (height < 0)
+                throw new ArgumentOutOfRangeException(nameof(height));
 
-            int count = checked(source.Width * source.Height);
-            var adjacent = new HexAdjacency[count];
+            Width = width;
+            Height = height;
+            Layout = layout;
+            _adjacent = new HexAdjacency[checked(width * height)];
 
-            for (int i = 0; i < count; i++)
+            switch (layout)
             {
-                adjacent[i] = new HexAdjacency(
-                    source.HasAdjacent[i],
-                    source.Adjacent0Index[i],
-                    source.Adjacent1Index[i],
-                    source.Adjacent2Index[i],
-                    source.Adjacent3Index[i],
-                    source.Adjacent4Index[i],
-                    source.Adjacent5Index[i]);
+                case Layout.OddR:
+                    FillRowLayoutTopology(false);
+                    break;
+                case Layout.EvenR:
+                    FillRowLayoutTopology(true);
+                    break;
+                case Layout.OddQ:
+                    FillColumnLayoutTopology(false);
+                    break;
+                case Layout.EvenQ:
+                    FillColumnLayoutTopology(true);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
             }
-
-            Width = source.Width;
-            Height = source.Height;
-            Layout = source.Layout;
-            _adjacent = adjacent;
         }
 
         public int Width { get; }
@@ -73,5 +114,76 @@ namespace Akeldov.Math.Hexes.Topology
         }
 
         private int GetFlatIndex(VectorXYInt index) => index.Y * Width + index.X;
+
+        private void FillRowLayoutTopology(bool evenRowsAreShifted)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                var rowStart = y * Width;
+                var rowIsShifted = ((y & 1) == 0) == evenRowsAreShifted;
+                var offsets = rowIsShifted ? RowShiftedOffsets : RowUnshiftedOffsets;
+
+                for (int x = 0; x < Width; x++)
+                {
+                    var flatIndex = rowStart + x;
+                    _adjacent[flatIndex] = CreateAdjacency(x, y, flatIndex, offsets);
+                }
+            }
+        }
+
+        private void FillColumnLayoutTopology(bool evenColumnsAreShifted)
+        {
+            for (int y = 0; y < Height; y++)
+            {
+                var rowStart = y * Width;
+
+                for (int x = 0; x < Width; x++)
+                {
+                    var columnIsShifted = ((x & 1) == 0) == evenColumnsAreShifted;
+                    var offsets = columnIsShifted ? ColumnShiftedOffsets : ColumnUnshiftedOffsets;
+                    var flatIndex = rowStart + x;
+                    _adjacent[flatIndex] = CreateAdjacency(x, y, flatIndex, offsets);
+                }
+            }
+        }
+
+        private HexAdjacency CreateAdjacency(
+            int x,
+            int y,
+            int flatIndex,
+            sbyte[] offsets)
+        {
+            var flags = HexAdjacencyFlags.None;
+
+            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex, HexAdjacencyFlags.Adjacent0, ref flags);
+            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex, HexAdjacencyFlags.Adjacent1, ref flags);
+            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex, HexAdjacencyFlags.Adjacent2, ref flags);
+            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex, HexAdjacencyFlags.Adjacent3, ref flags);
+            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex, HexAdjacencyFlags.Adjacent4, ref flags);
+            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex, HexAdjacencyFlags.Adjacent5, ref flags);
+
+            return new HexAdjacency(
+                flags,
+                adjacent0Index,
+                adjacent1Index,
+                adjacent2Index,
+                adjacent3Index,
+                adjacent4Index,
+                adjacent5Index);
+        }
+
+        private int GetAdjacentFlatIndex(
+            int x,
+            int y,
+            int fallbackFlatIndex,
+            HexAdjacencyFlags flag,
+            ref HexAdjacencyFlags flags)
+        {
+            if ((uint)x >= (uint)Width || (uint)y >= (uint)Height)
+                return fallbackFlatIndex;
+
+            flags |= flag;
+            return y * Width + x;
+        }
     }
 }

@@ -44,10 +44,10 @@ public class HexAdjacencyGridTests
         Assert.That(grid.GetHexFlatIndex(new VectorXYInt(1, 0)), Is.EqualTo(0));
         Assert.That(grid.GetHexFlatIndex(new VectorXYInt(2, 0)), Is.EqualTo(1));
         Assert.That(grid.GetHexFlatIndex(new VectorXYInt(3, 0)), Is.EqualTo(1));
-        Assert.That(grid[new VectorXYInt(0, 0)], Is.EqualTo(map[new VectorXYInt(0, 0)]));
-        Assert.That(grid[new VectorXYInt(1, 0)], Is.EqualTo(map[new VectorXYInt(0, 0)]));
-        Assert.That(grid[new VectorXYInt(2, 0)], Is.EqualTo(map[new VectorXYInt(1, 0)]));
-        Assert.That(grid[new VectorXYInt(3, 0)], Is.EqualTo(map[new VectorXYInt(1, 0)]));
+        AssertIndexedAdjacency(grid[new VectorXYInt(0, 0)], 0, map[new VectorXYInt(0, 0)]);
+        AssertIndexedAdjacency(grid[new VectorXYInt(1, 0)], 0, map[new VectorXYInt(0, 0)]);
+        AssertIndexedAdjacency(grid[new VectorXYInt(2, 0)], 1, map[new VectorXYInt(1, 0)]);
+        AssertIndexedAdjacency(grid[new VectorXYInt(3, 0)], 1, map[new VectorXYInt(1, 0)]);
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class HexAdjacencyGridTests
         Assert.That(grid.GetCellCenter(VectorXYInt.Zero), Is.EqualTo(shiftedRowCenter));
         Assert.That(grid.GetHexIndex(VectorXYInt.Zero), Is.EqualTo(new VectorXYInt(0, 1)));
         Assert.That(grid.GetHexFlatIndex(VectorXYInt.Zero), Is.EqualTo(2));
-        Assert.That(grid[VectorXYInt.Zero], Is.EqualTo(map[new VectorXYInt(0, 1)]));
+        AssertIndexedAdjacency(grid[VectorXYInt.Zero], 2, map[new VectorXYInt(0, 1)]);
     }
 
     [Test]
@@ -94,6 +94,9 @@ public class HexAdjacencyGridTests
         Assert.That(grid.TryGetHexFlatIndex(VectorXYInt.Zero, out int hexFlatIndex), Is.False);
         Assert.That(hexFlatIndex, Is.EqualTo(-1));
         Assert.That(grid.HasHexAt(VectorXYInt.Zero), Is.False);
+        Assert.That(grid.Adjacent[0].Index, Is.EqualTo(0));
+        Assert.That(grid.Adjacent[0].Flags, Is.EqualTo(IndexedHexAdjacencyFlags.None));
+        Assert.That(grid.Adjacent[0].HasOwnIndex, Is.False);
         Assert.Throws<InvalidOperationException>(() => _ = grid.GetHexIndex(VectorXYInt.Zero));
         Assert.Throws<InvalidOperationException>(() => _ = grid.GetHexFlatIndex(VectorXYInt.Zero));
         Assert.Throws<InvalidOperationException>(() => _ = grid[VectorXYInt.Zero]);
@@ -165,5 +168,18 @@ public class HexAdjacencyGridTests
 
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(map, VectorXY.Zero, 1f, new VectorXYInt(0, 1)));
         Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyGrid(map, VectorXY.Zero, 1f, new VectorXYInt(1, 0)));
+    }
+
+    private static void AssertIndexedAdjacency(IndexedHexAdjacency actual, int index, HexAdjacency expected)
+    {
+        Assert.That(actual.Index, Is.EqualTo(index));
+        Assert.That(actual.Flags, Is.EqualTo((IndexedHexAdjacencyFlags)expected.Flags | IndexedHexAdjacencyFlags.OwnIndex));
+        Assert.That(actual.HasOwnIndex, Is.True);
+        Assert.That(actual.Adjacent0Index, Is.EqualTo(expected.Adjacent0Index));
+        Assert.That(actual.Adjacent1Index, Is.EqualTo(expected.Adjacent1Index));
+        Assert.That(actual.Adjacent2Index, Is.EqualTo(expected.Adjacent2Index));
+        Assert.That(actual.Adjacent3Index, Is.EqualTo(expected.Adjacent3Index));
+        Assert.That(actual.Adjacent4Index, Is.EqualTo(expected.Adjacent4Index));
+        Assert.That(actual.Adjacent5Index, Is.EqualTo(expected.Adjacent5Index));
     }
 }

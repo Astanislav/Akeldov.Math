@@ -32,7 +32,7 @@ public class HexAdjacencyGridRGBA16BitRasterSnapshotTests
 
     private static RGBA16BitColor ToSnapshotColor(int hexFlatIndex, HexAdjacency adjacency)
     {
-        int adjacentCount = CountBits(adjacency.HasAdjacent);
+        int adjacentCount = CountBits(adjacency.Flags);
         float red = 0.16f + 0.045f * hexFlatIndex;
         float green = 0.20f + 0.10f * adjacentCount;
         float blue = 0.72f - 0.035f * hexFlatIndex;
@@ -44,8 +44,9 @@ public class HexAdjacencyGridRGBA16BitRasterSnapshotTests
             ushort.MaxValue);
     }
 
-    private static int CountBits(byte value)
+    private static int CountBits(HexAdjacencyFlags flags)
     {
+        byte value = (byte)flags;
         int count = 0;
 
         for (int i = 0; i < 6; i++)

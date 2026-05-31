@@ -10,7 +10,7 @@ namespace Akeldov.Math.Hexes.Topology
     {
         private const int InvalidHexIndex = -1;
 
-        private HexAdjacency[] _adjacent;
+        private IndexedHexAdjacency[] _adjacent;
         private int[] _hexIndices;
         private bool[] _hasHex;
 
@@ -111,19 +111,19 @@ namespace Akeldov.Math.Hexes.Topology
 
         public int Count => _adjacent.Length;
 
-        public HexAdjacency[] Adjacent => _adjacent;
+        public IndexedHexAdjacency[] Adjacent => _adjacent;
 
         public int[] HexIndices => _hexIndices;
 
         public bool[] HasHex => _hasHex;
 
-        public HexAdjacency this[VectorXYInt index]
+        public IndexedHexAdjacency this[VectorXYInt index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _adjacent[GetHitFlatIndex(index)];
         }
 
-        public HexAdjacency this[int index]
+        public IndexedHexAdjacency this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -197,7 +197,7 @@ namespace Akeldov.Math.Hexes.Topology
             Resolution = resolution;
             ResolutionX = resolution.X;
             ResolutionY = resolution.Y;
-            _adjacent = new HexAdjacency[checked(resolution.X * resolution.Y)];
+            _adjacent = new IndexedHexAdjacency[checked(resolution.X * resolution.Y)];
             _hexIndices = new int[_adjacent.Length];
             _hasHex = new bool[_adjacent.Length];
 
@@ -241,12 +241,13 @@ namespace Akeldov.Math.Hexes.Topology
                     if (hexIndex < 0)
                     {
                         _hexIndices[flatIndex] = InvalidHexIndex;
+                        _adjacent[flatIndex] = default(IndexedHexAdjacency);
                         continue;
                     }
 
                     _hasHex[flatIndex] = true;
                     _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = hexAdjacencyMap[hexIndex];
+                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex, hexAdjacencyMap[hexIndex]);
                 }
             }
         }
@@ -267,14 +268,28 @@ namespace Akeldov.Math.Hexes.Topology
                     if (hexIndex < 0)
                     {
                         _hexIndices[flatIndex] = InvalidHexIndex;
+                        _adjacent[flatIndex] = default(IndexedHexAdjacency);
                         continue;
                     }
 
                     _hasHex[flatIndex] = true;
                     _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = hexAdjacencyMap[hexIndex];
+                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex, hexAdjacencyMap[hexIndex]);
                 }
             }
+        }
+
+        private static IndexedHexAdjacency CreateIndexedAdjacency(int index, HexAdjacency adjacency)
+        {
+            return new IndexedHexAdjacency(
+                IndexedHexAdjacencyFlags.OwnIndex | (IndexedHexAdjacencyFlags)adjacency.Flags,
+                index,
+                adjacency.Adjacent0Index,
+                adjacency.Adjacent1Index,
+                adjacency.Adjacent2Index,
+                adjacency.Adjacent3Index,
+                adjacency.Adjacent4Index,
+                adjacency.Adjacent5Index);
         }
 
         private VectorXY GetCellCenterUnchecked(int x, int y)

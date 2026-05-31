@@ -30,6 +30,26 @@ public class HexAdjacencyGridRGBA16BitRasterExtensionsTests
     }
 
     [Test]
+    public void ToRGBA16BitRaster_MapsHitCellsByIndexedAdjacency()
+    {
+        var map = new HexAdjacencyMap(2, 1, Layout.OddR);
+        var grid = new HexAdjacencyGrid(map, VectorXY.Zero, 2f, new VectorXYInt(4, 1));
+        var red = new RGBA16BitColor(ushort.MaxValue, 0, 0, ushort.MaxValue);
+        var blue = new RGBA16BitColor(0, 0, ushort.MaxValue, ushort.MaxValue);
+
+        RGBA16BitRaster raster = grid.ToRGBA16BitRaster(
+            adjacency => adjacency.HasOwnIndex && adjacency.Index == 0 ? red : blue);
+
+        Assert.That(raster.Values, Is.EqualTo(new[]
+        {
+            red,
+            red,
+            blue,
+            blue
+        }));
+    }
+
+    [Test]
     public void ToRGBA16BitRaster_MapsHitCellsByFlatHexIndex()
     {
         var map = new HexAdjacencyMap(2, 1, Layout.OddR);
@@ -89,7 +109,7 @@ public class HexAdjacencyGridRGBA16BitRasterExtensionsTests
         var map = new HexAdjacencyMap(1, 1, Layout.OddR);
         var grid = new HexAdjacencyGrid(map, VectorXY.Zero, 2f, VectorXYInt.One);
 
-        Assert.Throws<ArgumentNullException>(() => grid.ToRGBA16BitRaster((Func<HexAdjacency, RGBA16BitColor>)null!));
+        Assert.Throws<ArgumentNullException>(() => grid.ToRGBA16BitRaster((Func<IndexedHexAdjacency, RGBA16BitColor>)null!));
         Assert.Throws<ArgumentNullException>(() => grid.ToRGBA16BitRaster((Func<int, HexAdjacency, RGBA16BitColor>)null!));
     }
 }

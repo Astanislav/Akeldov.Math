@@ -5,18 +5,18 @@ using System;
 
 namespace Akeldov.Math.Hexes.Topology
 {
-    public static class HexAdjacencyGridRGBA16BitRasterExtensions
+    public static class HexAdjacencyGridExtensions
     {
         public static RGBA16BitRaster ToRGBA16BitRaster(
             this HexAdjacencyGrid grid,
-            Func<HexAdjacency, RGBA16BitColor> adjacencyToColor)
+            Func<IndexedHexAdjacency, RGBA16BitColor> adjacencyToColor)
         {
             return grid.ToRGBA16BitRaster(adjacencyToColor, default(RGBA16BitColor));
         }
 
         public static RGBA16BitRaster ToRGBA16BitRaster(
             this HexAdjacencyGrid grid,
-            Func<HexAdjacency, RGBA16BitColor> adjacencyToColor,
+            Func<IndexedHexAdjacency, RGBA16BitColor> adjacencyToColor,
             RGBA16BitColor emptyColor)
         {
             if (grid == null)
@@ -60,11 +60,23 @@ namespace Akeldov.Math.Hexes.Topology
             for (int i = 0; i < values.Length; i++)
             {
                 values[i] = grid.HasHex[i]
-                    ? hexToColor(grid.HexIndices[i], grid.Adjacent[i])
+                    ? hexToColor(grid.Adjacent[i].Index, ToHexAdjacency(grid.Adjacent[i]))
                     : emptyColor;
             }
 
             return new RGBA16BitRaster(CreateRasterGrid(grid), values);
+        }
+
+        private static HexAdjacency ToHexAdjacency(IndexedHexAdjacency adjacency)
+        {
+            return new HexAdjacency(
+                (HexAdjacencyFlags)adjacency.Flags & HexAdjacencyFlags.AllAdjacent,
+                adjacency.Adjacent0Index,
+                adjacency.Adjacent1Index,
+                adjacency.Adjacent2Index,
+                adjacency.Adjacent3Index,
+                adjacency.Adjacent4Index,
+                adjacency.Adjacent5Index);
         }
 
         private static RasterGrid CreateRasterGrid(HexAdjacencyGrid grid)

@@ -31,20 +31,22 @@ public class HexFieldTopologyTests
     }
 
     [Test]
-    public void Constructor_FromSoA_PreservesAdjacency()
+    public void Constructor_CreatesAdjacency()
     {
-        var source = new HexFieldTopologySoA(3, 2, Layout.OddR);
-
-        var topology = new HexAdjacencyMap(source);
+        var topology = new HexAdjacencyMap(3, 2, Layout.OddR);
         HexAdjacency adjacency = topology[new VectorXYInt(1, 0)];
 
-        Assert.That(adjacency.HasAdjacent, Is.EqualTo(source.HasAdjacent[1]));
-        Assert.That(adjacency.Adjacent0Index, Is.EqualTo(source.Adjacent0Index[1]));
-        Assert.That(adjacency.Adjacent1Index, Is.EqualTo(source.Adjacent1Index[1]));
-        Assert.That(adjacency.Adjacent2Index, Is.EqualTo(source.Adjacent2Index[1]));
-        Assert.That(adjacency.Adjacent3Index, Is.EqualTo(source.Adjacent3Index[1]));
-        Assert.That(adjacency.Adjacent4Index, Is.EqualTo(source.Adjacent4Index[1]));
-        Assert.That(adjacency.Adjacent5Index, Is.EqualTo(source.Adjacent5Index[1]));
+        Assert.That(adjacency.Flags, Is.EqualTo(
+            HexAdjacencyFlags.Adjacent0 |
+            HexAdjacencyFlags.Adjacent1 |
+            HexAdjacencyFlags.Adjacent2 |
+            HexAdjacencyFlags.Adjacent3));
+        Assert.That(adjacency.Adjacent0Index, Is.EqualTo(2));
+        Assert.That(adjacency.Adjacent1Index, Is.EqualTo(4));
+        Assert.That(adjacency.Adjacent2Index, Is.EqualTo(3));
+        Assert.That(adjacency.Adjacent3Index, Is.EqualTo(0));
+        Assert.That(adjacency.Adjacent4Index, Is.EqualTo(1));
+        Assert.That(adjacency.Adjacent5Index, Is.EqualTo(1));
     }
 
     [Test]
@@ -57,8 +59,9 @@ public class HexFieldTopologyTests
     }
 
     [Test]
-    public void Constructor_WhenSourceIsNull_Throws()
+    public void Constructor_WhenDimensionIsNegative_Throws()
     {
-        Assert.Throws<ArgumentNullException>(() => new HexAdjacencyMap(null!));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyMap(-1, 1, Layout.OddR));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new HexAdjacencyMap(1, -1, Layout.OddR));
     }
 }
