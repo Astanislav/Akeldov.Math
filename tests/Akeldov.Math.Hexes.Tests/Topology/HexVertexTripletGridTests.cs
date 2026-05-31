@@ -108,6 +108,42 @@ public class HexVertexTripletGridTests
     }
 
     [Test]
+    public void Grids_WhenVertexNeighborsAreOutside_UseMainOnly()
+    {
+        VectorXY point = GetPointNearOddRVertex0();
+        var expectedIndexTriplet = new Triplet<VectorXYInt>(
+            VectorXYInt.Zero,
+            VectorXYInt.Zero,
+            VectorXYInt.Zero);
+
+        var indexGrid = CreateSingleSampleIndexTripletGrid(point, 1, 1);
+        var barycentricGrid = CreateSingleSampleBarycentricGrid(point, 1, 1);
+        var chromaticGrid = CreateSingleSampleChromaticGrid(point, 1, 1);
+
+        AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
+        AssertTriplet(chromaticGrid[VectorXYInt.Zero], expectedIndexTriplet.GetChromaticTriplet(Layout.OddR));
+        AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 1f, 0f, 0f);
+    }
+
+    [Test]
+    public void Grids_WhenOneVertexNeighborIsOutside_FoldMissingWeightIntoMain()
+    {
+        VectorXY point = GetPointNearOddRVertex0();
+        var expectedIndexTriplet = new Triplet<VectorXYInt>(
+            VectorXYInt.Zero,
+            VectorXYInt.Zero,
+            new VectorXYInt(1, 0));
+
+        var indexGrid = CreateSingleSampleIndexTripletGrid(point, 2, 1);
+        var barycentricGrid = CreateSingleSampleBarycentricGrid(point, 2, 1);
+        var chromaticGrid = CreateSingleSampleChromaticGrid(point, 2, 1);
+
+        AssertTriplet(indexGrid[VectorXYInt.Zero], expectedIndexTriplet);
+        AssertTriplet(chromaticGrid[VectorXYInt.Zero], expectedIndexTriplet.GetChromaticTriplet(Layout.OddR));
+        AssertBarycentric(barycentricGrid[VectorXYInt.Zero], 0.75f, 0f, 0.25f);
+    }
+
+    [Test]
     public void Grids_WhenCellDoesNotHitHex_ReturnFalseAndThrowOnIndexer()
     {
         var grid = new HexVertexIndexTripletGrid(
@@ -146,9 +182,17 @@ public class HexVertexTripletGridTests
 
     private static HexVertexIndexTripletGrid CreateSingleSampleIndexTripletGrid(VectorXY point)
     {
+        return CreateSingleSampleIndexTripletGrid(point, 2, 2);
+    }
+
+    private static HexVertexIndexTripletGrid CreateSingleSampleIndexTripletGrid(
+        VectorXY point,
+        int hexWidth,
+        int hexHeight)
+    {
         return new HexVertexIndexTripletGrid(
-            2,
-            2,
+            hexWidth,
+            hexHeight,
             Layout.OddR,
             VectorXY.Zero,
             2f,
@@ -159,9 +203,17 @@ public class HexVertexTripletGridTests
 
     private static HexVertexBarycentricGrid CreateSingleSampleBarycentricGrid(VectorXY point)
     {
+        return CreateSingleSampleBarycentricGrid(point, 2, 2);
+    }
+
+    private static HexVertexBarycentricGrid CreateSingleSampleBarycentricGrid(
+        VectorXY point,
+        int hexWidth,
+        int hexHeight)
+    {
         return new HexVertexBarycentricGrid(
-            2,
-            2,
+            hexWidth,
+            hexHeight,
             Layout.OddR,
             VectorXY.Zero,
             2f,
@@ -172,9 +224,17 @@ public class HexVertexTripletGridTests
 
     private static HexVertexChromaticIndexTripletGrid CreateSingleSampleChromaticGrid(VectorXY point)
     {
+        return CreateSingleSampleChromaticGrid(point, 2, 2);
+    }
+
+    private static HexVertexChromaticIndexTripletGrid CreateSingleSampleChromaticGrid(
+        VectorXY point,
+        int hexWidth,
+        int hexHeight)
+    {
         return new HexVertexChromaticIndexTripletGrid(
-            2,
-            2,
+            hexWidth,
+            hexHeight,
             Layout.OddR,
             VectorXY.Zero,
             2f,
@@ -187,6 +247,14 @@ public class HexVertexTripletGridTests
     {
         Assert.That(actual.Main, Is.EqualTo(expected.Main));
         Assert.That(actual.Left, Is.EqualTo(expected.Left));
-        Assert.That(actual.Right, Is.EqualTo(expected.Right));
+            Assert.That(actual.Right, Is.EqualTo(expected.Right));
+    }
+
+    private static void AssertBarycentric(Triplet<float> actual, float main, float left, float right)
+    {
+        Assert.That(actual.Main, Is.EqualTo(main).Within(0.000001f));
+        Assert.That(actual.Left, Is.EqualTo(left).Within(0.000001f));
+        Assert.That(actual.Right, Is.EqualTo(right).Within(0.000001f));
+        Assert.That(actual.Main + actual.Left + actual.Right, Is.EqualTo(1f).Within(0.000001f));
     }
 }

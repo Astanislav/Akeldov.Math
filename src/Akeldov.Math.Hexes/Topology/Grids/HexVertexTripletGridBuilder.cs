@@ -167,21 +167,51 @@ namespace Akeldov.Math.Hexes.Topology
             VectorXY mainCenter = mainIndex.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
             HexVertex hexVertex = (HexVertex)GetClosestVertexIndex(point, grid.HexRadius, mainCenter, normalizedHexVertexes);
             Triplet<VectorXYInt> indexTriplet = mainIndex.GetAdjacentTriplet(hexVertex, grid.Layout);
+            bool hasLeft = ContainsHex(grid, indexTriplet.Left);
+            bool hasRight = ContainsHex(grid, indexTriplet.Right);
+            Triplet<VectorXYInt> boundedIndexTriplet = new Triplet<VectorXYInt>(
+                indexTriplet.Main,
+                hasLeft ? indexTriplet.Left : indexTriplet.Main,
+                hasRight ? indexTriplet.Right : indexTriplet.Main);
 
             hasHex[flatIndex] = true;
 
             if (indexTriplets != null)
-                indexTriplets[flatIndex] = indexTriplet;
+                indexTriplets[flatIndex] = boundedIndexTriplet;
 
             if (chromaticIndices != null)
-                chromaticIndices[flatIndex] = indexTriplet.GetChromaticTriplet(grid.Layout);
+                chromaticIndices[flatIndex] = boundedIndexTriplet.GetChromaticTriplet(grid.Layout);
 
             if (barycentricCoordinates != null)
             {
                 VectorXY leftCenter = indexTriplet.Left.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
                 VectorXY rightCenter = indexTriplet.Right.GetHexCenter(grid.HexApothem, grid.HexRadius, grid.HexOrigin, grid.Layout);
-                barycentricCoordinates[flatIndex] = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                Triplet<float> barycentric = point.BarycentricCoordinates(mainCenter, leftCenter, rightCenter);
+                float main = barycentric.Main;
+                float left = barycentric.Left;
+                float right = barycentric.Right;
+
+                if (!hasLeft)
+                {
+                    main += left;
+                    left = 0f;
+                }
+
+                if (!hasRight)
+                {
+                    main += right;
+                    right = 0f;
+                }
+
+                barycentricCoordinates[flatIndex] = new Triplet<float>(main, left, right);
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool ContainsHex(HexGridDefinition grid, VectorXYInt index)
+        {
+            return (uint)index.X < (uint)grid.HexResolution.X &&
+                (uint)index.Y < (uint)grid.HexResolution.Y;
         }
 
         private static int GetClosestVertexIndex(
