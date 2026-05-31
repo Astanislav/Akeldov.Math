@@ -9,6 +9,10 @@ namespace Akeldov.Math.Hexes.Topology
     public sealed class HexAdjacencyGrid
     {
         private const int InvalidHexIndex = -1;
+        private const float Sqrt3Over3 = 0.5773502588f;
+        private const float OneThird = 0.3333333333f;
+        private const float TwoThirds = 0.6666666666f;
+        private const float ThreeHalves = 1.5f;
 
         private IndexedHexAdjacency[] _adjacent;
         private int[] _hexIndices;
@@ -46,7 +50,8 @@ namespace Akeldov.Math.Hexes.Topology
                 hexRadius,
                 new VectorXY(bounds.MinX, bounds.MinY),
                 new VectorXY(bounds.Width, bounds.Height),
-                resolution);
+                resolution,
+                null);
         }
 
         public HexAdjacencyGrid(
@@ -88,7 +93,8 @@ namespace Akeldov.Math.Hexes.Topology
                 hexRadius,
                 new VectorXY(bounds.MinX, bounds.MinY),
                 new VectorXY(bounds.Width, bounds.Height),
-                resolution);
+                resolution,
+                CreateIndexedAdjacencyCache(hexAdjacencyMap));
         }
 
         public HexAdjacencyGrid(
@@ -128,7 +134,8 @@ namespace Akeldov.Math.Hexes.Topology
                 hexApothem.ConvertHexApothemToRadius(),
                 gridOrigin,
                 gridSize,
-                resolution);
+                resolution,
+                null);
         }
 
         public HexAdjacencyGrid(
@@ -169,7 +176,8 @@ namespace Akeldov.Math.Hexes.Topology
                 hexApothem.ConvertHexApothemToRadius(),
                 gridOrigin,
                 gridSize,
-                resolution);
+                resolution,
+                CreateIndexedAdjacencyCache(hexAdjacencyMap));
         }
 
         public VectorXYInt HexResolution { get; private set; }
@@ -271,7 +279,8 @@ namespace Akeldov.Math.Hexes.Topology
             float hexRadius,
             VectorXY gridOrigin,
             VectorXY gridSize,
-            VectorXYInt resolution)
+            VectorXYInt resolution,
+            IndexedHexAdjacency[] hexAdjacencyCache)
         {
             HexResolution = new VectorXYInt(hexWidth, hexHeight);
             Layout = layout;
@@ -288,106 +297,248 @@ namespace Akeldov.Math.Hexes.Topology
             _hexIndices = new int[_adjacent.Length];
             _hasHex = new bool[_adjacent.Length];
 
-            Fill();
+            Fill(hexAdjacencyCache ?? CreateIndexedAdjacencyCache(hexWidth, hexHeight, layout));
         }
 
-        private void Fill()
+        private void Fill(IndexedHexAdjacency[] hexAdjacencyCache)
         {
             switch (Layout)
             {
                 case Layout.OddR:
-                    FillRowLayout(false);
+                    FillRowLayout(false, hexAdjacencyCache);
                     break;
                 case Layout.EvenR:
-                    FillRowLayout(true);
+                    FillRowLayout(true, hexAdjacencyCache);
                     break;
                 case Layout.OddQ:
-                    FillColumnLayout(false);
+                    FillColumnLayout(false, hexAdjacencyCache);
                     break;
                 case Layout.EvenQ:
-                    FillColumnLayout(true);
+                    FillColumnLayout(true, hexAdjacencyCache);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(Layout));
             }
         }
 
-        private void FillRowLayout(bool evenRowsAreShifted)
+        private void FillRowLayout(bool evenRowsAreShifted, IndexedHexAdjacency[] hexAdjacencyCache)
         {
-            for (int y = 0; y < ResolutionY; y++)
+            IndexedHexAdjacency[] adjacent = _adjacent;
+            int[] hexIndices = _hexIndices;
+            bool[] hasHex = _hasHex;
+            int resolutionX = ResolutionX;
+            int resolutionY = ResolutionY;
+            int hexWidth = HexResolution.X;
+            int hexHeight = HexResolution.Y;
+            float originX = Origin.X;
+            float originY = Origin.Y;
+            float hexOriginX = HexOrigin.X;
+            float hexOriginY = HexOrigin.Y;
+            float cellSizeX = CellSize.X;
+            float cellSizeY = CellSize.Y;
+            float hexRadius = HexRadius;
+            var pointyQNumeratorByX = new float[resolutionX];
+
+            for (int x = 0; x < resolutionX; x++)
             {
-                var rowStart = y * ResolutionX;
+                float shiftedX = originX + (x + 0.5f) * cellSizeX - hexOriginX;
+                pointyQNumeratorByX[x] = Sqrt3Over3 * shiftedX;
+            }
 
-                for (int x = 0; x < ResolutionX; x++)
+            for (int y = 0; y < resolutionY; y++)
+            {
+                int rowStart = y * resolutionX;
+                float shiftedY = originY + (y + 0.5f) * cellSizeY - hexOriginY;
+                float qYNumerator = OneThird * shiftedY;
+                float r = TwoThirds * shiftedY / hexRadius;
+
+                for (int x = 0; x < resolutionX; x++)
                 {
-                    var flatIndex = rowStart + x;
-                    float shiftedX = Origin.X + (x + 0.5f) * CellSize.X - HexOrigin.X;
-                    float shiftedY = Origin.Y + (y + 0.5f) * CellSize.Y - HexOrigin.Y;
-                    var hexIndex = GetRowLayoutHexFlatIndex(shiftedX, shiftedY, evenRowsAreShifted);
+                    float q = (pointyQNumeratorByX[x] - qYNumerator) / hexRadius;
+                    RoundPointyTopAxial(q, r, out int qInt, out int rInt);
 
-                    if (hexIndex < 0)
+                    int hexX = evenRowsAreShifted
+                        ? qInt + ((rInt + (rInt & 1)) / 2)
+                        : qInt + ((rInt - (rInt & 1)) / 2);
+
+                    int flatIndex = rowStart + x;
+
+                    if ((uint)hexX >= (uint)hexWidth || (uint)rInt >= (uint)hexHeight)
                     {
-                        _hexIndices[flatIndex] = InvalidHexIndex;
-                        _adjacent[flatIndex] = default(IndexedHexAdjacency);
+                        hexIndices[flatIndex] = InvalidHexIndex;
                         continue;
                     }
 
-                    _hasHex[flatIndex] = true;
-                    _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex);
+                    int hexIndex = rInt * hexWidth + hexX;
+                    hasHex[flatIndex] = true;
+                    hexIndices[flatIndex] = hexIndex;
+                    adjacent[flatIndex] = hexAdjacencyCache[hexIndex];
                 }
             }
         }
 
-        private void FillColumnLayout(bool evenColumnsAreShifted)
+        private void FillColumnLayout(bool evenColumnsAreShifted, IndexedHexAdjacency[] hexAdjacencyCache)
         {
-            for (int y = 0; y < ResolutionY; y++)
+            IndexedHexAdjacency[] adjacent = _adjacent;
+            int[] hexIndices = _hexIndices;
+            bool[] hasHex = _hasHex;
+            int resolutionX = ResolutionX;
+            int resolutionY = ResolutionY;
+            int hexWidth = HexResolution.X;
+            int hexHeight = HexResolution.Y;
+            float originX = Origin.X;
+            float originY = Origin.Y;
+            float hexOriginX = HexOrigin.X;
+            float hexOriginY = HexOrigin.Y;
+            float cellSizeX = CellSize.X;
+            float cellSizeY = CellSize.Y;
+            float hexRadius = HexRadius;
+            var flatQNumeratorByX = new float[resolutionX];
+            var flatRNumeratorByX = new float[resolutionX];
+
+            for (int x = 0; x < resolutionX; x++)
             {
-                var rowStart = y * ResolutionX;
+                float shiftedX = originX + (x + 0.5f) * cellSizeX - hexOriginX;
+                flatQNumeratorByX[x] = TwoThirds * shiftedX;
+                flatRNumeratorByX[x] = OneThird * shiftedX;
+            }
 
-                for (int x = 0; x < ResolutionX; x++)
+            for (int y = 0; y < resolutionY; y++)
+            {
+                int rowStart = y * resolutionX;
+                float shiftedY = originY + (y + 0.5f) * cellSizeY - hexOriginY;
+                float rYNumerator = Sqrt3Over3 * shiftedY;
+
+                for (int x = 0; x < resolutionX; x++)
                 {
-                    var flatIndex = rowStart + x;
-                    float shiftedX = Origin.X + (x + 0.5f) * CellSize.X - HexOrigin.X;
-                    float shiftedY = Origin.Y + (y + 0.5f) * CellSize.Y - HexOrigin.Y;
-                    var hexIndex = GetColumnLayoutHexFlatIndex(shiftedX, shiftedY, evenColumnsAreShifted);
+                    float q = flatQNumeratorByX[x] / hexRadius;
+                    float r = (rYNumerator - flatRNumeratorByX[x]) / hexRadius;
+                    RoundFlatTopAxial(q, r, out int qInt, out int rInt);
 
-                    if (hexIndex < 0)
+                    int hexY = evenColumnsAreShifted
+                        ? rInt + ((qInt + (qInt & 1)) / 2)
+                        : rInt + ((qInt - (qInt & 1)) / 2);
+
+                    int flatIndex = rowStart + x;
+
+                    if ((uint)qInt >= (uint)hexWidth || (uint)hexY >= (uint)hexHeight)
                     {
-                        _hexIndices[flatIndex] = InvalidHexIndex;
-                        _adjacent[flatIndex] = default(IndexedHexAdjacency);
+                        hexIndices[flatIndex] = InvalidHexIndex;
                         continue;
                     }
 
-                    _hasHex[flatIndex] = true;
-                    _hexIndices[flatIndex] = hexIndex;
-                    _adjacent[flatIndex] = CreateIndexedAdjacency(hexIndex);
+                    int hexIndex = hexY * hexWidth + qInt;
+                    hasHex[flatIndex] = true;
+                    hexIndices[flatIndex] = hexIndex;
+                    adjacent[flatIndex] = hexAdjacencyCache[hexIndex];
                 }
             }
         }
 
-        private IndexedHexAdjacency CreateIndexedAdjacency(int index)
+        private static IndexedHexAdjacency[] CreateIndexedAdjacencyCache(HexAdjacencyMap map)
         {
-            int x = index % HexResolution.X;
-            int y = index / HexResolution.X;
+            HexAdjacency[] source = map.Adjacent;
+            var cache = new IndexedHexAdjacency[source.Length];
 
-            return CreateIndexedAdjacency(x, y, index, HexAdjacencyOffsets.GetOffsets(Layout, x, y));
+            for (int i = 0; i < source.Length; i++)
+            {
+                HexAdjacency adjacency = source[i];
+                cache[i] = new IndexedHexAdjacency(
+                    (IndexedHexAdjacencyFlags)adjacency.Flags | IndexedHexAdjacencyFlags.OwnIndex,
+                    i,
+                    adjacency.Adjacent0Index,
+                    adjacency.Adjacent1Index,
+                    adjacency.Adjacent2Index,
+                    adjacency.Adjacent3Index,
+                    adjacency.Adjacent4Index,
+                    adjacency.Adjacent5Index);
+            }
+
+            return cache;
         }
 
-        private IndexedHexAdjacency CreateIndexedAdjacency(
+        private static IndexedHexAdjacency[] CreateIndexedAdjacencyCache(
+            int width,
+            int height,
+            Layout layout)
+        {
+            var cache = new IndexedHexAdjacency[checked(width * height)];
+
+            switch (layout)
+            {
+                case Layout.OddR:
+                    FillRowLayoutAdjacencyCache(width, height, false, cache);
+                    break;
+                case Layout.EvenR:
+                    FillRowLayoutAdjacencyCache(width, height, true, cache);
+                    break;
+                case Layout.OddQ:
+                    FillColumnLayoutAdjacencyCache(width, height, false, cache);
+                    break;
+                case Layout.EvenQ:
+                    FillColumnLayoutAdjacencyCache(width, height, true, cache);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(layout));
+            }
+
+            return cache;
+        }
+
+        private static void FillRowLayoutAdjacencyCache(
+            int width,
+            int height,
+            bool evenRowsAreShifted,
+            IndexedHexAdjacency[] cache)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                int rowStart = y * width;
+                sbyte[] offsets = HexAdjacencyOffsets.GetRowOffsets(y, evenRowsAreShifted);
+
+                for (int x = 0; x < width; x++)
+                {
+                    int flatIndex = rowStart + x;
+                    cache[flatIndex] = CreateIndexedAdjacency(x, y, flatIndex, offsets, width, height);
+                }
+            }
+        }
+
+        private static void FillColumnLayoutAdjacencyCache(
+            int width,
+            int height,
+            bool evenColumnsAreShifted,
+            IndexedHexAdjacency[] cache)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                int rowStart = y * width;
+
+                for (int x = 0; x < width; x++)
+                {
+                    sbyte[] offsets = HexAdjacencyOffsets.GetColumnOffsets(x, evenColumnsAreShifted);
+                    int flatIndex = rowStart + x;
+                    cache[flatIndex] = CreateIndexedAdjacency(x, y, flatIndex, offsets, width, height);
+                }
+            }
+        }
+
+        private static IndexedHexAdjacency CreateIndexedAdjacency(
             int x,
             int y,
             int flatIndex,
-            sbyte[] offsets)
+            sbyte[] offsets,
+            int width,
+            int height)
         {
             var flags = IndexedHexAdjacencyFlags.OwnIndex;
 
-            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex, IndexedHexAdjacencyFlags.Adjacent0, ref flags);
-            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex, IndexedHexAdjacencyFlags.Adjacent1, ref flags);
-            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex, IndexedHexAdjacencyFlags.Adjacent2, ref flags);
-            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex, IndexedHexAdjacencyFlags.Adjacent3, ref flags);
-            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex, IndexedHexAdjacencyFlags.Adjacent4, ref flags);
-            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex, IndexedHexAdjacencyFlags.Adjacent5, ref flags);
+            int adjacent0Index = GetAdjacentFlatIndex(x + offsets[0], y + offsets[1], flatIndex, IndexedHexAdjacencyFlags.Adjacent0, ref flags, width, height);
+            int adjacent1Index = GetAdjacentFlatIndex(x + offsets[2], y + offsets[3], flatIndex, IndexedHexAdjacencyFlags.Adjacent1, ref flags, width, height);
+            int adjacent2Index = GetAdjacentFlatIndex(x + offsets[4], y + offsets[5], flatIndex, IndexedHexAdjacencyFlags.Adjacent2, ref flags, width, height);
+            int adjacent3Index = GetAdjacentFlatIndex(x + offsets[6], y + offsets[7], flatIndex, IndexedHexAdjacencyFlags.Adjacent3, ref flags, width, height);
+            int adjacent4Index = GetAdjacentFlatIndex(x + offsets[8], y + offsets[9], flatIndex, IndexedHexAdjacencyFlags.Adjacent4, ref flags, width, height);
+            int adjacent5Index = GetAdjacentFlatIndex(x + offsets[10], y + offsets[11], flatIndex, IndexedHexAdjacencyFlags.Adjacent5, ref flags, width, height);
 
             return new IndexedHexAdjacency(
                 flags,
@@ -400,18 +551,20 @@ namespace Akeldov.Math.Hexes.Topology
                 adjacent5Index);
         }
 
-        private int GetAdjacentFlatIndex(
+        private static int GetAdjacentFlatIndex(
             int x,
             int y,
             int fallbackFlatIndex,
             IndexedHexAdjacencyFlags flag,
-            ref IndexedHexAdjacencyFlags flags)
+            ref IndexedHexAdjacencyFlags flags,
+            int width,
+            int height)
         {
-            if ((uint)x >= (uint)HexResolution.X || (uint)y >= (uint)HexResolution.Y)
+            if ((uint)x >= (uint)width || (uint)y >= (uint)height)
                 return fallbackFlatIndex;
 
             flags |= flag;
-            return y * HexResolution.X + x;
+            return y * width + x;
         }
 
         private VectorXY GetCellCenterUnchecked(int x, int y)
@@ -419,42 +572,6 @@ namespace Akeldov.Math.Hexes.Topology
             return new VectorXY(
                 Origin.X + (x + 0.5f) * CellSize.X,
                 Origin.Y + (y + 0.5f) * CellSize.Y);
-        }
-
-        private int GetRowLayoutHexFlatIndex(float shiftedX, float shiftedY, bool evenRowsAreShifted)
-        {
-            float q = (0.5773502588f * shiftedX - 0.3333333333f * shiftedY) / HexRadius;
-            float r = 0.6666666666f * shiftedY / HexRadius;
-
-            RoundPointyTopAxial(q, r, out int qInt, out int rInt);
-
-            int x = evenRowsAreShifted
-                ? qInt + ((rInt + (rInt & 1)) / 2)
-                : qInt + ((rInt - (rInt & 1)) / 2);
-
-            return GetHexFlatIndex(x, rInt);
-        }
-
-        private int GetColumnLayoutHexFlatIndex(float shiftedX, float shiftedY, bool evenColumnsAreShifted)
-        {
-            float q = 0.6666666666f * shiftedX / HexRadius;
-            float r = (0.5773502588f * shiftedY - 0.3333333333f * shiftedX) / HexRadius;
-
-            RoundFlatTopAxial(q, r, out int qInt, out int rInt);
-
-            int y = evenColumnsAreShifted
-                ? rInt + ((qInt + (qInt & 1)) / 2)
-                : rInt + ((qInt - (qInt & 1)) / 2);
-
-            return GetHexFlatIndex(qInt, y);
-        }
-
-        private int GetHexFlatIndex(int x, int y)
-        {
-            if ((uint)x >= (uint)HexResolution.X || (uint)y >= (uint)HexResolution.Y)
-                return InvalidHexIndex;
-
-            return y * HexResolution.X + x;
         }
 
         private VectorXYInt GetHexIndex(int hexFlatIndex)
@@ -532,87 +649,93 @@ namespace Akeldov.Math.Hexes.Topology
             float hexApothem,
             float hexRadius)
         {
-            VectorXY[] normalizedVertexes = Geometry.VectorXYExtensions.GetNormalizedHexVertexes(layout);
-            GridBounds bounds = GetHexBounds(
-                GetHexCenter(0, 0, hexOrigin, hexApothem, hexRadius, layout),
-                hexRadius,
-                normalizedVertexes);
-
-            for (int y = 0; y < hexHeight; y++)
-            {
-                for (int x = 0; x < hexWidth; x++)
-                {
-                    if (x == 0 && y == 0)
-                        continue;
-
-                    bounds = bounds.Include(GetHexBounds(
-                        GetHexCenter(x, y, hexOrigin, hexApothem, hexRadius, layout),
-                        hexRadius,
-                        normalizedVertexes));
-                }
-            }
-
-            return bounds;
-        }
-
-        private static VectorXY GetHexCenter(
-            int x,
-            int y,
-            VectorXY origin,
-            float apothem,
-            float radius,
-            Layout layout)
-        {
             switch (layout)
             {
                 case Layout.OddR:
-                    return new VectorXY(
-                        origin.X + x * 2f * apothem + ((y & 1) == 1 ? apothem : 0f),
-                        origin.Y + 1.5f * radius * y);
+                    return GetOddRowLayoutBounds(hexWidth, hexHeight, hexOrigin, hexApothem, hexRadius);
                 case Layout.EvenR:
-                    return new VectorXY(
-                        origin.X + x * 2f * apothem + ((y & 1) == 0 ? apothem : 0f) - apothem,
-                        origin.Y + 1.5f * radius * y);
+                    return GetEvenRowLayoutBounds(hexWidth, hexHeight, hexOrigin, hexApothem, hexRadius);
                 case Layout.OddQ:
-                    return new VectorXY(
-                        origin.X + 1.5f * radius * x,
-                        origin.Y + y * 2f * apothem + ((x & 1) == 1 ? apothem : 0f));
+                    return GetOddColumnLayoutBounds(hexWidth, hexHeight, hexOrigin, hexApothem, hexRadius);
                 case Layout.EvenQ:
-                    return new VectorXY(
-                        origin.X + 1.5f * radius * x,
-                        origin.Y + y * 2f * apothem + ((x & 1) == 0 ? apothem : 0f) - apothem);
+                    return GetEvenColumnLayoutBounds(hexWidth, hexHeight, hexOrigin, hexApothem, hexRadius);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
+        }
+
+        private static GridBounds GetOddRowLayoutBounds(
+            int hexWidth,
+            int hexHeight,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
+            float shiftedRowExtra = hexHeight > 1 ? apothem : 0f;
+            float halfWidth = Geometry.Constants.Cos30Deg * radius;
+
+            return new GridBounds(
+                origin.X - halfWidth,
+                origin.Y - radius,
+                origin.X + 2f * apothem * (hexWidth - 1) + shiftedRowExtra + halfWidth,
+                origin.Y + ThreeHalves * radius * (hexHeight - 1) + radius);
+        }
+
+        private static GridBounds GetEvenRowLayoutBounds(
+            int hexWidth,
+            int hexHeight,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
+            float shiftedRowExtra = hexHeight > 1 ? apothem : 0f;
+            float halfWidth = Geometry.Constants.Cos30Deg * radius;
+
+            return new GridBounds(
+                origin.X - shiftedRowExtra - halfWidth,
+                origin.Y - radius,
+                origin.X + 2f * apothem * (hexWidth - 1) + halfWidth,
+                origin.Y + ThreeHalves * radius * (hexHeight - 1) + radius);
+        }
+
+        private static GridBounds GetOddColumnLayoutBounds(
+            int hexWidth,
+            int hexHeight,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
+            float shiftedColumnExtra = hexWidth > 1 ? apothem : 0f;
+            float halfHeight = Geometry.Constants.Sin60Deg * radius;
+
+            return new GridBounds(
+                origin.X - radius,
+                origin.Y - halfHeight,
+                origin.X + ThreeHalves * radius * (hexWidth - 1) + radius,
+                origin.Y + 2f * apothem * (hexHeight - 1) + shiftedColumnExtra + halfHeight);
+        }
+
+        private static GridBounds GetEvenColumnLayoutBounds(
+            int hexWidth,
+            int hexHeight,
+            VectorXY origin,
+            float apothem,
+            float radius)
+        {
+            float shiftedColumnExtra = hexWidth > 1 ? apothem : 0f;
+            float halfHeight = Geometry.Constants.Sin60Deg * radius;
+
+            return new GridBounds(
+                origin.X - radius,
+                origin.Y - shiftedColumnExtra - halfHeight,
+                origin.X + ThreeHalves * radius * (hexWidth - 1) + radius,
+                origin.Y + 2f * apothem * (hexHeight - 1) + halfHeight);
         }
 
         private static void ThrowIfHexDimensionIsNotPositive(int value, string paramName)
         {
             if (value <= 0)
                 throw new ArgumentOutOfRangeException(paramName, value, "Hex grid dimensions must be positive.");
-        }
-
-        private static GridBounds GetHexBounds(
-            VectorXY center,
-            float radius,
-            VectorXY[] normalizedVertexes)
-        {
-            VectorXY first = center + normalizedVertexes[0] * radius;
-            float minX = first.X;
-            float minY = first.Y;
-            float maxX = first.X;
-            float maxY = first.Y;
-
-            for (int i = 1; i < normalizedVertexes.Length; i++)
-            {
-                VectorXY vertex = center + normalizedVertexes[i] * radius;
-                minX = MathF.Min(minX, vertex.X);
-                minY = MathF.Min(minY, vertex.Y);
-                maxX = MathF.Max(maxX, vertex.X);
-                maxY = MathF.Max(maxY, vertex.Y);
-            }
-
-            return new GridBounds(minX, minY, maxX, maxY);
         }
 
         private readonly struct GridBounds
@@ -637,14 +760,6 @@ namespace Akeldov.Math.Hexes.Topology
 
             public float Height => MaxY - MinY;
 
-            public GridBounds Include(GridBounds bounds)
-            {
-                return new GridBounds(
-                    MathF.Min(MinX, bounds.MinX),
-                    MathF.Min(MinY, bounds.MinY),
-                    MathF.Max(MaxX, bounds.MaxX),
-                    MathF.Max(MaxY, bounds.MaxY));
-            }
         }
     }
 }

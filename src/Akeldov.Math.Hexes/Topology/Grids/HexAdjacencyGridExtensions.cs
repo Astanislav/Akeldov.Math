@@ -26,11 +26,13 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(adjacencyToColor));
 
             var values = new RGBA16BitColor[grid.Count];
+            bool[] hasHex = grid.HasHex;
+            IndexedHexAdjacency[] adjacent = grid.Adjacent;
 
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = grid.HasHex[i]
-                    ? adjacencyToColor(grid.Adjacent[i])
+                values[i] = hasHex[i]
+                    ? adjacencyToColor(adjacent[i])
                     : emptyColor;
             }
 
@@ -56,11 +58,14 @@ namespace Akeldov.Math.Hexes.Topology
                 throw new ArgumentNullException(nameof(hexToColor));
 
             var values = new RGBA16BitColor[grid.Count];
+            bool[] hasHex = grid.HasHex;
+            IndexedHexAdjacency[] adjacent = grid.Adjacent;
 
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = grid.HasHex[i]
-                    ? hexToColor(grid.Adjacent[i].Index, ToHexAdjacency(grid.Adjacent[i]))
+                IndexedHexAdjacency adjacency = adjacent[i];
+                values[i] = hasHex[i]
+                    ? hexToColor(adjacency.Index, ToHexAdjacency(adjacency))
                     : emptyColor;
             }
 
