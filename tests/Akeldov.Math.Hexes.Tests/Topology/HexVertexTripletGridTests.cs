@@ -45,6 +45,27 @@ public class HexVertexTripletGridTests
         AssertTriplet(fromTry, expected);
     }
 
+    [TestCase(Layout.OddR, 0, 1, 1, 0)]
+    [TestCase(Layout.EvenR, 1, 1, 1, 0)]
+    [TestCase(Layout.OddQ, 1, 0, 1, -1)]
+    [TestCase(Layout.EvenQ, 1, 1, 1, 0)]
+    public void GetAdjacentTriplet_UsesLayoutSpecificVertexEdges(
+        Layout layout,
+        int expectedLeftX,
+        int expectedLeftY,
+        int expectedRightX,
+        int expectedRightY)
+    {
+        Triplet<VectorXYInt> triplet = VectorXYInt.Zero.GetAdjacentTriplet(HexVertex.Vertex0, layout);
+
+        AssertTriplet(
+            triplet,
+            new Triplet<VectorXYInt>(
+                VectorXYInt.Zero,
+                new VectorXYInt(expectedLeftX, expectedLeftY),
+                new VectorXYInt(expectedRightX, expectedRightY)));
+    }
+
     [Test]
     public void BarycentricGrid_UsesSameVertexTripletCenters()
     {

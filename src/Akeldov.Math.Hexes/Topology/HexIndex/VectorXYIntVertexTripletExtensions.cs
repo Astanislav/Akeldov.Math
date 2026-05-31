@@ -9,7 +9,7 @@ namespace Akeldov.Math.Hexes.Topology
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Triplet<VectorXYInt> GetAdjacentTriplet(this VectorXYInt hexIndex, HexVertex hexVertex, Layout layout)
         {
-            var (leftEdge, rightEdge) = hexVertex.GetAdjacentEdges();
+            var (leftEdge, rightEdge) = hexVertex.GetAdjacentEdges(layout);
             var leftIndex = hexIndex.GetAdjacent(leftEdge, layout);
             var rightIndex = hexIndex.GetAdjacent(rightEdge, layout);
             return new Triplet<VectorXYInt>(hexIndex, leftIndex, rightIndex);

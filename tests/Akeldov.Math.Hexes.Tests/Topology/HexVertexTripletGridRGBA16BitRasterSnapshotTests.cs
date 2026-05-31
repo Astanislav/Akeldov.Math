@@ -2,6 +2,7 @@ using Akeldov.Math.Hexes.Topology;
 using Akeldov.Math.Hexes.Vectors.QRS;
 using Akeldov.Math.Spatial2D;
 using Akeldov.Math.Spatial2D.Imaging;
+using Akeldov.Math.Spatial2D.Rasterization;
 
 namespace Akeldov.Math.Hexes.Tests.Topology;
 
@@ -76,6 +77,37 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
         AssertMatchesApprovedPng(approvedFileName, actual);
     }
 
+    [TestCase(Layout.OddR, "hex-vertex-chromatic-barycentric-blend-grid-odd-r-rgba16.png")]
+    [TestCase(Layout.EvenR, "hex-vertex-chromatic-barycentric-blend-grid-even-r-rgba16.png")]
+    [TestCase(Layout.OddQ, "hex-vertex-chromatic-barycentric-blend-grid-odd-q-rgba16.png")]
+    [TestCase(Layout.EvenQ, "hex-vertex-chromatic-barycentric-blend-grid-even-q-rgba16.png")]
+    public void ChromaticIndexTripletAndBarycentricGrid_ToRGBA16BitRaster_WithLayout_MatchesApprovedImage(
+        Layout layout,
+        string approvedFileName)
+    {
+        var chromaticGrid = new HexVertexChromaticIndexTripletGrid(
+            hexWidth: 5,
+            hexHeight: 4,
+            layout: layout,
+            hexOrigin: VectorXY.Zero,
+            hexApothem: 8f,
+            resolution: new VectorXYInt(64, 64));
+        var barycentricGrid = new HexVertexBarycentricGrid(
+            hexWidth: 5,
+            hexHeight: 4,
+            layout: layout,
+            hexOrigin: VectorXY.Zero,
+            hexApothem: 8f,
+            resolution: new VectorXYInt(64, 64));
+        RGBA16BitRaster raster = ToChromaticBarycentricBlendRaster(
+            chromaticGrid,
+            barycentricGrid,
+            new RGBA16BitColor(0x1010, 0x1010, 0x1010, ushort.MaxValue));
+        byte[] actual = SaveToPngBytes(raster, approvedFileName);
+
+        AssertMatchesApprovedPng(approvedFileName, actual);
+    }
+
     private static RGBA16BitColor ToIndexTripletSnapshotColor(Triplet<VectorXYInt> triplet)
     {
         float main = EncodeIndex(triplet.Main);
@@ -105,6 +137,55 @@ public class HexVertexTripletGridRGBA16BitRasterSnapshotTests
             ToChannel(0.18f + 0.34f * chromaticIndices.Left),
             ToChannel(0.18f + 0.34f * chromaticIndices.Right),
             ushort.MaxValue);
+    }
+
+    private static RGBA16BitRaster ToChromaticBarycentricBlendRaster(
+        HexVertexChromaticIndexTripletGrid chromaticGrid,
+        HexVertexBarycentricGrid barycentricGrid,
+        RGBA16BitColor emptyColor)
+    {
+        var values = new RGBA16BitColor[chromaticGrid.Count];
+        bool[] chromaticHasHex = chromaticGrid.HasHex;
+        bool[] barycentricHasHex = barycentricGrid.HasHex;
+        Triplet<byte>[] chromaticIndices = chromaticGrid.ChromaticIndices;
+        Triplet<float>[] barycentricCoordinates = barycentricGrid.BarycentricCoordinates;
+
+        for (int i = 0; i < values.Length; i++)
+        {
+            values[i] = chromaticHasHex[i] && barycentricHasHex[i]
+                ? ToChromaticBarycentricBlendSnapshotColor(chromaticIndices[i], barycentricCoordinates[i])
+                : emptyColor;
+        }
+
+        return new RGBA16BitRaster(
+            new RasterGrid((PointXY)chromaticGrid.Origin, chromaticGrid.Size, chromaticGrid.Resolution),
+            values);
+    }
+
+    private static RGBA16BitColor ToChromaticBarycentricBlendSnapshotColor(
+        Triplet<byte> chromaticIndices,
+        Triplet<float> barycentricCoordinates)
+    {
+        float red = GetChromaticChannel(chromaticIndices.Main, 0) * barycentricCoordinates.Main +
+            GetChromaticChannel(chromaticIndices.Left, 0) * barycentricCoordinates.Left +
+            GetChromaticChannel(chromaticIndices.Right, 0) * barycentricCoordinates.Right;
+        float green = GetChromaticChannel(chromaticIndices.Main, 1) * barycentricCoordinates.Main +
+            GetChromaticChannel(chromaticIndices.Left, 1) * barycentricCoordinates.Left +
+            GetChromaticChannel(chromaticIndices.Right, 1) * barycentricCoordinates.Right;
+        float blue = GetChromaticChannel(chromaticIndices.Main, 2) * barycentricCoordinates.Main +
+            GetChromaticChannel(chromaticIndices.Left, 2) * barycentricCoordinates.Left +
+            GetChromaticChannel(chromaticIndices.Right, 2) * barycentricCoordinates.Right;
+
+        return new RGBA16BitColor(
+            ToChannel(red),
+            ToChannel(green),
+            ToChannel(blue),
+            ushort.MaxValue);
+    }
+
+    private static float GetChromaticChannel(byte chromaticIndex, byte channelIndex)
+    {
+        return chromaticIndex == channelIndex ? 1f : 0f;
     }
 
     private static float EncodeIndex(VectorXYInt index)

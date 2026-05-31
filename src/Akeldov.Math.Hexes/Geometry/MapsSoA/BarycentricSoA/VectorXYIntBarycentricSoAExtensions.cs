@@ -51,7 +51,7 @@ namespace Akeldov.Math.Hexes.Geometry
 
                     
                     var (mainIndex, hexVertex) = point.GetClosestVertexIndex(apothem, radius, origin, layout);
-                    var (leftEdge, rightEdge) = hexVertex.GetAdjacentEdges();
+                    var (leftEdge, rightEdge) = hexVertex.GetAdjacentEdges(layout);
                     var leftIndex = mainIndex.GetAdjacent(leftEdge, layout);
                     var rightIndex = mainIndex.GetAdjacent(rightEdge, layout);
                     indices[index] = new Triplet<VectorXYInt>(mainIndex, leftIndex, rightIndex);
