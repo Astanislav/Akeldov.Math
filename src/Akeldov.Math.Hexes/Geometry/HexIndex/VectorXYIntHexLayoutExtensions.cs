@@ -24,7 +24,7 @@ namespace Akeldov.Math.Hexes.Geometry
                         origin.Y + 1.5f * hexRadius * index.Y);
                 case Layout.EvenR:
                     return new VectorXY(
-                        origin.X + index.X * 2f * hexApothem + ((index.Y & 1) == 0 ? hexApothem : 0f),
+                        origin.X + index.X * 2f * hexApothem + ((index.Y & 1) == 1 ? -hexApothem : 0f),
                         origin.Y + 1.5f * hexRadius * index.Y);
                 case Layout.OddQ:
                     return new VectorXY(
@@ -33,7 +33,7 @@ namespace Akeldov.Math.Hexes.Geometry
                 case Layout.EvenQ:
                     return new VectorXY(
                         origin.X + 1.5f * hexRadius * index.X,
-                        origin.Y + index.Y * 2f * hexApothem + ((index.X & 1) == 0 ? hexApothem : 0f));
+                        origin.Y + index.Y * 2f * hexApothem + ((index.X & 1) == 1 ? -hexApothem : 0f));
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
@@ -46,11 +46,11 @@ namespace Akeldov.Math.Hexes.Geometry
                 case Layout.OddR:
                     return new VectorXY(hexApothem, hexRadius);
                 case Layout.EvenR:
-                    return new VectorXY(2f * hexApothem, hexRadius);
+                    return new VectorXY(3f * hexApothem, hexRadius);
                 case Layout.OddQ:
                     return new VectorXY(hexRadius, hexApothem);
                 case Layout.EvenQ:
-                    return new VectorXY(hexRadius, 2f * hexApothem);
+                    return new VectorXY(hexRadius, 3f * hexApothem);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(layout));
             }
